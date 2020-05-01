@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Blauhaus.Domain.Client.CommandHandlers.Entities;
-using Blauhaus.Domain.Server.Entities;
+using Blauhaus.Domain.Common.Entities;
 
 namespace Blauhaus.Domain.Tests.ServerTests.TestObjects
 {

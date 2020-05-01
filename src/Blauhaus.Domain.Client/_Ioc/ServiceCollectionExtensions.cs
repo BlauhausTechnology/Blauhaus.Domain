@@ -1,8 +1,7 @@
 ﻿using Blauhaus.Domain.Client.CommandHandlers;
-using Blauhaus.Domain.Client.CommandHandlers.Entities;
-using Blauhaus.Domain.Client.Entities;
 using Blauhaus.Domain.Client.Repositories;
 using Blauhaus.Domain.Common.CommandHandlers;
+using Blauhaus.Domain.Common.Entities;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Blauhaus.Domain.Client._Ioc

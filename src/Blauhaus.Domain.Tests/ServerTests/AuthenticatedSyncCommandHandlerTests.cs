@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Blauhaus.Domain.Client.CommandHandlers.Entities;
+using Blauhaus.Domain.Common.Entities;
 using Blauhaus.Domain.Server.CommandHandlers;
 using Blauhaus.Domain.Tests._Base;
 using Blauhaus.Domain.Tests.Extensions;
@@ -15,7 +15,7 @@ using NUnit.Framework;
 
 namespace Blauhaus.Domain.Tests.ServerTests
 {
-    public class AuthenticatedSyncCommandHandlerTests : BaseDomainTest<AuthenticatedSyncQueryHandler<TestServerEntity, TestSyncCommand, TestAuthenticatedUser>>
+    public class AuthenticatedSyncCommandHandlerTests : BaseDomainTest<AuthenticatedSyncCommandHandler<TestServerEntity, TestSyncCommand, TestAuthenticatedUser>>
     {
         private TestSyncCommand _command = new TestSyncCommand();
         private List<TestServerEntity> _entities = new List<TestServerEntity>();

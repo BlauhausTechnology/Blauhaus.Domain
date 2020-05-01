@@ -1,7 +1,6 @@
 ﻿using Blauhaus.Domain.Client.CommandHandlers;
-using Blauhaus.Domain.Client.CommandHandlers.Entities;
-using Blauhaus.Domain.Client.Entities;
 using Blauhaus.Domain.Common.CommandHandlers;
+using Blauhaus.Domain.Common.Entities;
 using Blauhaus.Ioc.Abstractions;
 
 namespace Blauhaus.Domain.Client._Ioc

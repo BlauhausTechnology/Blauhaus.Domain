@@ -2,10 +2,9 @@
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
-using Blauhaus.Domain.Client.CommandHandlers.Entities;
-using Blauhaus.Domain.Client.Entities;
 using Blauhaus.Domain.Client.Repositories;
 using Blauhaus.Domain.Common.CommandHandlers;
+using Blauhaus.Domain.Common.Entities;
 using CSharpFunctionalExtensions;
 
 namespace Blauhaus.Domain.Client.CommandHandlers

@@ -1,7 +1,6 @@
 ﻿using System;
-using Blauhaus.Domain.Common.Entities;
 
-namespace Blauhaus.Domain.Server.Entities
+namespace Blauhaus.Domain.Common.Entities
 {
     public interface IServerEntity : IEntity
     {

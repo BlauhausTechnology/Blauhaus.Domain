@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
-using Blauhaus.Domain.Client.Entities;
-using Blauhaus.Domain.Server.Entities;
+using Blauhaus.Domain.Common.Entities;
 using NUnit.Framework;
 
 namespace Blauhaus.Domain.Tests.Extensions

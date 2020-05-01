@@ -1,5 +1,4 @@
 ﻿using System;
-using Blauhaus.Domain.Client.CommandHandlers.Entities;
 
 namespace Blauhaus.Domain.Common.Entities
 {

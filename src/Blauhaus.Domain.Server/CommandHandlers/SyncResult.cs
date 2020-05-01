@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Blauhaus.Domain.Server.Entities;
+using Blauhaus.Domain.Common.Entities;
 
 namespace Blauhaus.Domain.Server.CommandHandlers
 {

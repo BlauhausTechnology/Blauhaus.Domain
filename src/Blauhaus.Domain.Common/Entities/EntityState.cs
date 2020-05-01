@@ -1,4 +1,4 @@
-﻿namespace Blauhaus.Domain.Client.CommandHandlers.Entities
+﻿namespace Blauhaus.Domain.Common.Entities
 {
     public enum EntityState
     {

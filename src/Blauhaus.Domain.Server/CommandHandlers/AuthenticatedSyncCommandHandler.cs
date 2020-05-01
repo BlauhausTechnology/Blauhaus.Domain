@@ -4,63 +4,63 @@ using System.Threading;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Domain.Common.CommandHandlers;
-using Blauhaus.Domain.Server.Entities;
+using Blauhaus.Domain.Common.Entities;
 using CSharpFunctionalExtensions;
 
 namespace Blauhaus.Domain.Server.CommandHandlers
 {
-    public class AuthenticatedSyncQueryHandler<TEntity, TSyncQuery, TUser> : IAuthenticatedCommandHandler<SyncResult<TEntity>, TSyncQuery, TUser>
+    public class AuthenticatedSyncCommandHandler<TEntity, TSyncCommand, TUser> : IAuthenticatedCommandHandler<SyncResult<TEntity>, TSyncCommand, TUser>
         where TEntity : IServerEntity
-        where TSyncQuery : SyncCommand
+        where TSyncCommand : SyncCommand
         where TUser : notnull
     {
         private readonly IAnalyticsService _analyticsService;
-        private readonly IAuthenticatedSyncQueryLoader<TEntity, TSyncQuery, TUser> _queryLoader;
+        private readonly IAuthenticatedSyncQueryLoader<TEntity, TSyncCommand, TUser> _queryLoader;
 
-        public AuthenticatedSyncQueryHandler(
+        public AuthenticatedSyncCommandHandler(
             IAnalyticsService analyticsService,
-            IAuthenticatedSyncQueryLoader<TEntity, TSyncQuery, TUser> queryLoader)
+            IAuthenticatedSyncQueryLoader<TEntity, TSyncCommand, TUser> queryLoader)
         {
             _analyticsService = analyticsService;
             _queryLoader = queryLoader;
         }
 
-        public  async Task<Result<SyncResult<TEntity>>> HandleAsync(TSyncQuery query, TUser authenticatedUser, CancellationToken token)
+        public  async Task<Result<SyncResult<TEntity>>> HandleAsync(TSyncCommand command, TUser authenticatedUser, CancellationToken token)
         {
 
-            var dbQueryResult = await _queryLoader.HandleAsync(query, authenticatedUser, token);
+            var dbQueryResult = await _queryLoader.HandleAsync(command, authenticatedUser, token);
             var dbQuery = dbQueryResult.Value.OrderByDescending(x => x.ModifiedAt).AsQueryable();
 
             var count = dbQuery.Count();
 
 
-            if (query.ModifiedAfter != null && query.ModifiedBefore != null)
+            if (command.ModifiedAfter != null && command.ModifiedBefore != null)
             {
                 //new sync must begin with both specified
-                var modifiedAfter = DateTime.SpecifyKind(new DateTime(query.ModifiedAfter.Value), DateTimeKind.Utc);
-                var modifiedBefore = DateTime.SpecifyKind(new DateTime(query.ModifiedBefore.Value), DateTimeKind.Utc);
+                var modifiedAfter = DateTime.SpecifyKind(new DateTime(command.ModifiedAfter.Value), DateTimeKind.Utc);
+                var modifiedBefore = DateTime.SpecifyKind(new DateTime(command.ModifiedBefore.Value), DateTimeKind.Utc);
                 dbQuery = dbQuery.Where(x => x.ModifiedAt > modifiedAfter || x.ModifiedAt < modifiedBefore);
             }
 
             else
             {
                 //subsequent requests during sync only request ModifiedBefore
-                if (query.ModifiedBefore != null)
+                if (command.ModifiedBefore != null)
                 {
-                    var modifiedBefore = DateTime.SpecifyKind(new DateTime(query.ModifiedBefore.Value), DateTimeKind.Utc);
+                    var modifiedBefore = DateTime.SpecifyKind(new DateTime(command.ModifiedBefore.Value), DateTimeKind.Utc);
                     dbQuery = dbQuery.Where(x => x.ModifiedAt < modifiedBefore);
                 }
 
                 //this should probably not be used
-                if (query.ModifiedAfter != null)
+                if (command.ModifiedAfter != null)
                 {
-                    var modifiedAfter = DateTime.SpecifyKind(new DateTime(query.ModifiedAfter.Value), DateTimeKind.Utc);
+                    var modifiedAfter = DateTime.SpecifyKind(new DateTime(command.ModifiedAfter.Value), DateTimeKind.Utc);
                     dbQuery = dbQuery.Where(x => x.ModifiedAt > modifiedAfter);
                 }
             }
             
             var entities = dbQuery
-                .Take(query.BatchSize)
+                .Take(command.BatchSize)
                 .ToList();
 
             return Result.Success(new SyncResult<TEntity>

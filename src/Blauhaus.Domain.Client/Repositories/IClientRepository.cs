@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Blauhaus.Domain.Client.CommandHandlers.Entities;
-using Blauhaus.Domain.Client.Entities;
+using Blauhaus.Domain.Common.Entities;
 
 namespace Blauhaus.Domain.Client.Repositories
 {

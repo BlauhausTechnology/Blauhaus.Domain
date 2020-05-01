@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using Blauhaus.Domain.Common.CommandHandlers;
-using Blauhaus.Domain.Server.Entities;
+using Blauhaus.Domain.Common.Entities;
 
 namespace Blauhaus.Domain.Server.CommandHandlers
 {
