@@ -3,18 +3,20 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blauhaus.Domain.Client", "Blauhaus.Domain.Client\Blauhaus.Domain.Client.csproj", "{32298C8E-6E85-4257-B9D7-CB332CD77E79}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blauhaus.Domain.Client", "Blauhaus.Domain.Client\Blauhaus.Domain.Client.csproj", "{32298C8E-6E85-4257-B9D7-CB332CD77E79}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blauhaus.Domain.Server", "Blauhaus.Domain.Server\Blauhaus.Domain.Server.csproj", "{F8AD9E7B-5A22-4B6E-93B4-B96AEB88B9C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blauhaus.Domain.Server", "Blauhaus.Domain.Server\Blauhaus.Domain.Server.csproj", "{F8AD9E7B-5A22-4B6E-93B4-B96AEB88B9C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blauhaus.Domain.Common", "Blauhaus.Domain.Common\Blauhaus.Domain.Common.csproj", "{279F7733-FB6E-425D-8B19-321B1E72BFCE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blauhaus.Domain.Common", "Blauhaus.Domain.Common\Blauhaus.Domain.Common.csproj", "{279F7733-FB6E-425D-8B19-321B1E72BFCE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blauhaus.Domain.Tests", "Blauhaus.Domain.Tests\Blauhaus.Domain.Tests.csproj", "{EF4A4B01-7DC8-460E-BA43-4CA0D2A48432}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blauhaus.Domain.Tests", "Blauhaus.Domain.Tests\Blauhaus.Domain.Tests.csproj", "{EF4A4B01-7DC8-460E-BA43-4CA0D2A48432}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{77883176-768C-4FE9-8045-800873F59308}"
 	ProjectSection(SolutionItems) = preProject
 		..\.github\workflows\blauhaus.yml = ..\.github\workflows\blauhaus.yml
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blauhaus.Domain.TestHelpers", "Blauhaus.Domain.TestHelpers\Blauhaus.Domain.TestHelpers.csproj", "{41628AB2-A8CF-416C-B7D3-3C5CCEE2239B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,6 +40,10 @@ Global
 		{EF4A4B01-7DC8-460E-BA43-4CA0D2A48432}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF4A4B01-7DC8-460E-BA43-4CA0D2A48432}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF4A4B01-7DC8-460E-BA43-4CA0D2A48432}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41628AB2-A8CF-416C-B7D3-3C5CCEE2239B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41628AB2-A8CF-416C-B7D3-3C5CCEE2239B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41628AB2-A8CF-416C-B7D3-3C5CCEE2239B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41628AB2-A8CF-416C-B7D3-3C5CCEE2239B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

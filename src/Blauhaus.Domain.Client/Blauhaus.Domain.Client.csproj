@@ -6,4 +6,15 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Blauhaus.Analytics.Abstractions" Version="0.7.17" />
+    <PackageReference Include="Blauhaus.Ioc.Abstractions" Version="0.7.1" />
+    <PackageReference Include="CSharpFunctionalExtensions" Version="2.7.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="1.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Blauhaus.Domain.Common\Blauhaus.Domain.Common.csproj" />
+  </ItemGroup>
+
 </Project>
