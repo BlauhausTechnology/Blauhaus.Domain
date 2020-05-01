@@ -6,6 +6,5 @@ namespace Blauhaus.Domain.Common.Entities
     {
         Guid Id { get; }
         EntityState EntityState { get; }
-        long ModifiedAtTicks { get; }
     }
 }
