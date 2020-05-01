@@ -17,6 +17,7 @@ namespace Blauhaus.Domain.Tests.ServerTests.TestObjects
 
         public Guid Id { get; }
         public EntityState EntityState { get; }
+        public long ModifiedAtTicks => ModifiedAt.Ticks;
         public DateTime CreatedAt { get; }
         public DateTime ModifiedAt { get; set; }
 

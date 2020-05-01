@@ -10,6 +10,8 @@ using CSharpFunctionalExtensions;
 namespace Blauhaus.Domain.Client.CommandHandlers
 {
     public class EntityCommandClientHandler<TModel, TModelDto, TCommandDto, TCommand> : ICommandHandler<TModel, TCommand> 
+        where TCommand: notnull
+        where TCommandDto: notnull
         where TModel : class, IClientEntity 
     {
         private readonly IAnalyticsService _analyticsService;

@@ -2,8 +2,10 @@
 using System.Linq;
 using Blauhaus.Auth.Abstractions.User;
 using Blauhaus.Domain.Common.CommandHandlers;
+using Blauhaus.Domain.Common.CommandHandlers.Sync;
 using Blauhaus.Domain.Common.Entities;
 using Blauhaus.Domain.Server.CommandHandlers;
+using Blauhaus.Domain.Server.CommandHandlers.Sync;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Blauhaus.Domain.Server._Ioc

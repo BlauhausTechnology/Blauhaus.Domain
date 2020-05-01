@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Blauhaus.Domain.Common.Entities;
 using Blauhaus.Domain.Server.CommandHandlers;
+using Blauhaus.Domain.Server.CommandHandlers.Sync;
 using Blauhaus.Domain.Tests._Base;
 using Blauhaus.Domain.Tests.Extensions;
 using Blauhaus.Domain.Tests.ServerTests.TestObjects;
@@ -66,7 +67,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
         {
             //Arrange
             _command.BatchSize = 4;
-            _command.ModifiedAfter = _entities[8].ModifiedAt.Ticks;
+            _command.ModifiedAfterTicks = _entities[8].ModifiedAt.Ticks;
 
             //Act
             var queryResult = await Sut.HandleAsync(_command, _user, CancellationToken);
@@ -89,7 +90,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
         {
             //Arrange
             _command.BatchSize = 7;
-            _command.ModifiedAfter = _entities[4].ModifiedAt.Ticks;
+            _command.ModifiedAfterTicks = _entities[4].ModifiedAt.Ticks;
 
             //Act
             var queryResult = await Sut.HandleAsync(_command, _user, CancellationToken);
@@ -112,7 +113,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
         {
             //Arrange
             _command.BatchSize = 3;
-            _command.ModifiedBefore = _entities[5].ModifiedAt.Ticks;
+            _command.ModifiedBeforeTicks = _entities[5].ModifiedAt.Ticks;
 
             //Act
             var queryResult = await Sut.HandleAsync(_command, _user, CancellationToken);
@@ -134,7 +135,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
         {
             //Arrange
             _command.BatchSize = 2;
-            _command.ModifiedBefore = _entities[5].ModifiedAt.Ticks;
+            _command.ModifiedBeforeTicks = _entities[5].ModifiedAt.Ticks;
 
             //Act
             var queryResult = await Sut.HandleAsync(_command, _user, CancellationToken);
@@ -154,8 +155,8 @@ namespace Blauhaus.Domain.Tests.ServerTests
         public async Task IF_ModifiedBefore_and_ModifiedAfter_are_specified_SHOULD_return_entities_matching_either_not_both()
         {
             //Arrange
-            _command.ModifiedAfter = _entities[3].ModifiedAt.Ticks;
-            _command.ModifiedBefore = _entities[8].ModifiedAt.Ticks;
+            _command.ModifiedAfterTicks = _entities[3].ModifiedAt.Ticks;
+            _command.ModifiedBeforeTicks = _entities[8].ModifiedAt.Ticks;
 
             //Act
             var queryResult = await Sut.HandleAsync(_command, _user, CancellationToken);
@@ -198,7 +199,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
             var result2 = await Sut.HandleAsync(new TestSyncCommand
             {
                 BatchSize = 5,
-                ModifiedBefore = result1.Value.Entities.Last().ModifiedAt.Ticks
+                ModifiedBeforeTicks = result1.Value.Entities.Last().ModifiedAt.Ticks
             }, _user, CancellationToken);
             Assert.AreEqual(5, result2.Value.Entities.Count);
             Assert.AreEqual(12, result2.Value.TotalCount);
@@ -215,7 +216,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
             var result3 = await Sut.HandleAsync(new TestSyncCommand
             {
                 BatchSize = 5,
-                ModifiedBefore = result2.Value.Entities.Last().ModifiedAt.Ticks
+                ModifiedBeforeTicks = result2.Value.Entities.Last().ModifiedAt.Ticks
             }, _user, CancellationToken);
             Assert.AreEqual(2, result3.Value.Entities.Count); 
             Assert.AreEqual(12, result3.Value.TotalCount);
@@ -238,7 +239,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
             var result2 = await Sut.HandleAsync(new TestSyncCommand
             {
                 BatchSize = 5,
-                ModifiedBefore = result1.Value.Entities.Last().ModifiedAt.Ticks
+                ModifiedBeforeTicks = result1.Value.Entities.Last().ModifiedAt.Ticks
             }, _user, CancellationToken);
             Assert.AreEqual(5, result1.Value.Entities.Count);
             Assert.AreEqual(12, result1.Value.TotalCount);
@@ -269,7 +270,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
             var result3 = await Sut.HandleAsync(new TestSyncCommand
             {
                 BatchSize = 5,
-                ModifiedBefore = result2.Value.Entities.Last().ModifiedAt.Ticks
+                ModifiedBeforeTicks = result2.Value.Entities.Last().ModifiedAt.Ticks
             }, _user, CancellationToken);
             Assert.AreEqual(2, result3.Value.Entities.Count); 
             Assert.AreEqual(12, result3.Value.TotalCount);
@@ -283,8 +284,8 @@ namespace Blauhaus.Domain.Tests.ServerTests
             var result4 = await Sut.HandleAsync(new TestSyncCommand
             {
                 BatchSize = 5,
-                ModifiedAfter = result1.Value.Entities.First().ModifiedAt.Ticks,
-                ModifiedBefore = result3.Value.Entities.Last().ModifiedAt.Ticks
+                ModifiedAfterTicks = result1.Value.Entities.First().ModifiedAt.Ticks,
+                ModifiedBeforeTicks = result3.Value.Entities.Last().ModifiedAt.Ticks
             }, _user, CancellationToken);
             Assert.AreEqual(1, result4.Value.Entities.Count); 
             Assert.AreEqual(12, result4.Value.TotalCount);
@@ -316,8 +317,8 @@ namespace Blauhaus.Domain.Tests.ServerTests
             var result2 = await Sut.HandleAsync(new TestSyncCommand()
             {
                 BatchSize = 5,
-                ModifiedAfter = result1.Value.Entities.First().ModifiedAt.Ticks,
-                ModifiedBefore = result1.Value.Entities.Last().ModifiedAt.Ticks
+                ModifiedAfterTicks = result1.Value.Entities.First().ModifiedAt.Ticks,
+                ModifiedBeforeTicks = result1.Value.Entities.Last().ModifiedAt.Ticks
             }, _user, CancellationToken);
             Assert.AreEqual(5, result2.Value.Entities.Count);
             Assert.AreEqual(13, result2.Value.TotalCount);
@@ -334,7 +335,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
             var result3 = await Sut.HandleAsync(new TestSyncCommand()
             {
                 BatchSize = 5,
-                ModifiedBefore = result2.Value.Entities.Last().ModifiedAt.Ticks
+                ModifiedBeforeTicks = result2.Value.Entities.Last().ModifiedAt.Ticks
             }, _user, CancellationToken);
             Assert.AreEqual(4, result3.Value.Entities.Count); 
             Assert.AreEqual(13, result3.Value.TotalCount);

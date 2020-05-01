@@ -1,4 +1,5 @@
-﻿using Blauhaus.Domain.Server.CommandHandlers;
+﻿using Blauhaus.Domain.Common.CommandHandlers.Sync;
+using Blauhaus.Domain.Server.CommandHandlers;
 
 namespace Blauhaus.Domain.Tests.ServerTests.TestObjects
 {
