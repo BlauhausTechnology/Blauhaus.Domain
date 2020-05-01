@@ -11,7 +11,7 @@ using CSharpFunctionalExtensions;
 namespace Blauhaus.Domain.Server.CommandHandlers.Sync
 {
     public class AuthenticatedSyncCommandHandler<TEntity, TSyncCommand, TUser> : IAuthenticatedCommandHandler<SyncResult<TEntity>, TSyncCommand, TUser>
-        where TEntity : IEntity
+        where TEntity : IServerEntity
         where TSyncCommand : SyncCommand
         where TUser : notnull
     {
@@ -30,7 +30,7 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
         {
 
             var dbQueryResult = await _queryLoader.HandleAsync(command, authenticatedUser, token);
-            var dbQuery = dbQueryResult.Value.OrderByDescending(x => x.ModifiedAtTicks).AsQueryable();
+            var dbQuery = dbQueryResult.Value.OrderByDescending(x => x.ModifiedAt).AsQueryable();
 
             var count = dbQuery.Count();
 
@@ -38,7 +38,9 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
             if (command.ModifiedAfterTicks != null && command.ModifiedBeforeTicks != 0)
             {
                 //new sync must begin with both specified
-                dbQuery = dbQuery.Where(x => x.ModifiedAtTicks > command.ModifiedAfterTicks || x.ModifiedAtTicks < command.ModifiedBeforeTicks);
+                var modifiedAfter = DateTime.SpecifyKind(new DateTime(command.ModifiedAfterTicks.Value), DateTimeKind.Utc);
+                var modifiedBefore= DateTime.SpecifyKind(new DateTime(command.ModifiedBeforeTicks), DateTimeKind.Utc);
+                dbQuery = dbQuery.Where(x => x.ModifiedAt> modifiedAfter || x.ModifiedAt < modifiedBefore);
             }
 
             else
@@ -46,13 +48,15 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
                 //subsequent requests during sync only request ModifiedBefore
                 if (command.ModifiedBeforeTicks != 0)
                 {
-                    dbQuery = dbQuery.Where(x => x.ModifiedAtTicks < command.ModifiedBeforeTicks);
+                    var modifiedBefore= DateTime.SpecifyKind(new DateTime(command.ModifiedBeforeTicks), DateTimeKind.Utc);
+                    dbQuery = dbQuery.Where(x => x.ModifiedAt < modifiedBefore);
                 }
 
                 //this should probably not be used
                 if (command.ModifiedAfterTicks != null)
                 {
-                    dbQuery = dbQuery.Where(x => x.ModifiedAtTicks > command.ModifiedAfterTicks);
+                    var modifiedAfter = DateTime.SpecifyKind(new DateTime(command.ModifiedAfterTicks.Value), DateTimeKind.Utc);
+                    dbQuery = dbQuery.Where(x => x.ModifiedAt > modifiedAfter);
                 }
             }
             
