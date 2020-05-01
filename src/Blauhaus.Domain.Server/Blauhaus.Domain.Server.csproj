@@ -16,4 +16,8 @@
     <ProjectReference Include="..\Blauhaus.Domain.Common\Blauhaus.Domain.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="CommandHandlers\" />
+  </ItemGroup>
+
 </Project>

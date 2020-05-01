@@ -14,4 +14,10 @@
     <ProjectReference Include="..\Blauhaus.Domain.Server\Blauhaus.Domain.Server.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="MockBuilders\Client\" />
+    <Folder Include="MockBuilders\Common\" />
+    <Folder Include="MockBuilders\Server\" />
+  </ItemGroup>
+
 </Project>

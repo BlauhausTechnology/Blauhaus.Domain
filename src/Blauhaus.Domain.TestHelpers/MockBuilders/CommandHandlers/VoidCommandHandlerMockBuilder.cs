@@ -3,7 +3,7 @@ using Blauhaus.Domain.TestHelpers.MockBuilders.CommandHandlers._Base;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.CommandHandlers
 {
-    public class VoidCommandHandlerMockBuilder<TCommand> : BaseVoidCommandHandlerMockBuilder<VoidCommandHandlerMockBuilder<TCommand>, 
+    public class VoidCommandHandlerMockBuilder<TCommand> : VoidCommandHandlerMockBuilder<VoidCommandHandlerMockBuilder<TCommand>, 
         IVoidCommandHandler<TCommand>, TCommand>
     {
         
