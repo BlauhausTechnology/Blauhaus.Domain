@@ -7,6 +7,7 @@ namespace Blauhaus.Domain.Common.CommandHandlers.Sync
         where TPayload : IEntity
     {
         public List<TPayload> Entities { get; set; } = new List<TPayload>();
-        public int TotalCount { get; set; }
+        public int TotalEntityCount { get; set; }
+        public int ModifiedEntityCount { get; set; }
     }
 }

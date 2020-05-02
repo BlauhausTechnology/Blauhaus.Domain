@@ -52,7 +52,8 @@ namespace Blauhaus.Domain.Tests.ServerTests
 
             //Assert
             Assert.AreEqual(3, result.Entities.Count);
-            Assert.AreEqual(12, result.TotalCount);
+            Assert.AreEqual(12, result.TotalEntityCount);
+            Assert.AreEqual(12, result.ModifiedEntityCount);
             result.Entities.VerifyEntities(new List<TestServerEntity>
             {
                 _entities[0],
@@ -61,53 +62,29 @@ namespace Blauhaus.Domain.Tests.ServerTests
             });
         }
 
-        
         [Test]
-        public async Task IF_ModifiedAfter_is_specified_and_batch_size_is_less_than_result_set_SHOULD_return_only_most_recently_modified()
+        public async Task IF_neither_modifiedAfter_nor_modifiedBefore_are_specified_SHOULD_exclude_inactive_entities()
         {
             //Arrange
-            _command.BatchSize = 4;
-            _command.ModifiedAfterTicks = _entities[8].ModifiedAt.Ticks;
+            _command.ModifiedAfterTicks = default;
+            _command.ModifiedBeforeTicks = default;
+            MockQueryLoader.Mock.Setup(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), _user, CancellationToken))
+                .ReturnsAsync(Result.Success(new List<TestServerEntity>
+                {
+                    new TestServerEntity(Guid.NewGuid(), EntityState.Deleted, DateTime.UtcNow, DateTime.UtcNow)
+                }.AsQueryable()));
 
             //Act
             var queryResult = await Sut.HandleAsync(_command, _user, CancellationToken);
             var result = queryResult.Value;
 
             //Assert
-            Assert.AreEqual(4, result.Entities.Count);
-            Assert.AreEqual(12, result.TotalCount); 
-            result.Entities.VerifyEntities(new List<TestServerEntity>
-            {
-                _entities[0], 
-                _entities[1], 
-                _entities[2],
-                _entities[3]
-            }); 
+            Assert.AreEqual(0, result.Entities.Count);
+            Assert.AreEqual(0, result.TotalEntityCount); 
+            Assert.AreEqual(0, result.ModifiedEntityCount);
+            Assert.IsNull(result.Entities.FirstOrDefault(x => x.EntityState == EntityState.Deleted));
         }
-
-        [Test]
-        public async Task IF_ModifiedAfter_is_specified_and_batch_size_is_greater_than_result_set_SHOULD_return_only_most_recently_modified()
-        {
-            //Arrange
-            _command.BatchSize = 7;
-            _command.ModifiedAfterTicks = _entities[4].ModifiedAt.Ticks;
-
-            //Act
-            var queryResult = await Sut.HandleAsync(_command, _user, CancellationToken);
-            var result = queryResult.Value;
-
-            //Assert
-            Assert.AreEqual(12, result.TotalCount); 
-            Assert.AreEqual(4, result.Entities.Count);
-            result.Entities.VerifyEntities(new List<TestServerEntity>
-            {
-                _entities[0], 
-                _entities[1], 
-                _entities[2],
-                _entities[3]
-            }); 
-        }
-
+         
         [Test]
         public async Task IF_ModifiedBefore_is_specified_SHOULD_return_only_entities_modified_before()
         {
@@ -120,7 +97,8 @@ namespace Blauhaus.Domain.Tests.ServerTests
             var result = queryResult.Value;
 
             //Assert
-            Assert.AreEqual(12, result.TotalCount); 
+            Assert.AreEqual(12, result.TotalEntityCount); 
+            Assert.AreEqual(6, result.ModifiedEntityCount); 
             Assert.AreEqual(3, result.Entities.Count); 
             result.Entities.VerifyEntities(new List<TestServerEntity>
             {
@@ -142,7 +120,8 @@ namespace Blauhaus.Domain.Tests.ServerTests
             var result = queryResult.Value;
 
             //Assert
-            Assert.AreEqual(12, result.TotalCount); 
+            Assert.AreEqual(12, result.TotalEntityCount); 
+            Assert.AreEqual(6, result.ModifiedEntityCount); 
             Assert.AreEqual(2, result.Entities.Count); 
             result.Entities.VerifyEntities(new List<TestServerEntity>
             {
@@ -164,7 +143,8 @@ namespace Blauhaus.Domain.Tests.ServerTests
 
             //Assert
             Assert.AreEqual(6, result.Entities.Count);
-            Assert.AreEqual(12, result.TotalCount); 
+            Assert.AreEqual(12, result.TotalEntityCount); 
+            Assert.AreEqual(6, result.ModifiedEntityCount); 
             result.Entities.VerifyEntities(new List<TestServerEntity>
             {
                 _entities[0], 
@@ -185,7 +165,8 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 BatchSize = 5
             }, _user, CancellationToken);
             Assert.AreEqual(5, result1.Value.Entities.Count);
-            Assert.AreEqual(12, result1.Value.TotalCount);
+            Assert.AreEqual(12, result1.Value.TotalEntityCount);
+            Assert.AreEqual(12, result1.Value.ModifiedEntityCount);
             result1.Value.Entities.VerifyEntities(new List<TestServerEntity>
             {
                 _entities[0], 
@@ -202,7 +183,8 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 ModifiedBeforeTicks = result1.Value.Entities.Last().ModifiedAt.Ticks
             }, _user, CancellationToken);
             Assert.AreEqual(5, result2.Value.Entities.Count);
-            Assert.AreEqual(12, result2.Value.TotalCount);
+            Assert.AreEqual(12, result2.Value.TotalEntityCount);
+            Assert.AreEqual(7, result2.Value.ModifiedEntityCount);
             result2.Value.Entities.VerifyEntities(new List<TestServerEntity>
             {
                 _entities[5], 
@@ -219,7 +201,8 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 ModifiedBeforeTicks = result2.Value.Entities.Last().ModifiedAt.Ticks
             }, _user, CancellationToken);
             Assert.AreEqual(2, result3.Value.Entities.Count); 
-            Assert.AreEqual(12, result3.Value.TotalCount);
+            Assert.AreEqual(12, result3.Value.TotalEntityCount);
+            Assert.AreEqual(2, result3.Value.ModifiedEntityCount);
             result3.Value.Entities.VerifyEntities(new List<TestServerEntity>
             {
                 _entities[10], 
@@ -242,7 +225,8 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 ModifiedBeforeTicks = result1.Value.Entities.Last().ModifiedAt.Ticks
             }, _user, CancellationToken);
             Assert.AreEqual(5, result1.Value.Entities.Count);
-            Assert.AreEqual(12, result1.Value.TotalCount);
+            Assert.AreEqual(12, result1.Value.TotalEntityCount);
+            Assert.AreEqual(12, result1.Value.ModifiedEntityCount);
             result1.Value.Entities.VerifyEntities(new List<TestServerEntity>
             {
                 _entities[0], 
@@ -254,7 +238,8 @@ namespace Blauhaus.Domain.Tests.ServerTests
 
             //Act 2
             Assert.AreEqual(5, result2.Value.Entities.Count);
-            Assert.AreEqual(12, result2.Value.TotalCount);
+            Assert.AreEqual(12, result2.Value.TotalEntityCount);
+            Assert.AreEqual(7, result2.Value.ModifiedEntityCount);
             result2.Value.Entities.VerifyEntities(new List<TestServerEntity>
             {
                 _entities[5], 
@@ -273,7 +258,8 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 ModifiedBeforeTicks = result2.Value.Entities.Last().ModifiedAt.Ticks
             }, _user, CancellationToken);
             Assert.AreEqual(2, result3.Value.Entities.Count); 
-            Assert.AreEqual(12, result3.Value.TotalCount);
+            Assert.AreEqual(12, result3.Value.TotalEntityCount);
+            Assert.AreEqual(2, result3.Value.ModifiedEntityCount);
             result3.Value.Entities.VerifyEntities(new List<TestServerEntity>
             {
                 _entities[10], 
@@ -288,7 +274,8 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 ModifiedBeforeTicks = result3.Value.Entities.Last().ModifiedAt.Ticks
             }, _user, CancellationToken);
             Assert.AreEqual(1, result4.Value.Entities.Count); 
-            Assert.AreEqual(12, result4.Value.TotalCount);
+            Assert.AreEqual(12, result4.Value.TotalEntityCount);
+            Assert.AreEqual(1, result4.Value.ModifiedEntityCount);
             result4.Value.Entities.VerifyEntities(new List<TestServerEntity>
             {
                 userToChange
@@ -321,7 +308,8 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 ModifiedBeforeTicks = result1.Value.Entities.Last().ModifiedAt.Ticks
             }, _user, CancellationToken);
             Assert.AreEqual(5, result2.Value.Entities.Count);
-            Assert.AreEqual(13, result2.Value.TotalCount);
+            Assert.AreEqual(13, result2.Value.TotalEntityCount);
+            Assert.AreEqual(9, result2.Value.ModifiedEntityCount);
             result2.Value.Entities.VerifyEntities(new List<TestServerEntity>
             {
                 newUser,
@@ -338,7 +326,8 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 ModifiedBeforeTicks = result2.Value.Entities.Last().ModifiedAt.Ticks
             }, _user, CancellationToken);
             Assert.AreEqual(4, result3.Value.Entities.Count); 
-            Assert.AreEqual(13, result3.Value.TotalCount);
+            Assert.AreEqual(13, result3.Value.TotalEntityCount);
+            Assert.AreEqual(9, result2.Value.ModifiedEntityCount);
             result3.Value.Entities.VerifyEntities(new List<TestServerEntity>
             {
                 _entities[8], 
@@ -348,5 +337,6 @@ namespace Blauhaus.Domain.Tests.ServerTests
             }); 
 
         }
+
     }
 }

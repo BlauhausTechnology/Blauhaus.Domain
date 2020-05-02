@@ -33,11 +33,22 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
             var dbQueryResult = await _queryLoader.HandleAsync(command, authenticatedUser, token);
             var dbQuery = dbQueryResult.Value.OrderByDescending(x => x.ModifiedAt).AsQueryable();
 
-            var count = dbQuery.Count();
-            
-            if (command.ModifiedAfterTicks != null && command.ModifiedBeforeTicks != 0)
+
+            if (command.IsFirstSyncForDevice())
             {
-                //new sync must begin with both specified
+                //exclude deleted entities since there is nothing on the device 
+                dbQuery = dbQuery.Where(x => x.EntityState == EntityState.Active);
+            }
+
+            var totalEntityCount = dbQuery.Count();
+            
+
+
+            if (command.IsFirstRequestInSyncSequence())
+            {
+                //when both values are provided, a new sync process has been started
+                //we need to return entities modified since the newest one on the device
+                //we also need to return entities modified before the oldest on device in case the sync wasn't completed
                 dbQuery = dbQuery.Where(x => 
                     x.ModifiedAt> command.ModifiedAfterTicks.ToUtcDateTime() || 
                     x.ModifiedAt < command.ModifiedBeforeTicks.ToUtcDateTime());
@@ -45,18 +56,15 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
 
             else
             {
-                //subsequent requests during sync only request ModifiedBefore
+                //subsequent requests during sync only request progressively older items so we can ignore ModifiedAfter
                 if (command.ModifiedBeforeTicks != 0)
                 {
                     dbQuery = dbQuery.Where(x => x.ModifiedAt <  command.ModifiedBeforeTicks.ToUtcDateTime());
                 }
 
-                //this should probably not be used for aggregate roots
-                if (command.ModifiedAfterTicks != null)
-                {
-                    dbQuery = dbQuery.Where(x => x.ModifiedAt > command.ModifiedAfterTicks.ToUtcDateTime());
-                }
             }
+
+            var modifiedEntityCount = dbQuery.Count();
             
             var entities = dbQuery
                 .Take(command.BatchSize)
@@ -65,7 +73,8 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
             return Result.Success(new SyncResult<TEntity>
             {
                 Entities = entities,
-                TotalCount = count
+                ModifiedEntityCount = modifiedEntityCount,
+                TotalEntityCount = totalEntityCount
             });
         }
     }
