@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Analytics.TestHelpers;
@@ -17,32 +19,44 @@ using NUnit.Framework;
 
 namespace Blauhaus.Domain.Tests.ClientTests
 {
-    public class EntityCommandClientHandlerTests : BaseDomainTest<TestClientEntityCommandHandler>
+    public class SyncCommandClientHandlerTests : BaseDomainTest<SyncCommandClientHandler<TestModel, TestModelDto, TestSyncCommandDto, TestSyncCommand>>
     {
-        private TestCommand _command;
-        private TestCommandDto _commandDto;
+        private TestSyncCommand _command;
+        private TestSyncCommandDto _commandDto;
         private TestModelDto _modelDto;
         private TestModel _model;
+        private DtoSyncResult<TestModelDto> _dtoSyncResult;
 
-        private MockBuilder<ICommandHandler<TestModelDto, TestCommandDto>> MockDtoCommandHandler => AddMock<ICommandHandler<TestModelDto, TestCommandDto>>().Invoke();
+        private MockBuilder<ICommandConverter<TestSyncCommandDto, TestSyncCommand>> MockCommandConverter 
+            => AddMock<ICommandConverter<TestSyncCommandDto, TestSyncCommand>>().Invoke();
+
+        private MockBuilder<ICommandHandler<DtoSyncResult<TestModelDto>, TestSyncCommandDto>> MockDtoCommandHandler
+            => AddMock<ICommandHandler<DtoSyncResult<TestModelDto>, TestSyncCommandDto>>().Invoke();
+
         private ClientRepositoryMockBuilder<IClientRepository<TestModel, TestModelDto>, TestModel, TestModelDto> MockClientRepository 
             => AddMock<ClientRepositoryMockBuilder<IClientRepository<TestModel, TestModelDto>, TestModel, TestModelDto>, IClientRepository<TestModel, TestModelDto>>().Invoke();
-        
-        private MockBuilder<ICommandConverter<TestCommandDto, TestCommand>> MockCommandConverter => AddMock<ICommandConverter<TestCommandDto, TestCommand>>().Invoke();
+
 
         [SetUp]
         public override void Setup()
         {
             base.Setup();
             
-            _command = new TestCommand();
-            _commandDto = new TestCommandDto{Name = "Converted Name"};
+            _command = new TestSyncCommand();
+            _commandDto = new TestSyncCommandDto{};
             _modelDto = new TestModelDto{Name = "Model Dto"};
             _model = new TestModel(Guid.NewGuid(), EntityState.Active, 1000, "Bob");
+            _dtoSyncResult = new DtoSyncResult<TestModelDto>
+            {
+                Dtos = new List<TestModelDto>{_modelDto},
+                ModifiedEntityCount = 1,
+                TotalEntityCount = 2
+            };
 
             MockCommandConverter.Mock.Setup(x => x.Convert(_command)).Returns(_commandDto);
-            MockDtoCommandHandler.Mock.Setup(x => x.HandleAsync(_commandDto, CancellationToken)).ReturnsAsync(Result.Success(_modelDto));
-            MockClientRepository.Where_SaveDtoAsync_returns(_model);
+            MockDtoCommandHandler.Mock.Setup(x => x.HandleAsync(_commandDto, CancellationToken))
+                .ReturnsAsync(Result.Success(_dtoSyncResult));
+            MockClientRepository.Where_SaveDtosAsync_returns(new List<TestModel> {_model});
 
             AddService(MockCommandConverter.Object);
             AddService(MockDtoCommandHandler.Object);
@@ -56,9 +70,9 @@ namespace Blauhaus.Domain.Tests.ClientTests
             await Sut.HandleAsync(_command, CancellationToken);
 
             //Assert
-            MockAnalyticsService.VerifyTrace("TestCommand Handler started");
+            MockAnalyticsService.VerifyTrace("TestSyncCommand handler for TestModel started");
             MockAnalyticsService.VerifyTraceProperty("Command", _command);
-            MockAnalyticsService.VerifyTrace("TestCommand Handler succeeded");
+            MockAnalyticsService.VerifyTrace("TestSyncCommand handler for TestModel succeeded");
         }
 
         [Test]
@@ -75,8 +89,8 @@ namespace Blauhaus.Domain.Tests.ClientTests
         public async Task IF_handler_fails_SHOULD_return_failure()
         {
             //Arrange
-            MockDtoCommandHandler.Mock.Setup(x => x.HandleAsync(_commandDto, CancellationToken)).ReturnsAsync(Result.Failure<TestModelDto>("oops"));
-            
+            MockDtoCommandHandler.Mock.Setup(x => x.HandleAsync(_commandDto, CancellationToken)).ReturnsAsync(Result.Failure<DtoSyncResult<TestModelDto>>("oops"));
+
             //Act
             var result = await Sut.HandleAsync(_command, CancellationToken);
 
@@ -85,15 +99,18 @@ namespace Blauhaus.Domain.Tests.ClientTests
         }
 
         [Test]
-        public async Task IF_handler_succeeds_SHOULD_save_and_return_Dto()
+        public async Task IF_handler_succeeds_SHOULD_save_and_return_Dtos()
         {
             //Act
             var result = await Sut.HandleAsync(_command, CancellationToken);
 
             //Assert
-            MockClientRepository.Mock.Verify(x => x.SaveDtoAsync(_modelDto));
-            Assert.AreEqual(_model, result.Value);
+            MockClientRepository.Mock.Verify(x => x.SaveDtosAsync(It.Is<IReadOnlyList<TestModelDto>>(y => 
+                y[0] == _modelDto)));
+            Assert.AreEqual(_model, result.Value.Entities.First());
+            Assert.AreEqual(1, result.Value.ModifiedEntityCount);
+            Assert.AreEqual(2, result.Value.TotalEntityCount);
         }
-         
+
     }
 }

@@ -18,5 +18,7 @@ namespace Blauhaus.Domain.Tests._Base
 
         protected AnalyticsServiceMockBuilder MockAnalyticsService => AddMock<AnalyticsServiceMockBuilder, IAnalyticsService>().Invoke();
 
+
+
     }
 }

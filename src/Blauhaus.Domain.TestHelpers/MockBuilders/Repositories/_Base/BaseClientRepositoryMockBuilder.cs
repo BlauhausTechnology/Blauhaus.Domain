@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using Blauhaus.Domain.Client.Repositories;
 using Blauhaus.Domain.Common.Entities;
@@ -7,6 +8,15 @@ using Moq;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Repositories._Base
 {
+
+    public class ClientRepositoryMockBuilder<TMock, TModel, TDto> : BaseClientRepositoryMockBuilder<ClientRepositoryMockBuilder<TMock, TModel, TDto>, TMock, TModel, TDto>
+        where TMock : class, IClientRepository<TModel, TDto> 
+        where TModel : class, IClientEntity
+    {
+
+    }
+
+
     public abstract class BaseClientRepositoryMockBuilder<TBuilder, TMock, TModel, TDto> : BaseMockBuilder<TBuilder, TMock> 
         where TBuilder : BaseClientRepositoryMockBuilder<TBuilder, TMock, TModel, TDto>
         where TMock : class, IClientRepository<TModel, TDto>
@@ -49,6 +59,12 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Repositories._Base
         {
             Mock.Setup(x => x.SaveDtoAsync(It.IsAny<TDto>()))
                 .ThrowsAsync(e);
+            return this as TBuilder;
+        }
+        public TBuilder Where_SaveDtosAsync_returns(IReadOnlyList<TModel> models)
+        {
+            Mock.Setup(x => x.SaveDtosAsync(It.IsAny<IReadOnlyList<TDto>>()))
+                .ReturnsAsync(models);
             return this as TBuilder;
         }
 

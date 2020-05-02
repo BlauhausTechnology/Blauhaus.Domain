@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Blauhaus.Domain.Common.Entities;
 
@@ -9,5 +10,6 @@ namespace Blauhaus.Domain.Client.Repositories
     {
         Task<TModel> LoadByIdAsync(Guid id);
         Task<TModel> SaveDtoAsync(TDto dto); 
+        Task<IReadOnlyList<TModel>> SaveDtosAsync(IReadOnlyList<TDto> dto); 
     }
 }
