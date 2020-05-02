@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Extensions;
@@ -10,7 +9,7 @@ using Blauhaus.Domain.Common.CommandHandlers.Sync;
 using Blauhaus.Domain.Common.Entities;
 using CSharpFunctionalExtensions;
 
-namespace Blauhaus.Domain.Client.CommandHandlers
+namespace Blauhaus.Domain.Client.CommandHandlers.Sync
 {
     public class SyncCommandClientHandler<TModel, TModelDto, TSyncCommandDto, TSyncCommand> : ICommandHandler<SyncResult<TModel>, TSyncCommand> 
         where TModel : class, IClientEntity

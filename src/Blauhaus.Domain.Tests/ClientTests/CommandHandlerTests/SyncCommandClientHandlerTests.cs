@@ -2,22 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Blauhaus.Analytics.Abstractions.Service;
-using Blauhaus.Analytics.TestHelpers;
 using Blauhaus.Domain.Client.CommandHandlers;
+using Blauhaus.Domain.Client.CommandHandlers.Sync;
 using Blauhaus.Domain.Client.Repositories;
 using Blauhaus.Domain.Common.CommandHandlers;
 using Blauhaus.Domain.Common.Entities;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Repositories._Base;
 using Blauhaus.Domain.Tests._Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
-using Blauhaus.TestHelpers.BaseTests;
 using Blauhaus.TestHelpers.MockBuilders;
 using CSharpFunctionalExtensions;
 using Moq;
 using NUnit.Framework;
 
-namespace Blauhaus.Domain.Tests.ClientTests
+namespace Blauhaus.Domain.Tests.ClientTests.CommandHandlerTests
 {
     public class SyncCommandClientHandlerTests : BaseDomainTest<SyncCommandClientHandler<TestModel, TestModelDto, TestSyncCommandDto, TestSyncCommand>>
     {

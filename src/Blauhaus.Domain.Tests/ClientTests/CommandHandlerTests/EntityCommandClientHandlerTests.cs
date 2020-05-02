@@ -1,24 +1,30 @@
-﻿using System.Threading.Tasks;
-using Blauhaus.Analytics.Abstractions.Service;
-using Blauhaus.Analytics.TestHelpers;
+﻿using System;
+using System.Threading.Tasks;
 using Blauhaus.Domain.Client.CommandHandlers;
+using Blauhaus.Domain.Client.Repositories;
 using Blauhaus.Domain.Common.CommandHandlers;
+using Blauhaus.Domain.Common.Entities;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Repositories._Base;
 using Blauhaus.Domain.Tests._Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
-using Blauhaus.TestHelpers.BaseTests;
 using Blauhaus.TestHelpers.MockBuilders;
 using CSharpFunctionalExtensions;
 using Moq;
 using NUnit.Framework;
 
-namespace Blauhaus.Domain.Tests.ClientTests
+namespace Blauhaus.Domain.Tests.ClientTests.CommandHandlerTests
 {
-    public class VoidCommandClientHandlerTests : BaseDomainTest<VoidCommandClientHandler<TestCommandDto, TestCommand>>
+    public class EntityCommandClientHandlerTests : BaseDomainTest<TestClientEntityCommandHandler>
     {
         private TestCommand _command;
         private TestCommandDto _commandDto;
+        private TestModelDto _modelDto;
+        private TestModel _model;
 
-        private MockBuilder<IVoidCommandHandler<TestCommandDto>> MockDtoCommandHandler => AddMock<IVoidCommandHandler<TestCommandDto>>().Invoke();
+        private MockBuilder<ICommandHandler<TestModelDto, TestCommandDto>> MockDtoCommandHandler => AddMock<ICommandHandler<TestModelDto, TestCommandDto>>().Invoke();
+        private ClientRepositoryMockBuilder<IClientRepository<TestModel, TestModelDto>, TestModel, TestModelDto> MockClientRepository 
+            => AddMock<ClientRepositoryMockBuilder<IClientRepository<TestModel, TestModelDto>, TestModel, TestModelDto>, IClientRepository<TestModel, TestModelDto>>().Invoke();
+        
         private MockBuilder<ICommandConverter<TestCommandDto, TestCommand>> MockCommandConverter => AddMock<ICommandConverter<TestCommandDto, TestCommand>>().Invoke();
 
         [SetUp]
@@ -28,12 +34,16 @@ namespace Blauhaus.Domain.Tests.ClientTests
             
             _command = new TestCommand();
             _commandDto = new TestCommandDto{Name = "Converted Name"};
+            _modelDto = new TestModelDto{Name = "Model Dto"};
+            _model = new TestModel(Guid.NewGuid(), EntityState.Active, 1000, "Bob");
 
             MockCommandConverter.Mock.Setup(x => x.Convert(_command)).Returns(_commandDto);
-            MockDtoCommandHandler.Mock.Setup(x => x.HandleAsync(_commandDto, CancellationToken)).ReturnsAsync(Result.Success());
+            MockDtoCommandHandler.Mock.Setup(x => x.HandleAsync(_commandDto, CancellationToken)).ReturnsAsync(Result.Success(_modelDto));
+            MockClientRepository.Where_SaveDtoAsync_returns(_model);
 
             AddService(MockCommandConverter.Object);
             AddService(MockDtoCommandHandler.Object);
+            AddService(MockClientRepository.Object);
         }
 
         [Test]
@@ -62,7 +72,7 @@ namespace Blauhaus.Domain.Tests.ClientTests
         public async Task IF_handler_fails_SHOULD_return_failure()
         {
             //Arrange
-            MockDtoCommandHandler.Mock.Setup(x => x.HandleAsync(_commandDto, CancellationToken)).ReturnsAsync(Result.Failure("oops"));
+            MockDtoCommandHandler.Mock.Setup(x => x.HandleAsync(_commandDto, CancellationToken)).ReturnsAsync(Result.Failure<TestModelDto>("oops"));
             
             //Act
             var result = await Sut.HandleAsync(_command, CancellationToken);
@@ -72,13 +82,15 @@ namespace Blauhaus.Domain.Tests.ClientTests
         }
 
         [Test]
-        public async Task IF_handler_succeeds_SHOULD_return_success()
+        public async Task IF_handler_succeeds_SHOULD_save_and_return_Dto()
         {
             //Act
             var result = await Sut.HandleAsync(_command, CancellationToken);
 
             //Assert
-            Assert.IsTrue(result.IsSuccess);
+            MockClientRepository.Mock.Verify(x => x.SaveDtoAsync(_modelDto));
+            Assert.AreEqual(_model, result.Value);
         }
+         
     }
 }

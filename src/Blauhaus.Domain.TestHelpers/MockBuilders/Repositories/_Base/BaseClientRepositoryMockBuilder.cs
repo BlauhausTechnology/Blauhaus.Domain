@@ -7,8 +7,7 @@ using Blauhaus.TestHelpers.MockBuilders;
 using Moq;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Repositories._Base
-{
-
+{ 
     public class ClientRepositoryMockBuilder<TMock, TModel, TDto> : BaseClientRepositoryMockBuilder<ClientRepositoryMockBuilder<TMock, TModel, TDto>, TMock, TModel, TDto>
         where TMock : class, IClientRepository<TModel, TDto> 
         where TModel : class, IClientEntity
