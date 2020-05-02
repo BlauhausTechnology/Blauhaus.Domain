@@ -40,6 +40,33 @@ namespace Blauhaus.Domain.Tests.ServerTests
             AddService(MockQueryLoader.Object);
         }
 
+
+        [Test]
+        public async Task SHOULD_trace_success()
+        {
+            //Arrange
+            _command.BatchSize = 3;
+
+            //Act
+            var queryResult = await Sut.HandleAsync(_command, _user, CancellationToken);
+            var result = queryResult.Value;
+
+            //Assert
+            Assert.AreEqual(3, result.Entities.Count);
+            Assert.AreEqual(12, result.TotalEntityCount);
+            Assert.AreEqual(12, result.ModifiedEntityCount);
+            result.Entities.VerifyEntities(new List<TestServerEntity>
+            {
+                _entities[0],
+                _entities[1],
+                _entities[2]
+            });
+            MockAnalyticsService.VerifyTrace("SyncCommand processed");
+            MockAnalyticsService.VerifyTraceProperty("TotalEntityCount", 12);
+            MockAnalyticsService.VerifyTraceProperty("ModifiedEntityCount", 12);
+            MockAnalyticsService.VerifyTraceProperty("BatchCount", 3);
+        }
+
         [Test]
         public async Task IF_batch_size_is_overriden_SHOULD_return_most_recent_entities()
         {

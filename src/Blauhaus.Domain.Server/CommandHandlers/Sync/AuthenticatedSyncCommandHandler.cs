@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Domain.Common.CommandHandlers;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
@@ -41,7 +43,6 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
             }
 
             var totalEntityCount = dbQuery.Count();
-            
 
 
             if (command.IsFirstRequestInSyncSequence())
@@ -61,7 +62,6 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
                 {
                     dbQuery = dbQuery.Where(x => x.ModifiedAt <  command.ModifiedBeforeTicks.ToUtcDateTime());
                 }
-
             }
 
             var modifiedEntityCount = dbQuery.Count();
@@ -69,6 +69,13 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
             var entities = dbQuery
                 .Take(command.BatchSize)
                 .ToList();
+
+            _analyticsService.TraceVerbose(this, "SyncCommand processed", new Dictionary<string, object>
+            {
+                {"BatchCount", entities.Count},
+                {"TotalEntityCount", totalEntityCount},
+                {"ModifiedEntityCount", modifiedEntityCount}
+            });
 
             return Result.Success(new SyncResult<TEntity>
             {
