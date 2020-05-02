@@ -35,27 +35,7 @@ namespace Blauhaus.Domain.Client._Ioc
             services.AddTransient<IVoidCommandHandler<TCommandDto>, TDtoCommandHandler>();
             return services;
         }
-
-        public static IServiceCollection AddClientRepository<TModel, TModelDto, TRepository>(this IServiceCollection services) 
-            where TModel : class, IClientEntity 
-            where TRepository : class, IClientRepository<TModel, TModelDto>
-        {
-            services.AddTransient<IClientRepository<TModel, TModelDto>, TRepository>();
-            return services;
-        }
-
-        public static IServiceCollection AddSyncClient<TModel, TModelDto, TSyncCommandDto, TSyncCommand, TRepository>(this IServiceCollection services) 
-            where TModel : class, IClientEntity 
-            where TRepository : class, ISyncClientRepository<TModel, TModelDto>
-            where TSyncCommand : SyncCommand
-            where TSyncCommandDto :  notnull
-        {
-            services.AddScoped<ISyncClient<TModel, TSyncCommand>>();
-            services.AddTransient<ICommandHandler<SyncResult<TModel>, TSyncCommand>, SyncCommandClientHandler<TModel, TModelDto, TSyncCommandDto, TSyncCommand>>();
-            services.AddTransient<ISyncClientRepository<TModel, TModelDto>, TRepository>();
-            return services;
-        }
-
+         
         
          
     }
