@@ -7,11 +7,20 @@ using Blauhaus.Domain.Common.Entities;
 
 namespace Blauhaus.Domain.Client.Repositories
 {
-    public interface ISyncClientRepository<TModel, in TDto> : IClientRepository<TModel, TDto>
+
+    public interface ISyncClientRepository<TModel, in TDto> : ISyncClientRepository<TModel, TDto, SyncCommand>
         where TModel : class, IClientEntity
     {
+
+    }
+
+
+    public interface ISyncClientRepository<TModel, in TDto, TSyncCommand> : IClientRepository<TModel, TDto>
+        where TModel : class, IClientEntity
+        where TSyncCommand : SyncCommand
+    {
         Task<ClientSyncStatus> GetSyncStatusAsync();
-        Task<IReadOnlyList<TModel>> LoadSyncedModelsAsync(long? modifiedBefore, int batchSize);
-        Task<IReadOnlyList<TModel>> SaveSyncedDtosAsync(IReadOnlyList<TDto> dtos); 
+        Task<IReadOnlyList<TModel>> LoadSyncedModelsAsync(TSyncCommand syncCommand);
+        Task<IReadOnlyList<TModel>> SaveSyncedDtosAsync(IEnumerable<TDto> dtos); 
     }
 }

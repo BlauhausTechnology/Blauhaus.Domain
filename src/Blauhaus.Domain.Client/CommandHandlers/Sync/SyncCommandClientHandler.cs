@@ -19,13 +19,13 @@ namespace Blauhaus.Domain.Client.CommandHandlers.Sync
         private readonly IAnalyticsService _analyticsService;
         private readonly ICommandConverter<TSyncCommandDto, TSyncCommand> _converter;
         private readonly ICommandHandler<DtoSyncResult<TModelDto>, TSyncCommandDto> _dtoCommandHandler;
-        private readonly ISyncClientRepository<TModel, TModelDto> _repository;
+        private readonly ISyncClientRepository<TModel, TModelDto, TSyncCommand> _repository;
 
         public SyncCommandClientHandler(
             IAnalyticsService analyticsService,
             ICommandConverter<TSyncCommandDto, TSyncCommand> converter,
             ICommandHandler<DtoSyncResult<TModelDto>, TSyncCommandDto> dtoCommandHandler,
-            ISyncClientRepository<TModel, TModelDto> repository)
+            ISyncClientRepository<TModel, TModelDto, TSyncCommand> repository)
         {
             _analyticsService = analyticsService;
             _converter = converter;

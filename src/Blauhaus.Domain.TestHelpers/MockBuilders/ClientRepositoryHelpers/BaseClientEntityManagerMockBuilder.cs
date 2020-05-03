@@ -7,16 +7,17 @@ using SQLite;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.ClientRepositoryHelpers
 {
-    public class ClientRepositoryHelperMockBuilder<TModel, TRootEntity, TDto> : BaseClientRepositoryHelperMockBuilder<ClientRepositoryHelperMockBuilder<TModel, TRootEntity, TDto>, IClientRepositoryHelper<TModel, TRootEntity, TDto>, TModel, TRootEntity, TDto>
+    public class ClientEntityManagerMockBuilder<TModel, TDto, TRootEntity> 
+        : BaseClientEntityManagerMockBuilder<ClientEntityManagerMockBuilder<TModel, TDto, TRootEntity>, IClientEntityManager<TModel, TDto, TRootEntity>, TModel, TDto, TRootEntity>
     {
 
     }
 
 
-    public abstract class BaseClientRepositoryHelperMockBuilder<TBuilder, TMock, TModel, TRootEntity, TDto> 
+    public abstract class BaseClientEntityManagerMockBuilder<TBuilder, TMock, TModel, TDto, TRootEntity> 
         : BaseMockBuilder<TBuilder, TMock>
-        where TMock : class, IClientRepositoryHelper<TModel, TRootEntity, TDto>
-        where TBuilder : BaseClientRepositoryHelperMockBuilder<TBuilder, TMock, TModel, TRootEntity, TDto>
+        where TMock : class, IClientEntityManager<TModel, TDto, TRootEntity>
+        where TBuilder : BaseClientEntityManagerMockBuilder<TBuilder, TMock, TModel, TDto, TRootEntity>
     {
 
         public TBuilder Where_ConstructModelFromRootEntity_returns(TModel value)

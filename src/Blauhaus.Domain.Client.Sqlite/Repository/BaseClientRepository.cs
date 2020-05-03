@@ -1,25 +1,35 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Blauhaus.Analytics.Abstractions.Operation;
+using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.ClientDatabase.Sqlite.Entities;
 using Blauhaus.ClientDatabase.Sqlite.Service;
 using Blauhaus.Domain.Client.Repositories;
 using Blauhaus.Domain.Common.Entities;
+using SqlKata;
+using SqlKata.Compilers;
 
 namespace Blauhaus.Domain.Client.Sqlite.Repository
 {
-    public abstract class BaseSqliteRepository<TModel, TRootEntity, TDto> : IClientRepository<TModel, TDto> 
+    public abstract class BaseClientRepository<TModel, TDto, TRootEntity> : IClientRepository<TModel, TDto> 
         where TModel : class, IClientEntity
         where TRootEntity : BaseSqliteEntity, new()
     {
+        protected readonly IAnalyticsService AnalyticsService;
         protected readonly ISqliteDatabaseService DatabaseService;
-        protected readonly IClientRepositoryHelper<TModel, TRootEntity, TDto> Helper;
+        protected readonly IClientEntityManager<TModel, TDto, TRootEntity> EntityManager;
 
-        protected BaseSqliteRepository(
+        protected readonly SqliteCompiler SqlCompiler = new SqliteCompiler();
+        protected Query SqlQuery() => new Query(typeof(TRootEntity).Name);
+
+        protected BaseClientRepository(
+            IAnalyticsService analyticsService,
             ISqliteDatabaseService sqliteDatabaseService, 
-            IClientRepositoryHelper<TModel, TRootEntity, TDto> helper)
+            IClientEntityManager<TModel, TDto, TRootEntity> entityManager)
         {
+            AnalyticsService = analyticsService;
             DatabaseService = sqliteDatabaseService;
-            Helper = helper;
+            EntityManager = entityManager;
         }
 
 
@@ -35,7 +45,7 @@ namespace Blauhaus.Domain.Client.Sqlite.Repository
 
                 if (entity != null)
                 {
-                    model = Helper.ConstructModelFromRootEntity(entity, connection);
+                    model = EntityManager.ConstructModelFromRootEntity(entity, connection);
                 }
 
             });
@@ -51,16 +61,16 @@ namespace Blauhaus.Domain.Client.Sqlite.Repository
 
             await db.RunInTransactionAsync(connection =>
             {
-                var rootEntity = Helper.ExtractRootEntityFromDto(dto);
+                var rootEntity = EntityManager.ExtractRootEntityFromDto(dto);
                 connection.InsertOrReplace(rootEntity);
 
-                foreach (var childEntity in Helper.ExtractChildEntitiesFromDto(dto))
+                foreach (var childEntity in EntityManager.ExtractChildEntitiesFromDto(dto))
                 {
                     connection.InsertOrReplace(childEntity);
                 }
                 connection.InsertOrReplace(rootEntity);
 
-                model = Helper.ConstructModelFromRootEntity(rootEntity, connection);
+                model = EntityManager.ConstructModelFromRootEntity(rootEntity, connection);
             });
 
             return model;

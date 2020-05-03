@@ -4,7 +4,7 @@ using SQLite;
 
 namespace Blauhaus.Domain.Client.Sqlite.Repository
 {
-    public interface IClientRepositoryHelper<TModel, TRootEntity, TDto>
+    public interface IClientEntityManager<TModel, TDto, TRootEntity>
     {
         TRootEntity ExtractRootEntityFromDto(TDto dto);
         IEnumerable<IClientEntity> ExtractChildEntitiesFromDto(TDto dto);

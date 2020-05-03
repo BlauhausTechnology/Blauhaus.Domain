@@ -26,8 +26,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
         private ClientSyncStatus _localSyncstatus;
         private SyncResult<TestModel> _syncResult;
 
-        private SyncClientRepositoryMockBuilder<ISyncClientRepository<TestModel, TestModelDto>, TestModel, TestModelDto> MockSyncClientRepository 
-            => AddMock<SyncClientRepositoryMockBuilder<ISyncClientRepository<TestModel, TestModelDto>, TestModel, TestModelDto>, ISyncClientRepository<TestModel, TestModelDto>>().Invoke();
+        private SyncClientRepositoryMockBuilder<ISyncClientRepository<TestModel, TestModelDto, TestSyncCommand>, TestModel, TestModelDto, TestSyncCommand> MockSyncClientRepository 
+            => AddMock<SyncClientRepositoryMockBuilder<ISyncClientRepository<TestModel, TestModelDto, TestSyncCommand>, TestModel, TestModelDto, TestSyncCommand>, ISyncClientRepository<TestModel, TestModelDto, TestSyncCommand>>().Invoke();
 
         private CommandHandlerMockBuilder<SyncResult<TestModel>, TestSyncCommand> MockSyncCommandHandler 
             => AddMock<CommandHandlerMockBuilder<SyncResult<TestModel>, TestSyncCommand>, ICommandHandler<SyncResult<TestModel>, TestSyncCommand>>().Invoke();
@@ -79,7 +79,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
 
             //Assert
             MockSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync());
-            MockSyncClientRepository.Mock.Verify(x => x.LoadSyncedModelsAsync(null, 12));
+            MockSyncClientRepository.Mock.Verify(x => x.LoadSyncedModelsAsync(_syncCommand));
         }
 
 

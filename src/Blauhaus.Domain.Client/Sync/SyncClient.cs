@@ -16,12 +16,12 @@ namespace Blauhaus.Domain.Client.Sync
         where TSyncCommand : SyncCommand 
     {
         private readonly IAnalyticsService _analyticsService;
-        private readonly ISyncClientRepository<TModel, TDto> _syncClientRepository;
+        private readonly ISyncClientRepository<TModel, TDto, TSyncCommand> _syncClientRepository;
         private readonly ICommandHandler<SyncResult<TModel>, TSyncCommand> _syncCommandHandler;
 
         public SyncClient(
             IAnalyticsService analyticsService, 
-            ISyncClientRepository<TModel, TDto> syncClientRepository,
+            ISyncClientRepository<TModel, TDto, TSyncCommand> syncClientRepository,
             ICommandHandler<SyncResult<TModel>, TSyncCommand> syncCommandHandler)
         {
             _analyticsService = analyticsService;
@@ -40,7 +40,7 @@ namespace Blauhaus.Domain.Client.Sync
                 
                 ClientSyncStatus syncStatus = await _syncClientRepository.GetSyncStatusAsync();
 
-                var firstBatchOfLocalModels= await _syncClientRepository.LoadSyncedModelsAsync(null, syncCommand.BatchSize);
+                var firstBatchOfLocalModels= await _syncClientRepository.LoadSyncedModelsAsync(syncCommand);
                 foreach (var localModel in firstBatchOfLocalModels)
                 {
                     observer.OnNext(new SyncUpdate<TModel>(localModel));

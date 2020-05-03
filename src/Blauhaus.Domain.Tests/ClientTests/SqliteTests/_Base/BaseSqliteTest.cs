@@ -1,8 +1,11 @@
 ﻿using System.Threading.Tasks;
+using Blauhaus.Analytics.Abstractions.Service;
+using Blauhaus.Analytics.TestHelpers;
 using Blauhaus.ClientDatabase.Sqlite.Service;
 using Blauhaus.DeviceServices.Abstractions.DeviceInfo;
 using Blauhaus.DeviceServices.TestHelpers.MockBuilders;
 using Blauhaus.Domain.Client.Sqlite.Repository;
+using Blauhaus.Domain.Client.Sqlite.SyncRepository;
 using Blauhaus.Domain.TestHelpers.MockBuilders.ClientRepositoryHelpers;
 using Blauhaus.Domain.Tests.ClientTests.SqliteTests._TestObjects;
 using Blauhaus.TestHelpers.BaseTests;
@@ -24,12 +27,19 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests._Base
             Task.Run(async () => await SqliteDatabaseService.DropTablesAsync()).Wait();
             Connection = SqliteDatabaseService.GetDatabaseConnectionAsync().Result;
             AddService(SqliteDatabaseService);
-            AddService(x => MockClientRepositoryHelper.Object);
+            AddService(x => MockClientEntityManager.Object);
+            AddService(x => MockSyncQueryGenerator.Object);
+            AddService(x => MockAnalyticsService.Object);
         }
 
         protected DeviceInfoServiceMockBuilder MockDeviceInfoService => AddMock<DeviceInfoServiceMockBuilder, IDeviceInfoService>().Invoke();
 
-        protected ClientRepositoryHelperMockBuilder<ITestModel, TestRootEntity, ITestDto> MockClientRepositoryHelper => AddMock<ClientRepositoryHelperMockBuilder<ITestModel, TestRootEntity, ITestDto>,
-            IClientRepositoryHelper<ITestModel, TestRootEntity, ITestDto>>().Invoke();
+        protected ClientEntityManagerMockBuilder<ITestModel, ITestDto, TestRootEntity> MockClientEntityManager 
+            => AddMock<ClientEntityManagerMockBuilder<ITestModel, ITestDto, TestRootEntity>, IClientEntityManager<ITestModel, ITestDto, TestRootEntity>>().Invoke();
+
+        protected SyncQueryGeneratorMockBuilder<ISyncQueryGenerator<TestSyncCommand>, TestSyncCommand> MockSyncQueryGenerator
+            => AddMock<SyncQueryGeneratorMockBuilder<ISyncQueryGenerator<TestSyncCommand>, TestSyncCommand>, ISyncQueryGenerator<TestSyncCommand>>().Invoke();
+
+        protected AnalyticsServiceMockBuilder MockAnalyticsService => AddMock<AnalyticsServiceMockBuilder, IAnalyticsService>().Invoke();
     }
 }

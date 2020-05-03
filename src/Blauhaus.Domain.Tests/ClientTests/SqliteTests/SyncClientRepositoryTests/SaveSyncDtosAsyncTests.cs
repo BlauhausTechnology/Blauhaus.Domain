@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Blauhaus.Domain.Client.Sqlite.Repository;
+using Blauhaus.Domain.Client.Sqlite.SyncRepository;
+using Blauhaus.Domain.Common.CommandHandlers.Sync;
 using Blauhaus.Domain.Common.Entities;
 using Blauhaus.Domain.Tests.ClientTests.SqliteTests._Base;
 using Blauhaus.Domain.Tests.ClientTests.SqliteTests._TestObjects;
@@ -10,10 +11,32 @@ using Moq;
 using NUnit.Framework;
 using SQLite;
 
-namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
+namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTests
 {
-    public class SaveDtodAsyncTests : BaseSqliteTest<ClientRepository<ITestModel, ITestDto, TestRootEntity>>
+    public class SaveSyncDtosAsyncTests : BaseSqliteTest<SyncClientRepository<ITestModel, ITestDto, TestSyncCommand, TestRootEntity>>
     {
+        private Guid _rootId1;
+        private Guid _rootId2;
+        private Guid _rootId3;
+
+        public override void Setup()
+        {
+            base.Setup();
+
+            _rootId1 = Guid.NewGuid();
+            _rootId2 = Guid.NewGuid();
+            _rootId3 = Guid.NewGuid();
+
+            var entities = new List<TestRootEntity>
+            {
+                new TestRootEntity{ Id = _rootId1 },
+                new TestRootEntity{ Id = _rootId2 },
+                new TestRootEntity{ Id = _rootId3 }
+            };
+
+            var connection = SqliteDatabaseService.GetDatabaseConnectionAsync().Result;
+            connection.InsertAllAsync(entities);
+        }
 
         [Test]
         public async Task IF_root_entity_already_exists_SHOULD_update()
@@ -33,15 +56,15 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
 
             //Act
             var dto = new MockBuilder<ITestDto>().With(x => x.Id, bob.Id).Object;
-            await Sut.SaveDtoAsync(dto);
+            await Sut.SaveSyncedDtosAsync(new List<ITestDto>{dto});
 
             //Assert
             MockClientEntityManager.Mock.Verify(x => x.ExtractRootEntityFromDto(dto));
             var newBob = await Connection.Table<TestRootEntity>().FirstAsync(x => x.Id == bob.Id);
             Assert.AreEqual("Fred", newBob.RootName);
-            Assert.AreEqual(1, await Connection.Table<TestRootEntity>().CountAsync());
         } 
 
+        
         [Test]
         public async Task IF_child_entity_already_exists_SHOULD_update()
         {
@@ -69,15 +92,15 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
 
             //Act
             var dto = new MockBuilder<ITestDto>().Object;
-            await Sut.SaveDtoAsync(dto);
+            await Sut.SaveSyncedDtosAsync(new List<ITestDto>{dto});
 
             //Assert
             MockClientEntityManager.Mock.Verify(x => x.ExtractChildEntitiesFromDto(dto));
             var newChild = await Connection.Table<TestChildEntity>().FirstAsync(x => x.Id == child.Id);
             Assert.AreEqual("Hop", newChild.ChildName);
-            Assert.AreEqual(1, await Connection.Table<TestChildEntity>().CountAsync());
         } 
 
+        
         [Test]
         public async Task IF_root_entity_does_not_exist_SHOULD_insert()
         {
@@ -91,13 +114,12 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
 
             //Act
             var dto = new MockBuilder<ITestDto>().Object;
-            await Sut.SaveDtoAsync(dto);
+            await Sut.SaveSyncedDtosAsync(new List<ITestDto>{dto});
 
             //Assert
             MockClientEntityManager.Mock.Verify(x => x.ExtractRootEntityFromDto(dto));
             var newBob = await Connection.Table<TestRootEntity>().FirstAsync(x => x.Id == bob.Id);
             Assert.AreEqual("Fred", newBob.RootName);
-            Assert.AreEqual(1, await Connection.Table<TestRootEntity>().CountAsync());
         } 
         
         [Test]
@@ -126,7 +148,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
 
             //Act
             var dto = new MockBuilder<ITestDto>().Object;
-            await Sut.SaveDtoAsync(dto);
+            await Sut.SaveSyncedDtosAsync(new List<ITestDto>{dto});
 
             //Assert
             MockClientEntityManager.Mock.Verify(x => x.ExtractChildEntitiesFromDto(dto));
@@ -151,11 +173,11 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
 
             //Act
             var dto = new MockBuilder<ITestDto>().Object;
-            var result = await Sut.SaveDtoAsync(dto); 
+            var result =  await Sut.SaveSyncedDtosAsync(new List<ITestDto>{dto});
 
             //Assert
             MockClientEntityManager.Mock.Verify(x => x.ConstructModelFromRootEntity(bob, It.IsAny<SQLiteConnection>()));
-            Assert.AreEqual(model, result);
+            Assert.AreEqual(model, result[0]);
         } 
     }
 }

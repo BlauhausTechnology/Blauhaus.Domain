@@ -11,7 +11,7 @@ using SQLite;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
 {
-    public class LoadByIdAsyncTests : BaseSqliteTest<ClientRepository<ITestModel, TestRootEntity, ITestDto>>
+    public class LoadByIdAsyncTests : BaseSqliteTest<ClientRepository<ITestModel, ITestDto, TestRootEntity>>
     {
         private Guid _rootId1;
         private Guid _rootId2;
@@ -44,14 +44,14 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
             await Sut.LoadByIdAsync(_rootId2);
 
             //Assert
-            MockClientRepositoryHelper.Mock.Verify(x => x.ConstructModelFromRootEntity(It.Is<TestRootEntity>(y => y.Id == _rootId2), It.IsAny<SQLiteConnection>()));
+            MockClientEntityManager.Mock.Verify(x => x.ConstructModelFromRootEntity(It.Is<TestRootEntity>(y => y.Id == _rootId2), It.IsAny<SQLiteConnection>()));
         }
 
         [Test]
         public async Task SHOULD_return_constructed_model()
         {
             //Arrange
-            MockClientRepositoryHelper.Where_ConstructModelFromRootEntity_returns(new MockBuilder<ITestModel>()
+            MockClientEntityManager.Where_ConstructModelFromRootEntity_returns(new MockBuilder<ITestModel>()
                 .With(x => x.RootEntityName, "Bob").Object);
 
             //Act

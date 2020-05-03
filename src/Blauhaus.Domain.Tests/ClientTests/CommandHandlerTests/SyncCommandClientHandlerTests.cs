@@ -14,6 +14,7 @@ using Blauhaus.TestHelpers.MockBuilders;
 using CSharpFunctionalExtensions;
 using Moq;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 
 namespace Blauhaus.Domain.Tests.ClientTests.CommandHandlerTests
 {
@@ -31,8 +32,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.CommandHandlerTests
         private MockBuilder<ICommandHandler<DtoSyncResult<TestModelDto>, TestSyncCommandDto>> MockDtoCommandHandler
             => AddMock<ICommandHandler<DtoSyncResult<TestModelDto>, TestSyncCommandDto>>().Invoke();
 
-        private SyncClientRepositoryMockBuilder<ISyncClientRepository<TestModel, TestModelDto>, TestModel, TestModelDto> MockSyncClientRepository 
-            => AddMock<SyncClientRepositoryMockBuilder<ISyncClientRepository<TestModel, TestModelDto>, TestModel, TestModelDto>, ISyncClientRepository<TestModel, TestModelDto>>().Invoke();
+        private SyncClientRepositoryMockBuilder<ISyncClientRepository<TestModel, TestModelDto, TestSyncCommand>, TestModel, TestModelDto, TestSyncCommand> MockSyncClientRepository 
+            => AddMock<SyncClientRepositoryMockBuilder<ISyncClientRepository<TestModel, TestModelDto,TestSyncCommand>, TestModel, TestModelDto, TestSyncCommand>, ISyncClientRepository<TestModel, TestModelDto, TestSyncCommand>>().Invoke();
 
 
         [SetUp]
