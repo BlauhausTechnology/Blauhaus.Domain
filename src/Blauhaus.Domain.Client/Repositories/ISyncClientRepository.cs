@@ -11,6 +11,7 @@ namespace Blauhaus.Domain.Client.Repositories
         where TModel : class, IClientEntity
     {
         Task<ClientSyncStatus> GetSyncStatusAsync();
-        Task<IReadOnlyList<TModel>> LoadOlderItemsAsync(long? modifiedBefore, int batchSize);
+        Task<IReadOnlyList<TModel>> LoadSyncedModelsAsync(long? modifiedBefore, int batchSize);
+        Task<IReadOnlyList<TModel>> SaveSyncedDtosAsync(IReadOnlyList<TDto> dtos); 
     }
 }

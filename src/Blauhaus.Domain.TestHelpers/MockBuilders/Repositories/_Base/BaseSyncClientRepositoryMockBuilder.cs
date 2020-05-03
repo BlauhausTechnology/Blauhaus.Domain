@@ -22,21 +22,21 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Repositories._Base
         where TModel : class, IClientEntity
     {
         
-        public TBuilder Where_LoadOlderItemsAsync_returns(TModel model)
+        public TBuilder Where_LoadSyncedModelsAsync_returns(TModel model)
         {
-            Mock.Setup(x => x.LoadOlderItemsAsync(It.IsAny<long?>(), It.IsAny<int>()))
+            Mock.Setup(x => x.LoadSyncedModelsAsync(It.IsAny<long?>(), It.IsAny<int>()))
                 .ReturnsAsync(new List<TModel>{model});
             return this as TBuilder;
         }
-        public TBuilder Where_LoadOlderItemsAsync_returns(List<TModel> models)
+        public TBuilder Where_LoadSyncedModelsAsync_returns(List<TModel> models)
         {
-            Mock.Setup(x => x.LoadOlderItemsAsync(It.IsAny<long?>(), It.IsAny<int>()))
+            Mock.Setup(x => x.LoadSyncedModelsAsync(It.IsAny<long?>(), It.IsAny<int>()))
                 .ReturnsAsync(models);
             return this as TBuilder;
         }
-        public TBuilder Where_LoadOlderItemsAsync_throws(Exception e)
+        public TBuilder Where_LoadSyncedModelsAsync_throws(Exception e)
         {
-            Mock.Setup(x => x.LoadOlderItemsAsync(It.IsAny<long?>(), It.IsAny<int>()))
+            Mock.Setup(x => x.LoadSyncedModelsAsync(It.IsAny<long?>(), It.IsAny<int>()))
                 .ThrowsAsync(e);
             return this as TBuilder;
         }
@@ -50,6 +50,13 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Repositories._Base
         }
 
         
+        public TBuilder Where_SaveSyncedDtosAsync_returns(IReadOnlyList<TModel> models)
+        {
+            Mock.Setup(x => x.SaveSyncedDtosAsync(It.IsAny<IReadOnlyList<TDto>>()))
+                .ReturnsAsync(models);
+            return this as TBuilder;
+        }
+
         
         public TBuilder Where_GetSyncStatusAsync_returns(ClientSyncStatus value)
         {

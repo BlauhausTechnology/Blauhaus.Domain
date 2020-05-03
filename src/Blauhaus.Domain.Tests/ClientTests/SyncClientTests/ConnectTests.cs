@@ -52,7 +52,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 TotalEntityCount = 300
             };
 
-            MockSyncClientRepository.Where_LoadOlderItemsAsync_returns(_localModels);
+            MockSyncClientRepository.Where_LoadSyncedModelsAsync_returns(_localModels);
             MockSyncClientRepository.Where_GetSyncStatusAsync_returns(_localSyncstatus);
             MockSyncCommandHandler.Where_HandleAsync_returns(_syncResult);
             
@@ -79,7 +79,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
 
             //Assert
             MockSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync());
-            MockSyncClientRepository.Mock.Verify(x => x.LoadOlderItemsAsync(null, 12));
+            MockSyncClientRepository.Mock.Verify(x => x.LoadSyncedModelsAsync(null, 12));
         }
 
 

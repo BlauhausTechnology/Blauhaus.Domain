@@ -19,13 +19,13 @@ namespace Blauhaus.Domain.Client.CommandHandlers.Sync
         private readonly IAnalyticsService _analyticsService;
         private readonly ICommandConverter<TSyncCommandDto, TSyncCommand> _converter;
         private readonly ICommandHandler<DtoSyncResult<TModelDto>, TSyncCommandDto> _dtoCommandHandler;
-        private readonly IClientRepository<TModel, TModelDto> _repository;
+        private readonly ISyncClientRepository<TModel, TModelDto> _repository;
 
         public SyncCommandClientHandler(
             IAnalyticsService analyticsService,
             ICommandConverter<TSyncCommandDto, TSyncCommand> converter,
             ICommandHandler<DtoSyncResult<TModelDto>, TSyncCommandDto> dtoCommandHandler,
-            IClientRepository<TModel, TModelDto> repository)
+            ISyncClientRepository<TModel, TModelDto> repository)
         {
             _analyticsService = analyticsService;
             _converter = converter;
@@ -46,7 +46,7 @@ namespace Blauhaus.Domain.Client.CommandHandlers.Sync
                 return Result.Failure<SyncResult<TModel>>(dtoResult.Error);
             }
 
-            var models = await _repository.SaveDtosAsync(dtoResult.Value.Dtos);
+            var models = await _repository.SaveSyncedDtosAsync(dtoResult.Value.Dtos);
 
             _analyticsService.TraceVerbose(this,  $"{typeof(TSyncCommand).Name} handler for {typeof(TModel).Name} succeeded");
 

@@ -60,13 +60,6 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Repositories._Base
                 .ThrowsAsync(e);
             return this as TBuilder;
         }
-        public TBuilder Where_SaveDtosAsync_returns(IReadOnlyList<TModel> models)
-        {
-            Mock.Setup(x => x.SaveDtosAsync(It.IsAny<IReadOnlyList<TDto>>()))
-                .ReturnsAsync(models);
-            return this as TBuilder;
-        }
-
         public void VerifySaveDtoAsync(params Expression<Func<TDto, bool>>[] predicates)
         {
             foreach (var predicate in predicates)
