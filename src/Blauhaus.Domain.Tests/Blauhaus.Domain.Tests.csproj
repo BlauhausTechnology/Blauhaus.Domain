@@ -8,9 +8,28 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blauhaus.Analytics.TestHelpers" Version="0.8.0" />
+    <PackageReference Include="Blauhaus.DeviceServices.TestHelpers" Version="0.5.9" />
+    <PackageReference Include="Blauhaus.TestHelpers" Version="1.0.8" />
     <PackageReference Include="nunit" Version="3.12.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0"/>
+    <PackageReference Include="NUnit3TestAdapter" Version="3.16.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.1" />
+    <PackageReference Include="System.Reactive" Version="4.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Blauhaus.Domain.Client.Sqlite\Blauhaus.Domain.Client.Sqlite.csproj" />
+    <ProjectReference Include="..\Blauhaus.Domain.Client\Blauhaus.Domain.Client.csproj" />
+    <ProjectReference Include="..\Blauhaus.Domain.Common\Blauhaus.Domain.Common.csproj" />
+    <ProjectReference Include="..\Blauhaus.Domain.Server\Blauhaus.Domain.Server.csproj" />
+    <ProjectReference Include="..\Blauhaus.Domain.TestHelpers\Blauhaus.Domain.TestHelpers.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ClientTests\SqliteTests\_Seeds\" />
   </ItemGroup>
 
 </Project>

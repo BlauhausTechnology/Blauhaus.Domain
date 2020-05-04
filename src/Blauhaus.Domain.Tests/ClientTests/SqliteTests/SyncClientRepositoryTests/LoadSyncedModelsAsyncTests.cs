@@ -1,0 +1,109 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Blauhaus.Domain.Client.Sqlite.SyncRepository;
+using Blauhaus.Domain.Tests.ClientTests.SqliteTests._Base;
+using Blauhaus.Domain.Tests.ClientTests.SqliteTests._TestObjects;
+using Blauhaus.TestHelpers.MockBuilders;
+using Moq;
+using NUnit.Framework;
+using SQLite;
+using SqlKata;
+
+namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTests
+{
+    public class LoadSyncedModelsAsyncTests : BaseSqliteTest<SyncClientRepository<ITestModel, ITestDto, TestSyncCommand, TestRootEntity>>
+    {
+        private List<TestRootEntity> _entitiesConstructed;
+        private Guid _ziggyId;
+        private Guid _twiggyId;
+
+        public override void Setup()
+        {
+            base.Setup();
+
+            _ziggyId = Guid.NewGuid();
+            _twiggyId = Guid.NewGuid();
+             
+            var entities = new List<TestRootEntity>
+            {
+                new TestRootEntity{ ModifiedAtTicks = 2000, RootName = "Bob" },
+                new TestRootEntity{ ModifiedAtTicks = 1000, RootName = "Fred" },
+                new TestRootEntity{ ModifiedAtTicks = 3000, RootName = "John" },
+                new TestRootEntity{ ModifiedAtTicks = 6000, RootName = "Cedric" },
+                new TestRootEntity{ ModifiedAtTicks = 8000, RootName = "Ramona" },
+                new TestRootEntity{ ModifiedAtTicks = 9000, RootName = "Ziggy", Id = _ziggyId },
+                new TestRootEntity{ ModifiedAtTicks = 5000, RootName = "Twiggy", Id = _twiggyId },
+                new TestRootEntity{ ModifiedAtTicks = 4000, RootName = "Morris" },
+            };
+
+            Connection.InsertAllAsync(entities);
+
+            _entitiesConstructed = new List<TestRootEntity>();
+            MockClientEntityManager.Mock.Setup(x => x.ConstructModelFromRootEntity(Capture.In(_entitiesConstructed), It.IsAny<SQLiteConnection>()))
+                .Returns((TestRootEntity root, SQLiteConnection conn)=> new MockBuilder<ITestModel>()
+                    .With(x => x.Id, root.Id)
+                    .With(x => x.ModifiedAtTicks, root.ModifiedAtTicks).Object);
+        }
+
+        [Test]
+        public async Task WHEN_ModifiedBeforeTicks_and_batch_size_are_given_SHOULD_return_correct_quantity_in_correct_order()
+        {
+            //Act
+            var result = await Sut.LoadSyncedModelsAsync(new TestSyncCommand
+            {
+                ModifiedBeforeTicks = 6000,
+                BatchSize = 3
+            });
+
+            //Arrance
+            Assert.AreEqual(3, result.Count);
+            Assert.AreEqual(5000, result[0].ModifiedAtTicks);
+            Assert.AreEqual(4000, result [1].ModifiedAtTicks);
+            Assert.AreEqual(3000, result[2].ModifiedAtTicks);
+            Assert.AreEqual(3, _entitiesConstructed.Count);
+            Assert.AreEqual(5000, _entitiesConstructed[0].ModifiedAtTicks);
+            Assert.AreEqual(4000, _entitiesConstructed [1].ModifiedAtTicks);
+            Assert.AreEqual(3000, _entitiesConstructed[2].ModifiedAtTicks);
+        } 
+
+        [Test]
+        public async Task WHEN_ModifiedBeforeTicks_is_not_given_SHOULD_return_correct_quantity_in_correct_order()
+        {
+            //Act
+            var result = await Sut.LoadSyncedModelsAsync(new TestSyncCommand
+            {
+                BatchSize = 3
+            });
+
+            //Arrance
+            Assert.AreEqual(3, result.Count);
+            Assert.AreEqual(9000, result[0].ModifiedAtTicks);
+            Assert.AreEqual(8000, result[1].ModifiedAtTicks);
+            Assert.AreEqual(6000, result[2].ModifiedAtTicks);
+            Assert.AreEqual(3, _entitiesConstructed.Count);
+            Assert.AreEqual(9000, _entitiesConstructed[0].ModifiedAtTicks);
+            Assert.AreEqual(8000, _entitiesConstructed [1].ModifiedAtTicks);
+            Assert.AreEqual(6000, _entitiesConstructed[2].ModifiedAtTicks);
+        } 
+
+        [Test]
+        public async Task WHEN_QueryGenerator_modifies_query_SHOULD_apply()
+        {
+            //Act
+            MockSyncQueryGenerator.Where_ExtendQuery_returns(new Query(nameof(TestRootEntity))
+                .WhereContains(nameof(TestRootEntity.RootName), "ggy"));
+            var result = await Sut.LoadSyncedModelsAsync(new TestSyncCommand { BatchSize = 3 });
+
+            //Arrance
+            Assert.AreEqual(2, result.Count);
+            Assert.IsNotNull(result.FirstOrDefault(x => x.Id == _twiggyId));
+            Assert.IsNotNull(result.FirstOrDefault(x => x.Id == _ziggyId)); 
+            Assert.AreEqual(2, _entitiesConstructed.Count);
+            Assert.IsNotNull(_entitiesConstructed.FirstOrDefault(x => x.Id == _twiggyId));
+            Assert.IsNotNull(_entitiesConstructed.FirstOrDefault(x => x.Id == _ziggyId)); 
+        } 
+         
+    }
+}
