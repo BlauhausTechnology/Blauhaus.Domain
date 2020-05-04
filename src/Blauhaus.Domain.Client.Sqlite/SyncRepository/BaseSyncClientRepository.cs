@@ -19,6 +19,13 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
     {
         private readonly ISyncQueryGenerator<TSyncCommand> _syncQueryGenerator;
 
+        //TODO unhandled case: when syncing after a long time, and number of entities modified since LastModifiedAtTicks exceeds BatchCount
+        //TODO in this case there will be a gap of missing entities modified before the FirstModified of the returned batch and after the LastModified on device
+        //TODO these entities will be lost forever
+        //TODO the only way I can think to solve this is to track occurences of this case in a sync metadata table and send it to the server so the server can correct
+        //TODO this is the pitfall of doing MostRecentFirst syncing, and the solutions are probably ugly. Yup, it's going to be ugly. But cool. 
+
+
         public BaseSyncClientRepository(
             IAnalyticsService analyticsService,
             ISqliteDatabaseService sqliteDatabaseService, 
@@ -28,7 +35,9 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
         {
             _syncQueryGenerator = syncQueryGenerator;
         }
+        
 
+        //TODO exclude non-synced entities from count
         public async Task<ClientSyncStatus> GetSyncStatusAsync()
         {
             var syncStatus = new ClientSyncStatus();
@@ -74,6 +83,7 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
             return models;
         }
 
+        //TODO SyncState set to true when saving during sync
         public async Task<IReadOnlyList<TModel>> SaveSyncedDtosAsync(IEnumerable<TDto> dtos)
         {
             var models = new List<TModel>();
