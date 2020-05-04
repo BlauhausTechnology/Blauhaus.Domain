@@ -1,6 +1,6 @@
 ﻿using Blauhaus.Analytics.Abstractions.Service;
-using Blauhaus.ClientDatabase.Sqlite.Entities;
 using Blauhaus.ClientDatabase.Sqlite.Service;
+using Blauhaus.Domain.Client.Sqlite.Entities;
 using Blauhaus.Domain.Client.Sqlite.Repository;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
 using Blauhaus.Domain.Common.Entities;
@@ -8,7 +8,7 @@ using Blauhaus.Domain.Common.Entities;
 namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
 {
     public class SyncClientRepository <TModel, TDto, TSyncCommand, TRootEntity> : BaseSyncClientRepository<TModel, TDto, TSyncCommand, TRootEntity>
-        where TRootEntity : BaseSqliteEntity, new() 
+        where TRootEntity : BaseSyncClientEntity, new() 
         where TModel : class, IClientEntity 
         where TSyncCommand : SyncCommand
     {

@@ -1,13 +1,13 @@
 ﻿using Blauhaus.Analytics.Abstractions.Service;
-using Blauhaus.ClientDatabase.Sqlite.Entities;
 using Blauhaus.ClientDatabase.Sqlite.Service;
+using Blauhaus.Domain.Client.Sqlite.Entities;
 using Blauhaus.Domain.Common.Entities;
 
 namespace Blauhaus.Domain.Client.Sqlite.Repository
 {
     public class ClientRepository<TModel, TDto, TRootEntity> : BaseClientRepository<TModel, TDto, TRootEntity> 
         where TModel : class, IClientEntity 
-        where TRootEntity : BaseSqliteEntity, new()
+        where TRootEntity : ISyncClientEntity, new()
     {
         public ClientRepository(
             IAnalyticsService analyticsService,

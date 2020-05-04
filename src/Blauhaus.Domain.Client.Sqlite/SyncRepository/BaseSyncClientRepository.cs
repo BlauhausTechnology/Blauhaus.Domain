@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Service;
-using Blauhaus.ClientDatabase.Sqlite.Entities;
 using Blauhaus.ClientDatabase.Sqlite.Service;
 using Blauhaus.Domain.Client.Repositories;
+using Blauhaus.Domain.Client.Sqlite.Entities;
 using Blauhaus.Domain.Client.Sqlite.Repository;
 using Blauhaus.Domain.Client.Sync;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
@@ -13,7 +13,7 @@ using Blauhaus.Domain.Common.Entities;
 namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
 {
     public class BaseSyncClientRepository<TModel, TDto, TSyncCommand, TRootEntity> : BaseClientRepository<TModel,TDto,TRootEntity>, ISyncClientRepository<TModel,TDto, TSyncCommand> 
-        where TRootEntity : BaseSqliteEntity, new() 
+        where TRootEntity : BaseSyncClientEntity, new() 
         where TModel : class, IClientEntity 
         where TSyncCommand : SyncCommand
     {
@@ -25,6 +25,7 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
         //TODO the only way I can think to solve this is to track occurences of this case in a sync metadata table and send it to the server so the server can correct
         //TODO this is the pitfall of doing MostRecentFirst syncing, and the solutions are probably ugly. Yup, it's going to be ugly. But cool. 
 
+        //TODO maybe the best way to handle this is to invalidate all client side entities older than the new batch IF we are unable to resolve the problem during a sync cycle
 
         public BaseSyncClientRepository(
             IAnalyticsService analyticsService,
@@ -37,14 +38,16 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
         }
         
 
-        //TODO exclude non-synced entities from count
         public async Task<ClientSyncStatus> GetSyncStatusAsync()
         {
             var syncStatus = new ClientSyncStatus();
             var db = await DatabaseService.GetDatabaseConnectionAsync();
             await db.RunInTransactionAsync(connection =>
             {
-                var orderedQuery = connection.Table<TRootEntity>().OrderByDescending(x => x.ModifiedAtTicks);
+                var orderedQuery = connection.Table<TRootEntity>()
+                    .Where(x => x.SyncState == SyncState.InSync)
+                    .OrderByDescending(x => x.ModifiedAtTicks);
+                
                 syncStatus.LastModifiedAt = orderedQuery.FirstOrDefault()?.ModifiedAtTicks;
                 syncStatus.FirstModifiedAt = orderedQuery.LastOrDefault()?.ModifiedAtTicks ?? 0;
                 syncStatus.TotalCount = orderedQuery.Count();
@@ -53,7 +56,7 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
             return syncStatus;
         }
 
-        public async Task<IReadOnlyList<TModel>> LoadSyncedModelsAsync(TSyncCommand syncCommand)
+        public async Task<IReadOnlyList<TModel>> LoadModelsAsync(TSyncCommand syncCommand)
         { 
             var db = await DatabaseService.GetDatabaseConnectionAsync();
             var models = new List<TModel>();
@@ -83,7 +86,6 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
             return models;
         }
 
-        //TODO SyncState set to true when saving during sync
         public async Task<IReadOnlyList<TModel>> SaveSyncedDtosAsync(IEnumerable<TDto> dtos)
         {
             var models = new List<TModel>();
@@ -95,8 +97,16 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
                 foreach (var dto in dtos)
                 {
                     var rootEntity = EntityManager.ExtractRootEntityFromDto(dto);
+                    rootEntity.SyncState = SyncState.InSync;
                     entities.Add(rootEntity);
-                    entities.AddRange(EntityManager.ExtractChildEntitiesFromDto(dto));
+
+                    var childEntities = EntityManager.ExtractChildEntitiesFromDto(dto);
+                    foreach (var childEntity in childEntities)
+                    {
+                        childEntity.SyncState = SyncState.InSync;
+                        entities.Add(childEntity);
+                    }
+
                     models.Add(EntityManager.ConstructModelFromRootEntity(rootEntity, connection));
                 }
 

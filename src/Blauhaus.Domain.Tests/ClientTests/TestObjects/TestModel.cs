@@ -17,6 +17,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.TestObjects
         public Guid Id { get; }
         public EntityState EntityState { get; }
         public long ModifiedAtTicks { get; }
+        public SyncState SyncState { get; }
 
         public string Name { get; }
 

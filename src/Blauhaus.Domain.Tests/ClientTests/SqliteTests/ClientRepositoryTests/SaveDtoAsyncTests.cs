@@ -58,7 +58,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
             };
             await Connection.InsertAsync(bob);
             await Connection.InsertAsync(child);
-            MockClientEntityManager.Where_ExtractChildEntitiesFromDto_returns(new List<IClientEntity>
+            MockClientEntityManager.Where_ExtractChildEntitiesFromDto_returns(new List<ISyncClientEntity>
             {
                 new TestChildEntity()
                 {
@@ -115,7 +115,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
                 ChildName = "Pop"
             };
             await Connection.InsertAsync(bob);
-            MockClientEntityManager.Where_ExtractChildEntitiesFromDto_returns(new List<IClientEntity>
+            MockClientEntityManager.Where_ExtractChildEntitiesFromDto_returns(new List<ISyncClientEntity>
             {
                 new TestChildEntity()
                 {

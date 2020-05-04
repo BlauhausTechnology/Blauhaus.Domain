@@ -2,8 +2,7 @@
 {
     public enum SyncState
     {
-        Synced,
-        CreatedOnDevice,
-        OutOfSync
+        OutOfSync,
+        InSync,
     }
 }

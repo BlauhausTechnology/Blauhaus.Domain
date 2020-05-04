@@ -1,5 +1,5 @@
-﻿using Blauhaus.ClientDatabase.Sqlite.Entities;
-using Blauhaus.Domain.Client.Repositories;
+﻿using Blauhaus.Domain.Client.Repositories;
+using Blauhaus.Domain.Client.Sqlite.Entities;
 using Blauhaus.Domain.Client.Sqlite.Repository;
 using Blauhaus.Domain.Client.Sqlite.SyncRepository;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
@@ -12,7 +12,7 @@ namespace Blauhaus.Domain.Client.Sqlite._Ioc
     {
         public static IServiceCollection AddClientRepository<TModel, TDto, TRootEntity, TEntityManager>(this IServiceCollection services) 
             where TModel : class, IClientEntity 
-            where TRootEntity : BaseSqliteEntity, new() 
+            where TRootEntity : BaseSyncClientEntity, new() 
             where TEntityManager : class, IClientEntityManager<TModel, TDto, TRootEntity>
         {
             services.AddTransient<IClientRepository<TModel, TDto>, ClientRepository<TModel, TDto, TRootEntity>>();
@@ -21,7 +21,7 @@ namespace Blauhaus.Domain.Client.Sqlite._Ioc
         }
         public static IServiceCollection AddSyncClientRepository<TModel, TDto, TRootEntity, TEntityManager>(this IServiceCollection services) 
             where TModel : class, IClientEntity 
-            where TRootEntity : BaseSqliteEntity, new() 
+            where TRootEntity : BaseSyncClientEntity, new() 
             where TEntityManager : class, IClientEntityManager<TModel, TDto, TRootEntity>
         {
             services.AddTransient<ISyncClientRepository<TModel, TDto, SyncCommand>, SyncClientRepository<TModel, TDto, SyncCommand, TRootEntity>>();
@@ -32,7 +32,7 @@ namespace Blauhaus.Domain.Client.Sqlite._Ioc
 
         public static IServiceCollection AddSyncClientRepository<TModel, TDto, TSyncCommand, TRootEntity, TEntityManager, TSyncQueryGenerator>(this IServiceCollection services) 
             where TModel : class, IClientEntity 
-            where TRootEntity : BaseSqliteEntity, new() 
+            where TRootEntity : BaseSyncClientEntity, new() 
             where TEntityManager : class, IClientEntityManager<TModel, TDto, TRootEntity>
             where TSyncCommand : SyncCommand
             where TSyncQueryGenerator : class, ISyncQueryGenerator<TSyncCommand>

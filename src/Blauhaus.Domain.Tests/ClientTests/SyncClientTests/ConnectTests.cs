@@ -79,7 +79,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
 
             //Assert
             MockSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync());
-            MockSyncClientRepository.Mock.Verify(x => x.LoadSyncedModelsAsync(_syncCommand));
+            MockSyncClientRepository.Mock.Verify(x => x.LoadModelsAsync(_syncCommand));
         }
 
 

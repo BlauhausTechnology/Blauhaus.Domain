@@ -17,5 +17,6 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests._TestObjects
         public Guid Id { get; }
         public EntityState EntityState { get; }
         public long ModifiedAtTicks { get; }
+        public SyncState SyncState { get; }
     }
 }

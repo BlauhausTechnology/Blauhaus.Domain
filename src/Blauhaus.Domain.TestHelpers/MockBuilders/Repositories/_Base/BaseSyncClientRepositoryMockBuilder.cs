@@ -28,19 +28,19 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Repositories._Base
         
         public TBuilder Where_LoadSyncedModelsAsync_returns(TModel model)
         {
-            Mock.Setup(x => x.LoadSyncedModelsAsync(It.IsAny<TSyncCommand>()))
+            Mock.Setup(x => x.LoadModelsAsync(It.IsAny<TSyncCommand>()))
                 .ReturnsAsync(new List<TModel>{model});
             return this as TBuilder;
         }
         public TBuilder Where_LoadSyncedModelsAsync_returns(List<TModel> models)
         {
-            Mock.Setup(x => x.LoadSyncedModelsAsync(It.IsAny<TSyncCommand>()))
+            Mock.Setup(x => x.LoadModelsAsync(It.IsAny<TSyncCommand>()))
                 .ReturnsAsync(models);
             return this as TBuilder;
         }
         public TBuilder Where_LoadSyncedModelsAsync_throws(Exception e)
         {
-            Mock.Setup(x => x.LoadSyncedModelsAsync(It.IsAny<TSyncCommand>()))
+            Mock.Setup(x => x.LoadModelsAsync(It.IsAny<TSyncCommand>()))
                 .ThrowsAsync(e);
             return this as TBuilder;
         }

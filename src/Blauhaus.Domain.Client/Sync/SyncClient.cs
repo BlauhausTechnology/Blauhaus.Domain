@@ -40,7 +40,7 @@ namespace Blauhaus.Domain.Client.Sync
                 
                 ClientSyncStatus syncStatus = await _syncClientRepository.GetSyncStatusAsync();
 
-                var firstBatchOfLocalModels= await _syncClientRepository.LoadSyncedModelsAsync(syncCommand);
+                var firstBatchOfLocalModels= await _syncClientRepository.LoadModelsAsync(syncCommand);
                 foreach (var localModel in firstBatchOfLocalModels)
                 {
                     observer.OnNext(new SyncUpdate<TModel>(localModel));
