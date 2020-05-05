@@ -50,7 +50,8 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
                 
                 syncStatus.LastModifiedAt = orderedQuery.FirstOrDefault()?.ModifiedAtTicks;
                 syncStatus.FirstModifiedAt = orderedQuery.LastOrDefault()?.ModifiedAtTicks ?? 0;
-                syncStatus.TotalCount = orderedQuery.Count();
+                syncStatus.LocalSyncedEntities = orderedQuery.Count();
+                syncStatus.LocalEntities = connection.Table<TRootEntity>().Count();
             });
 
             return syncStatus;

@@ -4,6 +4,7 @@
     {
         public long? LastModifiedAt { get; set; }
         public long FirstModifiedAt { get; set; }
-        public long TotalCount { get; set; }
+        public long LocalEntities { get; set; }
+        public long LocalSyncedEntities { get; set; }
     }
 }

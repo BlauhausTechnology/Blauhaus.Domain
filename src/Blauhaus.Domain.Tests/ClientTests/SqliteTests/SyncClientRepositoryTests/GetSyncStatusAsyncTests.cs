@@ -29,13 +29,13 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             var result = await Sut.GetSyncStatusAsync();
 
             //Arrance
-            Assert.AreEqual(5, result.TotalCount);
+            Assert.AreEqual(5, result.LocalEntities);
             Assert.AreEqual(1000, result.FirstModifiedAt);
             Assert.AreEqual(5000, result.LastModifiedAt);
         }
 
         [Test]
-        public async Task SHOULD_ignore_non_synced_entities()
+        public async Task SHOULD_ignore_ModifiedAts_for_non_synced_entities()
         {
             //Arrange
             var entities = new List<TestRootEntity>
@@ -52,7 +52,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             var result = await Sut.GetSyncStatusAsync();
 
             //Arrance
-            Assert.AreEqual(3, result.TotalCount);
+            Assert.AreEqual(5, result.LocalEntities);
+            Assert.AreEqual(3, result.LocalSyncedEntities);
             Assert.AreEqual(2000, result.FirstModifiedAt);
             Assert.AreEqual(4000, result.LastModifiedAt);
         }
@@ -64,7 +65,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             var result = await Sut.GetSyncStatusAsync();
 
             //Arrance
-            Assert.AreEqual(0, result.TotalCount);
+            Assert.AreEqual(0, result.LocalEntities);
             Assert.AreEqual(0, result.FirstModifiedAt);
             Assert.AreEqual(null, result.LastModifiedAt);
         }

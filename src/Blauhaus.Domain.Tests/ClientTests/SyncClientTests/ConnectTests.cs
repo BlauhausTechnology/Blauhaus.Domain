@@ -41,7 +41,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             _syncCommand = new TestSyncCommand{BatchSize = 12};
             _localSyncstatus = new ClientSyncStatus
             {
-                TotalCount = 3,
+                LocalEntities = 3,
                 LastModifiedAt = _localModels.First().ModifiedAtTicks,
                 FirstModifiedAt = _localModels.Last().ModifiedAtTicks
             };
