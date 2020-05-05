@@ -1,23 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 using Blauhaus.Domain.Client.Repositories;
 using Blauhaus.Domain.Common.Entities;
 using Blauhaus.TestHelpers.MockBuilders;
 using Moq;
 
-namespace Blauhaus.Domain.TestHelpers.MockBuilders.Repositories._Base
+namespace Blauhaus.Domain.TestHelpers.MockBuilders.Repositories
 { 
-    public class ClientRepositoryMockBuilder<TMock, TModel, TDto> : BaseClientRepositoryMockBuilder<ClientRepositoryMockBuilder<TMock, TModel, TDto>, TMock, TModel, TDto>
-        where TMock : class, IClientRepository<TModel, TDto> 
+    public class ClientRepositoryMockBuilder<TModel, TDto> : ClientRepositoryMockBuilder<ClientRepositoryMockBuilder<TModel, TDto>, IClientRepository<TModel, TDto>, TModel, TDto>
         where TModel : class, IClientEntity
     {
 
     }
 
 
-    public abstract class BaseClientRepositoryMockBuilder<TBuilder, TMock, TModel, TDto> : BaseMockBuilder<TBuilder, TMock> 
-        where TBuilder : BaseClientRepositoryMockBuilder<TBuilder, TMock, TModel, TDto>
+    public abstract class ClientRepositoryMockBuilder<TBuilder, TMock, TModel, TDto> : BaseMockBuilder<TBuilder, TMock> 
+        where TBuilder : ClientRepositoryMockBuilder<TBuilder, TMock, TModel, TDto>
         where TMock : class, IClientRepository<TModel, TDto>
         where TModel : class, IClientEntity
     {

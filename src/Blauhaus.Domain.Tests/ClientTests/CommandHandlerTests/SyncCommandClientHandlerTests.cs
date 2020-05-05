@@ -7,7 +7,7 @@ using Blauhaus.Domain.Client.CommandHandlers.Sync;
 using Blauhaus.Domain.Client.Repositories;
 using Blauhaus.Domain.Common.CommandHandlers;
 using Blauhaus.Domain.Common.Entities;
-using Blauhaus.Domain.TestHelpers.MockBuilders.Repositories._Base;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Repositories;
 using Blauhaus.Domain.Tests._Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
 using Blauhaus.TestHelpers.MockBuilders;
@@ -32,8 +32,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.CommandHandlerTests
         private MockBuilder<ICommandHandler<DtoSyncResult<TestModelDto>, TestSyncCommandDto>> MockDtoCommandHandler
             => AddMock<ICommandHandler<DtoSyncResult<TestModelDto>, TestSyncCommandDto>>().Invoke();
 
-        private SyncClientRepositoryMockBuilder<ISyncClientRepository<TestModel, TestModelDto, TestSyncCommand>, TestModel, TestModelDto, TestSyncCommand> MockSyncClientRepository 
-            => AddMock<SyncClientRepositoryMockBuilder<ISyncClientRepository<TestModel, TestModelDto,TestSyncCommand>, TestModel, TestModelDto, TestSyncCommand>, ISyncClientRepository<TestModel, TestModelDto, TestSyncCommand>>().Invoke();
+        private SyncClientRepositoryMockBuilder<TestModel, TestModelDto, TestSyncCommand> MockSyncClientRepository 
+            => AddMock<SyncClientRepositoryMockBuilder<TestModel, TestModelDto, TestSyncCommand>, ISyncClientRepository<TestModel, TestModelDto, TestSyncCommand>>().Invoke();
 
 
         [SetUp]

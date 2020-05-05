@@ -4,7 +4,7 @@ using Blauhaus.Domain.Client.CommandHandlers;
 using Blauhaus.Domain.Client.Repositories;
 using Blauhaus.Domain.Common.CommandHandlers;
 using Blauhaus.Domain.Common.Entities;
-using Blauhaus.Domain.TestHelpers.MockBuilders.Repositories._Base;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Repositories;
 using Blauhaus.Domain.Tests._Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
 using Blauhaus.TestHelpers.MockBuilders;
@@ -22,8 +22,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.CommandHandlerTests
         private TestModel _model;
 
         private MockBuilder<ICommandHandler<TestModelDto, TestCommandDto>> MockDtoCommandHandler => AddMock<ICommandHandler<TestModelDto, TestCommandDto>>().Invoke();
-        private ClientRepositoryMockBuilder<IClientRepository<TestModel, TestModelDto>, TestModel, TestModelDto> MockClientRepository 
-            => AddMock<ClientRepositoryMockBuilder<IClientRepository<TestModel, TestModelDto>, TestModel, TestModelDto>, IClientRepository<TestModel, TestModelDto>>().Invoke();
+        private ClientRepositoryMockBuilder<TestModel, TestModelDto> MockClientRepository 
+            => AddMock<ClientRepositoryMockBuilder<TestModel, TestModelDto>, IClientRepository<TestModel, TestModelDto>>().Invoke();
         
         private MockBuilder<ICommandConverter<TestCommandDto, TestCommand>> MockCommandConverter => AddMock<ICommandConverter<TestCommandDto, TestCommand>>().Invoke();
 

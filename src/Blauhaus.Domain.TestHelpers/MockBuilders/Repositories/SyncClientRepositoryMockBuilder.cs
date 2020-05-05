@@ -1,26 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using Blauhaus.Domain.Client.Repositories;
 using Blauhaus.Domain.Client.Sync;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
 using Blauhaus.Domain.Common.Entities;
-using Blauhaus.TestHelpers.MockBuilders;
 using Moq;
 
-namespace Blauhaus.Domain.TestHelpers.MockBuilders.Repositories._Base
+namespace Blauhaus.Domain.TestHelpers.MockBuilders.Repositories
 {
-    public class SyncClientRepositoryMockBuilder<TMock, TModel, TDto, TSyncCommand> 
-        : BaseSyncClientRepositoryMockBuilder<SyncClientRepositoryMockBuilder<TMock, TModel, TDto, TSyncCommand>, TMock, TModel, TDto, TSyncCommand>
-        where TMock : class, ISyncClientRepository<TModel, TDto, TSyncCommand> 
+    public class SyncClientRepositoryMockBuilder<TModel, TDto, TSyncCommand> 
+        : SyncClientRepositoryMockBuilder<SyncClientRepositoryMockBuilder<TModel, TDto, TSyncCommand>,  ISyncClientRepository<TModel, TDto, TSyncCommand> , TModel, TDto, TSyncCommand>
         where TModel : class, IClientEntity
         where TSyncCommand : SyncCommand
     {
     }
      
 
-    public abstract class BaseSyncClientRepositoryMockBuilder<TBuilder, TMock, TModel, TDto, TSyncCommand> : BaseClientRepositoryMockBuilder<TBuilder, TMock, TModel, TDto> 
-        where TBuilder : BaseSyncClientRepositoryMockBuilder<TBuilder, TMock, TModel, TDto, TSyncCommand>
+    public abstract class SyncClientRepositoryMockBuilder<TBuilder, TMock, TModel, TDto, TSyncCommand> : ClientRepositoryMockBuilder<TBuilder, TMock, TModel, TDto> 
+        where TBuilder : SyncClientRepositoryMockBuilder<TBuilder, TMock, TModel, TDto, TSyncCommand>
         where TMock : class, ISyncClientRepository<TModel, TDto, TSyncCommand>
         where TModel : class, IClientEntity
         where TSyncCommand : SyncCommand

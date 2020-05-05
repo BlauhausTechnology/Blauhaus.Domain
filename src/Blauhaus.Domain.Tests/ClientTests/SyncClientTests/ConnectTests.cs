@@ -7,7 +7,7 @@ using Blauhaus.Domain.Client.Sync;
 using Blauhaus.Domain.Common.CommandHandlers;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
 using Blauhaus.Domain.TestHelpers.MockBuilders.CommandHandlers;
-using Blauhaus.Domain.TestHelpers.MockBuilders.Repositories._Base;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Repositories;
 using Blauhaus.Domain.Tests._Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
 using Blauhaus.Domain.Tests.ServerTests.TestObjects;
@@ -26,8 +26,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
         private ClientSyncStatus _localSyncstatus;
         private SyncResult<TestModel> _syncResult;
 
-        private SyncClientRepositoryMockBuilder<ISyncClientRepository<TestModel, TestModelDto, TestSyncCommand>, TestModel, TestModelDto, TestSyncCommand> MockSyncClientRepository 
-            => AddMock<SyncClientRepositoryMockBuilder<ISyncClientRepository<TestModel, TestModelDto, TestSyncCommand>, TestModel, TestModelDto, TestSyncCommand>, ISyncClientRepository<TestModel, TestModelDto, TestSyncCommand>>().Invoke();
+        private SyncClientRepositoryMockBuilder<TestModel, TestModelDto, TestSyncCommand> MockSyncClientRepository 
+            => AddMock<SyncClientRepositoryMockBuilder<TestModel, TestModelDto, TestSyncCommand>, ISyncClientRepository<TestModel, TestModelDto, TestSyncCommand>>().Invoke();
 
         private CommandHandlerMockBuilder<SyncResult<TestModel>, TestSyncCommand> MockSyncCommandHandler 
             => AddMock<CommandHandlerMockBuilder<SyncResult<TestModel>, TestSyncCommand>, ICommandHandler<SyncResult<TestModel>, TestSyncCommand>>().Invoke();
