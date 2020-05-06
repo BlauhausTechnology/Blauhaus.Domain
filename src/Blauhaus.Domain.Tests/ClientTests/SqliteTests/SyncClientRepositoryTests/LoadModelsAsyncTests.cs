@@ -53,7 +53,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             //Act
             var result = await Sut.LoadModelsAsync(new TestSyncCommand
             {
-                ModifiedBeforeTicks = 6000,
+                OlderThan = 6000,
                 BatchSize = 3
             });
 

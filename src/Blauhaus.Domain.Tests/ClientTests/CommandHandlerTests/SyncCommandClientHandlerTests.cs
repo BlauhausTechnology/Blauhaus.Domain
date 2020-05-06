@@ -106,9 +106,9 @@ namespace Blauhaus.Domain.Tests.ClientTests.CommandHandlerTests
             //Assert
             MockSyncClientRepository.Mock.Verify(x => x.SaveSyncedDtosAsync(It.Is<IReadOnlyList<TestModelDto>>(y => 
                 y[0] == _modelDto)));
-            Assert.AreEqual(_model, result.Value.Entities.First());
-            Assert.AreEqual(1, result.Value.ModifiedEntityCount);
-            Assert.AreEqual(2, result.Value.TotalEntityCount);
+            Assert.AreEqual(_model, result.Value.EntityBatch.First());
+            Assert.AreEqual(1, result.Value.EntitiesToDownloadCount);
+            Assert.AreEqual(2, result.Value.TotalActiveEntityCount);
         }
 
     }

@@ -47,9 +47,9 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             };
             _syncResult = new SyncResult<TestModel>
             {
-                Entities = _serverModels,
-                ModifiedEntityCount = 30,
-                TotalEntityCount = 300
+                EntityBatch = _serverModels,
+                EntitiesToDownloadCount = 30,
+                TotalActiveEntityCount = 300
             };
 
             MockSyncClientRepository.Where_LoadSyncedModelsAsync_returns(_localModels);
@@ -129,8 +129,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             Sut.Connect(_syncCommand).Subscribe();
 
             //Assert
-            MockSyncCommandHandler.Verify_HandleAsync_called_With(x => x.ModifiedBeforeTicks == _localSyncstatus.FirstModifiedAt);
-            MockSyncCommandHandler.Verify_HandleAsync_called_With(x => x.ModifiedAfterTicks == _localSyncstatus.LastModifiedAt);
+            MockSyncCommandHandler.Verify_HandleAsync_called_With(x => x.OlderThan == _localSyncstatus.FirstModifiedAt);
+            MockSyncCommandHandler.Verify_HandleAsync_called_With(x => x.NewerThan == _localSyncstatus.LastModifiedAt);
             MockSyncCommandHandler.Verify_HandleAsync_called_With(x => x.BatchSize == 12);
         }
 
@@ -156,9 +156,9 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             Assert.AreEqual(result[4].Current.Id, _serverModels[1].Id);
             Assert.AreEqual(result[5].Current.Id, _serverModels[2].Id);
             MockAnalyticsService.VerifyTrace("Sync result received from server");
-            MockAnalyticsService.VerifyTraceProperty(nameof(SyncResult<TestModel>.TotalEntityCount), _syncResult.TotalEntityCount);
-            MockAnalyticsService.VerifyTraceProperty(nameof(SyncResult<TestModel>.ModifiedEntityCount), _syncResult.ModifiedEntityCount);
-            MockAnalyticsService.VerifyTraceProperty(nameof(SyncResult<TestModel>.Entities), _syncResult.Entities.Count);
+            MockAnalyticsService.VerifyTraceProperty(nameof(SyncResult<TestModel>.TotalActiveEntityCount), _syncResult.TotalActiveEntityCount);
+            MockAnalyticsService.VerifyTraceProperty(nameof(SyncResult<TestModel>.EntitiesToDownloadCount), _syncResult.EntitiesToDownloadCount);
+            MockAnalyticsService.VerifyTraceProperty(nameof(SyncResult<TestModel>.EntityBatch), _syncResult.EntityBatch.Count);
         }
     }
 }

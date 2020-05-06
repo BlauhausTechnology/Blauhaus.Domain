@@ -52,19 +52,19 @@ namespace Blauhaus.Domain.Client.Sync
                     {"Models published", firstBatchOfLocalModels.Count}
                 });
 
-                syncCommand.ModifiedBeforeTicks = syncStatus.FirstModifiedAt;
-                syncCommand.ModifiedAfterTicks = syncStatus.LastModifiedAt;
+                syncCommand.OlderThan = syncStatus.FirstModifiedAt;
+                syncCommand.NewerThan = syncStatus.LastModifiedAt;
 
                 var updatesFromServer = await _syncCommandHandler.HandleAsync(syncCommand, disposable.Token);
 
                 _analyticsService.TraceVerbose(this, "Sync result received from server", new Dictionary<string, object>
                 {
-                    { nameof(SyncResult<TModel>.ModifiedEntityCount), updatesFromServer.Value.ModifiedEntityCount },
-                    { nameof(SyncResult<TModel>.TotalEntityCount), updatesFromServer.Value.TotalEntityCount },
-                    { nameof(SyncResult<TModel>.Entities), updatesFromServer.Value.Entities.Count },
+                    { nameof(SyncResult<TModel>.EntitiesToDownloadCount), updatesFromServer.Value.EntitiesToDownloadCount },
+                    { nameof(SyncResult<TModel>.TotalActiveEntityCount), updatesFromServer.Value.TotalActiveEntityCount },
+                    { nameof(SyncResult<TModel>.EntityBatch), updatesFromServer.Value.EntityBatch.Count },
                 });
 
-                foreach (var serverModel in updatesFromServer.Value.Entities)
+                foreach (var serverModel in updatesFromServer.Value.EntityBatch)
                 {
                     observer.OnNext(new SyncUpdate<TModel>(serverModel));
                 }

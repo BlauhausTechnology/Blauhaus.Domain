@@ -5,8 +5,8 @@ namespace Blauhaus.Domain.Common.CommandHandlers.Sync
     public class SyncCommand
     {
 
-        public long? ModifiedAfterTicks { get; set; }
-        public long ModifiedBeforeTicks { get; set; }
+        public long? NewerThan { get; set; }
+        public long? OlderThan { get; set; }
         public int BatchSize { get; set; } = 100;
 
     }

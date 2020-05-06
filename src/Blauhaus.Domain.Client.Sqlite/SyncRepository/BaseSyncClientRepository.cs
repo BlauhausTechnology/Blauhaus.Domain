@@ -68,9 +68,9 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
                     .OrderByDesc(nameof(IClientEntity.ModifiedAtTicks))
                     .Take(syncCommand.BatchSize);
 
-                if (syncCommand.ModifiedBeforeTicks > 0)
+                if (syncCommand.OlderThan > 0)
                 {
-                    query = query.Where(nameof(IClientEntity.ModifiedAtTicks), "<", syncCommand.ModifiedBeforeTicks);
+                    query = query.Where(nameof(IClientEntity.ModifiedAtTicks), "<", syncCommand.OlderThan);
                 }
 
                 query = _syncQueryGenerator.ExtendQuery(query, syncCommand);

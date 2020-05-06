@@ -58,7 +58,6 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Repositories
             return this as TBuilder;
         }
 
-        
         public TBuilder Where_GetSyncStatusAsync_returns(params ClientSyncStatus[] values)
         {
             var queue = new Queue<ClientSyncStatus>(values);
@@ -66,7 +65,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Repositories
                 .ReturnsAsync(queue.Dequeue);
             return this as TBuilder;
         }
-
+         
     
     }
 
