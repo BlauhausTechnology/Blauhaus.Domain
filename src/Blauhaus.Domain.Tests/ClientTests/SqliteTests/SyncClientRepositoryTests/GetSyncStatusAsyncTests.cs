@@ -29,9 +29,9 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             var result = await Sut.GetSyncStatusAsync();
 
             //Arrance
-            Assert.AreEqual(5, result.LocalEntities);
-            Assert.AreEqual(1000, result.FirstModifiedAt);
-            Assert.AreEqual(5000, result.LastModifiedAt);
+            Assert.AreEqual(5, result.AllLocalEntities);
+            Assert.AreEqual(1000, result.OldestModifiedAt);
+            Assert.AreEqual(5000, result.NewestModifiedAt);
         }
 
         [Test]
@@ -52,10 +52,10 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             var result = await Sut.GetSyncStatusAsync();
 
             //Arrance
-            Assert.AreEqual(5, result.LocalEntities);
-            Assert.AreEqual(3, result.LocalSyncedEntities);
-            Assert.AreEqual(2000, result.FirstModifiedAt);
-            Assert.AreEqual(4000, result.LastModifiedAt);
+            Assert.AreEqual(5, result.AllLocalEntities);
+            Assert.AreEqual(3, result.SyncedLocalEntities);
+            Assert.AreEqual(2000, result.OldestModifiedAt);
+            Assert.AreEqual(4000, result.NewestModifiedAt);
         }
 
         [Test]
@@ -65,9 +65,9 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             var result = await Sut.GetSyncStatusAsync();
 
             //Arrance
-            Assert.AreEqual(0, result.LocalEntities);
-            Assert.AreEqual(0, result.FirstModifiedAt);
-            Assert.AreEqual(null, result.LastModifiedAt);
+            Assert.AreEqual(0, result.AllLocalEntities);
+            Assert.AreEqual(0, result.OldestModifiedAt);
+            Assert.AreEqual(null, result.NewestModifiedAt);
         }
 
     }

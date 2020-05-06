@@ -6,11 +6,11 @@ namespace Blauhaus.Domain.Client.Sync
     {
         public SyncUpdate(TEntity current, bool canLoadMore = true)
         {
-            Current = current;
+            Model = current;
             CanLoadMore = canLoadMore;
         }
 
-        public TEntity Current { get; }
+        public TEntity Model { get; }
         public bool CanLoadMore { get; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Blauhaus.Domain.Client.Repositories;
 using Blauhaus.Domain.Client.Sync;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
@@ -57,10 +58,17 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Repositories
                 .ReturnsAsync(models);
             return this as TBuilder;
         }
-
-        public TBuilder Where_GetSyncStatusAsync_returns(params ClientSyncStatus[] values)
+        
+        public TBuilder Where_GetSyncStatusAsync_returns(ClientSyncStatus value)
         {
-            var queue = new Queue<ClientSyncStatus>(values);
+            Mock.Setup(x => x.GetSyncStatusAsync())
+                .ReturnsAsync(value);
+            return this as TBuilder;
+        }
+
+        public TBuilder Where_GetSyncStatusAsync_returns(List<ClientSyncStatus> values)
+        {
+            var queue = new Queue<ClientSyncStatus>(values.ToList());
             Mock.Setup(x => x.GetSyncStatusAsync())
                 .ReturnsAsync(queue.Dequeue);
             return this as TBuilder;

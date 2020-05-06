@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using Blauhaus.Common.ValueObjects.Errors;
@@ -6,6 +8,7 @@ using Blauhaus.Domain.Common.CommandHandlers;
 using Blauhaus.TestHelpers.MockBuilders;
 using CSharpFunctionalExtensions;
 using Moq;
+using Newtonsoft.Json;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.CommandHandlers._Base
 {
@@ -15,15 +18,39 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.CommandHandlers._Base
     {
     }
 
-
     public class CommandHandlerMockBuilder<TBuilder, TMock, TPayload, TCommand> : BaseMockBuilder<TBuilder, TMock>
         where TMock : class, ICommandHandler<TPayload, TCommand> 
         where TBuilder : BaseMockBuilder<TBuilder, TMock>
     {
+         
+        private readonly List<TCommand> _serializedCommands = new List<TCommand>();
+
         public TBuilder Where_HandleAsync_returns(TPayload payload)
         {
             Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Result.Success(payload));
+                .ReturnsAsync(Result.Success(payload))
+                .Callback((TCommand command, CancellationToken token) =>
+                {
+                    //we need to serialilze the values because SyncCommand changes state during execution
+                    _serializedCommands.Add(JsonConvert.DeserializeObject<TCommand>(JsonConvert.SerializeObject(command)));
+                }); ;
+            return this as TBuilder;
+        }
+
+        public TBuilder Where_HandleAsync_returns(List<TPayload> payloads)
+        {
+            var queue = new Queue<Result<TPayload>>();
+            foreach (var payload in payloads)
+            {
+                queue.Enqueue(Result.Success(payload));
+            }
+            Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(queue.Dequeue)
+                .Callback((TCommand command, CancellationToken token) =>
+                {
+                    //we need to serialilze the values because SyncCommand changes state during execution
+                    _serializedCommands.Add(JsonConvert.DeserializeObject<TCommand>(JsonConvert.SerializeObject(command)));
+                }); ;
             return this as TBuilder;
         }
 
@@ -49,13 +76,31 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.CommandHandlers._Base
         }
 
 
-        public TBuilder Where_HandleAsync_returns_throws(Exception exception)
+        public TBuilder Where_HandleAsync_throws(Exception exception)
         {
             Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>(), It.IsAny<CancellationToken>()))
                 .ThrowsAsync(exception);
             return this as TBuilder;
         }
+        
+        public void Verify_HandleAsync_called_in_sequence(int callIndex, Func<TCommand, bool> predicate)
+        {
+            if (_serializedCommands.Count < callIndex + 1)
+            {
+                throw new IndexOutOfRangeException();
+            }
+                
+            var commandAtIndex = _serializedCommands[callIndex];
+            if (predicate.Invoke(commandAtIndex) == false)
+            {
+                throw new Exception("Expcted command not called");
+            }
+        }
 
+        public void Verify_HandleAsync_called_Times(int times)
+        {
+            Mock.Verify(x => x.HandleAsync(It.IsAny<TCommand>(), It.IsAny<CancellationToken>()), Times.Exactly(times));
+        }
         public void Verify_HandleAsync_called_With(Expression<Func<TCommand, bool>> predicate)
         {
             Mock.Verify(x => x.HandleAsync(It.Is<TCommand>(predicate), It.IsAny<CancellationToken>()));
@@ -70,5 +115,6 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.CommandHandlers._Base
         {
             Mock.Verify(x => x.HandleAsync(It.IsAny<TCommand>(), It.IsAny<CancellationToken>()), Times.Never);
         }
+
     }
 }

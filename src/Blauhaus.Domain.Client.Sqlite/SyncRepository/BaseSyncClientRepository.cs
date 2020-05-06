@@ -48,10 +48,10 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
                     .Where(x => x.SyncState == SyncState.InSync)
                     .OrderByDescending(x => x.ModifiedAtTicks);
                 
-                syncStatus.LastModifiedAt = orderedQuery.FirstOrDefault()?.ModifiedAtTicks;
-                syncStatus.FirstModifiedAt = orderedQuery.LastOrDefault()?.ModifiedAtTicks ?? 0;
-                syncStatus.LocalSyncedEntities = orderedQuery.Count();
-                syncStatus.LocalEntities = connection.Table<TRootEntity>().Count();
+                syncStatus.NewestModifiedAt = orderedQuery.FirstOrDefault()?.ModifiedAtTicks;
+                syncStatus.OldestModifiedAt = orderedQuery.LastOrDefault()?.ModifiedAtTicks ?? 0;
+                syncStatus.SyncedLocalEntities = orderedQuery.Count();
+                syncStatus.AllLocalEntities = connection.Table<TRootEntity>().Count();
             });
 
             return syncStatus;

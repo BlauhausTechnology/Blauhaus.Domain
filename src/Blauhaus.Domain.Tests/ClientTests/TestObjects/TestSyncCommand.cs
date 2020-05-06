@@ -4,6 +4,6 @@ namespace Blauhaus.Domain.Tests.ClientTests.TestObjects
 {
     public class TestSyncCommand : SyncCommand
     {
-        
+        public string FavouriteFood { get; set; }
     }
 }

@@ -90,26 +90,7 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
                 TotalActiveEntityCount = totalActiveEntityCount
             });
 
-
-            //if (command.IsFirstRequestInSyncSequence())
-            //{
-            //    //when both values are provided, a new sync process has been started
-            //    //we need to return entities modified since the newest one on the device
-            //    //we also need to return entities modified before the oldest on device in case the sync wasn't completed
-            //    dbQuery = dbQuery.Where(x => 
-            //        x.ModifiedAt> command.ModifiedAfterTicks.ToUtcDateTime() || 
-            //        x.ModifiedAt < command.ModifiedBeforeTicks.ToUtcDateTime());
-            //}
-
-            //else
-            //{
-            //    //subsequent requests during sync only request progressively older items so we can ignore ModifiedAfter
-            //    if (command.ModifiedBeforeTicks != 0)
-            //    {
-            //        dbQuery = dbQuery.Where(x => x.ModifiedAt <  command.ModifiedBeforeTicks.ToUtcDateTime());
-            //    }
-            //}
-
+             
         }
     }
 }
