@@ -8,6 +8,8 @@ namespace Blauhaus.Domain.Client.Sync
         where TModel : IClientEntity
         where TSyncCommand : SyncCommand
     {
-        IObservable<SyncUpdate<TModel>> Connect(TSyncCommand syncCommand);
+        IObservable<TModel> Connect(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler);
+
+        void LoadMore();
     }
 }

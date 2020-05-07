@@ -13,7 +13,7 @@ using SqlKata;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTests
 {
-    public class LoadSyncedModelsAsyncTests : BaseSqliteTest<SyncClientRepository<ITestModel, ITestDto, TestSyncCommand, TestRootEntity>>
+    public class LoadModelsAsyncTests : BaseSqliteTest<SyncClientRepository<ITestModel, ITestDto, TestSyncCommand, TestRootEntity>>
     {
         private List<TestRootEntity> _entitiesConstructed;
         private Guid _ziggyId;
@@ -51,9 +51,9 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
         public async Task WHEN_ModifiedBeforeTicks_and_batch_size_are_given_SHOULD_return_correct_quantity_in_correct_order()
         {
             //Act
-            var result = await Sut.LoadSyncedModelsAsync(new TestSyncCommand
+            var result = await Sut.LoadModelsAsync(new TestSyncCommand
             {
-                ModifiedBeforeTicks = 6000,
+                OlderThan = 6000,
                 BatchSize = 3
             });
 
@@ -72,7 +72,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
         public async Task WHEN_ModifiedBeforeTicks_is_not_given_SHOULD_return_correct_quantity_in_correct_order()
         {
             //Act
-            var result = await Sut.LoadSyncedModelsAsync(new TestSyncCommand
+            var result = await Sut.LoadModelsAsync(new TestSyncCommand
             {
                 BatchSize = 3
             });
@@ -94,7 +94,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             //Act
             MockSyncQueryGenerator.Where_ExtendQuery_returns(new Query(nameof(TestRootEntity))
                 .WhereContains(nameof(TestRootEntity.RootName), "ggy"));
-            var result = await Sut.LoadSyncedModelsAsync(new TestSyncCommand { BatchSize = 3 });
+            var result = await Sut.LoadModelsAsync(new TestSyncCommand { BatchSize = 3 });
 
             //Arrance
             Assert.AreEqual(2, result.Count);

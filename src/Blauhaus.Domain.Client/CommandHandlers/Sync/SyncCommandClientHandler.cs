@@ -52,9 +52,9 @@ namespace Blauhaus.Domain.Client.CommandHandlers.Sync
 
             return Result.Success(new SyncResult<TModel>
             {
-                Entities = (List<TModel>) models,
-                TotalEntityCount = dtoResult.Value.TotalEntityCount,
-                ModifiedEntityCount = dtoResult.Value.ModifiedEntityCount
+                EntityBatch = (List<TModel>) models,
+                TotalActiveEntityCount = dtoResult.Value.TotalEntityCount,
+                EntitiesToDownloadCount = dtoResult.Value.ModifiedEntityCount
             });
         }
     }

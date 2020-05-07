@@ -1,9 +1,9 @@
 ﻿using System;
-using Blauhaus.ClientDatabase.Sqlite.Entities;
+using Blauhaus.Domain.Client.Sqlite.Entities;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests._TestObjects
 {
-    public class TestGrandChildEntity: BaseSqliteEntity
+    public class TestGrandChildEntity: BaseSyncClientEntity
     {
         public Guid ChildEntityId { get; set; }
         public string GrandchildName { get; set; }
