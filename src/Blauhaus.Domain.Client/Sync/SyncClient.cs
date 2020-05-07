@@ -60,24 +60,29 @@ namespace Blauhaus.Domain.Client.Sync
                     syncCommand.NewerThan = null;
                     syncCommand.OlderThan = null;
 
-                    await DownloadModelsAsync(syncCommand, syncRequirement, syncStatusHandler, observer, true, disposable.Token);
+                    await DownloadModelsAsync(syncCommand, syncRequirement, syncStatusHandler, observer, false, disposable.Token);
                 }
 
                 else
                 {
-                    //todo download newer entities
+                    //first update any new or modified entities
                     syncCommand.NewerThan = syncStatus.NewestModifiedAt;
-                    await DownloadModelsAsync(syncCommand, syncRequirement, syncStatusHandler, observer, false, disposable.Token);
-
-                    //todo download older entities if required
+                    await DownloadModelsAsync(syncCommand, syncRequirement, syncStatusHandler, observer, true, disposable.Token);
+                    
+                    //then complete download of any older items still required
+                    if (!syncRequirement.IsFulfilled(syncStatus.SyncedLocalEntities))
+                    {
+                        syncCommand.NewerThan = null;
+                        syncCommand.OlderThan = syncStatus.OldestModifiedAt;
+                        await DownloadModelsAsync(syncCommand, syncRequirement, syncStatusHandler, observer, false, disposable.Token);
+                    }
                 }
-
 
                 return disposable;
             });
         }
 
-        private async Task DownloadModelsAsync(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler, IObserver<SyncUpdate<TModel>> observer, bool isLoadingOlderItems, CancellationToken token)
+        private async Task DownloadModelsAsync(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler, IObserver<SyncUpdate<TModel>> observer, bool isLoadingNewerEntities, CancellationToken token)
         {
             while (true)
             {
@@ -106,7 +111,7 @@ namespace Blauhaus.Domain.Client.Sync
                 long stillToDownload = 0;
 
                 //when loading newer items than what we have on device we always try and sync them all
-                if (!isLoadingOlderItems || syncRequirement.SyncAll)
+                if (isLoadingNewerEntities || syncRequirement.SyncAll)
                 {
                     stillToDownload = serverDownloadResult.Value.EntitiesToDownloadCount - serverDownloadResult.Value.EntityBatch.Count;
                 }
@@ -117,15 +122,15 @@ namespace Blauhaus.Domain.Client.Sync
 
                 if (stillToDownload > 0)
                 {
-                    if (isLoadingOlderItems)
-                    {
-                        syncCommand.NewerThan = null;
-                        syncCommand.OlderThan = serverDownloadResult.Value.EntityBatch.Last().ModifiedAtTicks;
-                    }
-                    else
+                    if (isLoadingNewerEntities)
                     {
                         syncCommand.NewerThan = serverDownloadResult.Value.EntityBatch.First().ModifiedAtTicks;
                         syncCommand.OlderThan = null;
+                    }
+                    else
+                    {
+                        syncCommand.NewerThan = null;
+                        syncCommand.OlderThan = serverDownloadResult.Value.EntityBatch.Last().ModifiedAtTicks;
                     }
                     continue;
                 }

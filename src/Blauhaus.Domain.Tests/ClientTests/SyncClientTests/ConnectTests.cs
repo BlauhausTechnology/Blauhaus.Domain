@@ -48,6 +48,10 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 FavouriteFood = "Lasagne"
             }; 
             _clientSyncRequirement = ClientSyncRequirement.Batch;
+
+            MockSyncCommandHandler.Where_HandleAsync_returns(new SyncResult<TestModel>{EntityBatch = new List<TestModel>()});
+            MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new ClientSyncStatus());
+
             AddService(MockSyncClientRepository.Object);
             AddService(MockSyncCommandHandler.Object);
             AddService(MockTimeService.Object);
@@ -173,6 +177,90 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 Assert.AreEqual(publishedModels[2].Model.Id, newServerModels[2].Id);
             }
 
+            [Test]
+            public async Task WHEN_SyncRequirement_is_Batch_SHOULD_download_and_publish_only_one_batch()
+            { 
+                //Arrange
+                var models1 = TestModel.GenerateList(3).ToList();
+                var models2 = TestModel.GenerateList(3).ToList();
+                var models3 = TestModel.GenerateList(3).ToList();
+                MockSyncStatusHandler.Mock.SetupAllProperties();
+                MockSyncCommandHandler.Where_HandleAsync_returns(new List<SyncResult<TestModel>>
+                {
+                    new SyncResult<TestModel>
+                    {
+                        EntityBatch = models1,
+                        EntitiesToDownloadCount = 9,
+                        TotalActiveEntityCount = 9
+                    },                    
+                    new SyncResult<TestModel>
+                    {
+                        EntityBatch = models2,
+                        EntitiesToDownloadCount = 6,
+                        TotalActiveEntityCount = 9
+                    },                    
+                    new SyncResult<TestModel>
+                    {
+                        EntityBatch = models3,
+                        EntitiesToDownloadCount = 3,
+                        TotalActiveEntityCount = 9
+                    }
+                });
+                MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
+                {
+                    new ClientSyncStatus
+                    {
+                        SyncedLocalEntities = 0,
+                        AllLocalEntities = 0,
+                        OldestModifiedAt = 0,
+                        NewestModifiedAt = 0
+                    },
+                    new ClientSyncStatus
+                    {
+                        SyncedLocalEntities = 3,
+                        AllLocalEntities = 3,
+                        OldestModifiedAt = models1.Last().ModifiedAtTicks,
+                        NewestModifiedAt = models1.First().ModifiedAtTicks
+                    },                    
+                    new ClientSyncStatus
+                    {
+                        SyncedLocalEntities = 6,
+                        AllLocalEntities = 6,
+                        OldestModifiedAt = models2.Last().ModifiedAtTicks,
+                        NewestModifiedAt = models2.First().ModifiedAtTicks
+                    },
+                    new ClientSyncStatus
+                    {
+                        SyncedLocalEntities = 9,
+                        AllLocalEntities = 9,
+                        OldestModifiedAt = models3.Last().ModifiedAtTicks,
+                        NewestModifiedAt = models3.First().ModifiedAtTicks
+                    }});
+                var publishedModels = new List<SyncUpdate<TestModel>>();
+
+                //Act
+                Sut.Connect(_syncCommand, ClientSyncRequirement.Batch, MockSyncStatusHandler.Object).Subscribe(next =>
+                {
+                    publishedModels.Add(next);
+                    if (publishedModels.Count == 3)
+                    {
+                        _tcs.SetResult(publishedModels);
+                    }
+                });
+                await _tcs.Task;
+
+                //Assert
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.NewerThan == null);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.OlderThan == null); 
+                MockSyncCommandHandler.Verify_HandleAsync_called_Times(1);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.NewlyDownloadedEntities = 3);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.AllLocalEntities = 3);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.AllServerEntities = 9);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 3);
+                MockAnalyticsService.VerifyTrace("3 TestModel entities downloaded");
+                MockSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync(), Times.Exactly(2));
+            }
+            
             [Test]
             public async Task WHEN_SyncRequirement_is_all_SHOULD_download_and_publish_all_while_updating_client_status()
             { 
@@ -329,7 +417,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 var publishedModels = new List<SyncUpdate<TestModel>>();
 
                 //Act
-                Sut.Connect(_syncCommand, ClientSyncRequirement.AtLeast(5), MockSyncStatusHandler.Object).Subscribe(next =>
+                Sut.Connect(_syncCommand, ClientSyncRequirement.Minimum(5), MockSyncStatusHandler.Object).Subscribe(next =>
                 {
                     publishedModels.Add(next);
                     if (publishedModels.Count == 6)
@@ -358,25 +446,21 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
 
         }
 
-        public class NewModelsAndMoreOldModelsAvailable : ConnectTests
-        {
-            private List<TestModel> _localModels;
-            private List<TestModel> _newServerModels1;
-            private List<TestModel> _newServerModels2;
-            private List<TestModel> _oldServerModels1;
-            private List<TestModel> _oldServerModels2;
+        public class NotFirstTimeSync : ConnectTests
+        { 
+            
 
-            public override void Setup()
+            [Test]
+            public async Task WHEN_SyncRequirement_All_SHOULD_load_all_newer_and_older_entities_from_server()
             {
-                base.Setup();
-                
-                _localModels = TestModel.GenerateList(3).OrderByDescending(x => x.ModifiedAtTicks).ToList();
-                _newServerModels1 = TestModel.GenerateList(3).OrderBy(x => x.ModifiedAtTicks).ToList();
-                _newServerModels2 = TestModel.GenerateList(3).OrderBy(x => x.ModifiedAtTicks).ToList();
-                _oldServerModels1 = TestModel.GenerateList(3).OrderByDescending(x => x.ModifiedAtTicks).ToList();
-                _oldServerModels2 = TestModel.GenerateList(3).OrderByDescending(x => x.ModifiedAtTicks).ToList();
+                 //Arrange
+                var localModels = TestModel.GenerateList(3).OrderByDescending(x => x.ModifiedAtTicks).ToList();
+                var newServerModels1 = TestModel.GenerateList(3).OrderBy(x => x.ModifiedAtTicks).ToList();
+                var newServerModels2 = TestModel.GenerateList(3).OrderBy(x => x.ModifiedAtTicks).ToList();
+                var oldServerModels1 = TestModel.GenerateList(3).OrderByDescending(x => x.ModifiedAtTicks).ToList();
+                var oldServerModels2 = TestModel.GenerateList(3).OrderByDescending(x => x.ModifiedAtTicks).ToList();
 
-                MockSyncClientRepository.Where_LoadSyncedModelsAsync_returns(_localModels);
+                MockSyncClientRepository.Where_LoadSyncedModelsAsync_returns(localModels);
                 MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
                 {
                     //local entities
@@ -384,40 +468,40 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                     {
                         AllLocalEntities = 3,
                         SyncedLocalEntities = 3,
-                        NewestModifiedAt = _localModels.First().ModifiedAtTicks,
-                        OldestModifiedAt = _localModels.Last().ModifiedAtTicks
+                        NewestModifiedAt = localModels.First().ModifiedAtTicks,
+                        OldestModifiedAt = localModels.Last().ModifiedAtTicks
                     },
                     //after downloading first set of new entities
                     new ClientSyncStatus
                     {
                         AllLocalEntities = 6,
                         SyncedLocalEntities = 6,
-                        NewestModifiedAt = _newServerModels1.Last().ModifiedAtTicks,
-                        OldestModifiedAt = _newServerModels1.First().ModifiedAtTicks
+                        NewestModifiedAt = newServerModels1.Last().ModifiedAtTicks,
+                        OldestModifiedAt = newServerModels1.First().ModifiedAtTicks
                     },
                     //after downloading second set of new entities
                     new ClientSyncStatus
                     {
                         AllLocalEntities = 9,
                         SyncedLocalEntities = 9,
-                        NewestModifiedAt = _newServerModels2.Last().ModifiedAtTicks,
-                        OldestModifiedAt = _newServerModels2.First().ModifiedAtTicks
+                        NewestModifiedAt = newServerModels2.Last().ModifiedAtTicks,
+                        OldestModifiedAt = newServerModels2.First().ModifiedAtTicks
                     },
                     //after downloading first set of old entities
                     new ClientSyncStatus
                     {
                         AllLocalEntities = 12,
                         SyncedLocalEntities = 12,
-                        NewestModifiedAt = _oldServerModels1.First().ModifiedAtTicks,
-                        OldestModifiedAt = _oldServerModels1.Last().ModifiedAtTicks
+                        NewestModifiedAt = oldServerModels1.First().ModifiedAtTicks,
+                        OldestModifiedAt = oldServerModels1.Last().ModifiedAtTicks
                     },
                     //after downloading second set of old entities
                     new ClientSyncStatus
                     {
                         AllLocalEntities = 15,
                         SyncedLocalEntities = 15,
-                        NewestModifiedAt = _oldServerModels2.First().ModifiedAtTicks,
-                        OldestModifiedAt = _oldServerModels2.Last().ModifiedAtTicks
+                        NewestModifiedAt = oldServerModels2.First().ModifiedAtTicks,
+                        OldestModifiedAt = oldServerModels2.Last().ModifiedAtTicks
                     },
                 });
                 MockSyncCommandHandler.Where_HandleAsync_returns(new List<SyncResult<TestModel>>
@@ -425,60 +509,226 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                     new SyncResult<TestModel>
                     {
                         EntitiesToDownloadCount = 6,
-                        EntityBatch = _newServerModels1,
+                        EntityBatch = newServerModels1,
                         TotalActiveEntityCount = 200
                     },
                     new SyncResult<TestModel>
                     {
                         EntitiesToDownloadCount = 3,
-                        EntityBatch = _newServerModels2,
+                        EntityBatch = newServerModels2,
                         TotalActiveEntityCount = 200
                     },
                     new SyncResult<TestModel>
                     {
                         EntitiesToDownloadCount = 6,
-                        EntityBatch = _oldServerModels1,
+                        EntityBatch = oldServerModels1,
                         TotalActiveEntityCount = 200
                     },
                     new SyncResult<TestModel>
                     {
                         EntitiesToDownloadCount = 3,
-                        EntityBatch = _oldServerModels2,
+                        EntityBatch = oldServerModels2,
                         TotalActiveEntityCount = 200
                     }
                 });
-            }
-
-            [Test]
-            public async Task SHOULD_load_newer_and_older_entities_from_server()
-            {
-                //Arrange
 
                 //Act
-                Sut.Connect(_syncCommand, _clientSyncRequirement, MockSyncStatusHandler.Object).Subscribe();
+                Sut.Connect(_syncCommand, ClientSyncRequirement.All, MockSyncStatusHandler.Object).Subscribe();
 
                 //Assert
                 MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.OlderThan == null);
-                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.NewerThan == _localModels.First().ModifiedAtTicks);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.NewerThan == localModels.First().ModifiedAtTicks);
                 MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.BatchSize == 3);
                 MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.FavouriteFood == "Lasagne");
 
-                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.OlderThan == null);
-                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.NewerThan == _newServerModels1.First().ModifiedAtTicks);
-                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.BatchSize == 3);
-                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.FavouriteFood == "Lasagne");
-                
-                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.OlderThan == _localModels.Last().ModifiedAtTicks);
-                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.NewerThan == null);
-                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.BatchSize == 3);
-                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.FavouriteFood == "Lasagne");
-                
-                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.OlderThan == _oldServerModels1.Last().ModifiedAtTicks);
-                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.NewerThan == null);
-                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.BatchSize == 3);
-                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.FavouriteFood == "Lasagne");
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(1, x => x.OlderThan == null);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(1, x => x.NewerThan == newServerModels1.First().ModifiedAtTicks);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(1, x => x.BatchSize == 3);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(1, x => x.FavouriteFood == "Lasagne");
 
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(2, x => x.OlderThan == localModels.Last().ModifiedAtTicks);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(2, x => x.NewerThan == null);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(2, x => x.BatchSize == 3);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(2, x => x.FavouriteFood == "Lasagne");
+
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(3, x => x.OlderThan == oldServerModels1.Last().ModifiedAtTicks);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(3, x => x.NewerThan == null);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(3, x => x.BatchSize == 3);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(3, x => x.FavouriteFood == "Lasagne");
             }
+
+            [Test]
+            public void IF_SyncRequirement_is_All_SHOULD_check_for_older_items_even_when_all_synced()
+            {
+                //Arrange
+                var localModels = TestModel.GenerateList(15).OrderByDescending(x => x.ModifiedAtTicks).ToList(); 
+
+                MockSyncClientRepository.Where_LoadSyncedModelsAsync_returns(localModels);
+                MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new ClientSyncStatus
+                {
+                    AllLocalEntities = 15,
+                    SyncedLocalEntities = 15,
+                    NewestModifiedAt = localModels.First().ModifiedAtTicks,
+                    OldestModifiedAt = localModels.Last().ModifiedAtTicks
+                });
+                MockSyncCommandHandler.Where_HandleAsync_returns(new SyncResult<TestModel>
+                {
+                    EntitiesToDownloadCount = 0,
+                    EntityBatch = new List<TestModel>(),
+                    TotalActiveEntityCount = 15
+                });
+
+                //Act
+                Sut.Connect(_syncCommand, ClientSyncRequirement.All, MockSyncStatusHandler.Object).Subscribe();
+
+                //Assert
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.OlderThan == null);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.NewerThan == localModels.First().ModifiedAtTicks);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.BatchSize == 3);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.FavouriteFood == "Lasagne");
+
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(1, x => x.OlderThan ==  localModels.Last().ModifiedAtTicks);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(1, x => x.NewerThan == null);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(1, x => x.BatchSize == 3);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(1, x => x.FavouriteFood == "Lasagne");
+                MockSyncCommandHandler.Verify_HandleAsync_called_Times(2);
+            }
+
+            [Test]
+            public void IF_SyncRequirement_is_AtLeast_and_minimum_has_been_downloaded_SHOULD_not_check_for_older_items()
+            {
+                //Arrange
+                var localModels = TestModel.GenerateList(15).OrderByDescending(x => x.ModifiedAtTicks).ToList(); 
+
+                MockSyncClientRepository.Where_LoadSyncedModelsAsync_returns(localModels);
+                MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new ClientSyncStatus
+                {
+                    AllLocalEntities = 15,
+                    SyncedLocalEntities = 15,
+                    NewestModifiedAt = localModels.First().ModifiedAtTicks,
+                    OldestModifiedAt = localModels.Last().ModifiedAtTicks
+                });
+                MockSyncCommandHandler.Where_HandleAsync_returns(new SyncResult<TestModel>
+                {
+                    EntitiesToDownloadCount = 0,
+                    EntityBatch = new List<TestModel>(),
+                    TotalActiveEntityCount = 15
+                });
+
+                //Act
+                Sut.Connect(_syncCommand, ClientSyncRequirement.Minimum(15), MockSyncStatusHandler.Object).Subscribe();
+
+                //Assert
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.OlderThan == null);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.NewerThan == localModels.First().ModifiedAtTicks);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.BatchSize == 3);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.FavouriteFood == "Lasagne");
+                MockSyncCommandHandler.Verify_HandleAsync_called_Times(1);
+            }
+            
+            [Test]
+            public async Task WHEN_SyncRequirement_Minimum_SHOULD_load_all_newer_and_older_entities_from_server_until_mnimum_reached()
+            {
+                 //Arrange
+                var localModels = TestModel.GenerateList(3).OrderByDescending(x => x.ModifiedAtTicks).ToList();
+                var newServerModels1 = TestModel.GenerateList(3).OrderBy(x => x.ModifiedAtTicks).ToList();
+                var newServerModels2 = TestModel.GenerateList(3).OrderBy(x => x.ModifiedAtTicks).ToList();
+                var oldServerModels1 = TestModel.GenerateList(3).OrderByDescending(x => x.ModifiedAtTicks).ToList();
+                var oldServerModels2 = TestModel.GenerateList(3).OrderByDescending(x => x.ModifiedAtTicks).ToList();
+
+                MockSyncClientRepository.Where_LoadSyncedModelsAsync_returns(localModels);
+                MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
+                {
+                    //local entities
+                    new ClientSyncStatus
+                    {
+                        AllLocalEntities = 3,
+                        SyncedLocalEntities = 3,
+                        NewestModifiedAt = localModels.First().ModifiedAtTicks,
+                        OldestModifiedAt = localModels.Last().ModifiedAtTicks
+                    },
+                    //after downloading first set of new entities
+                    new ClientSyncStatus
+                    {
+                        AllLocalEntities = 6,
+                        SyncedLocalEntities = 6,
+                        NewestModifiedAt = newServerModels1.Last().ModifiedAtTicks,
+                        OldestModifiedAt = newServerModels1.First().ModifiedAtTicks
+                    },
+                    //after downloading second set of new entities
+                    new ClientSyncStatus
+                    {
+                        AllLocalEntities = 9,
+                        SyncedLocalEntities = 9,
+                        NewestModifiedAt = newServerModels2.Last().ModifiedAtTicks,
+                        OldestModifiedAt = newServerModels2.First().ModifiedAtTicks
+                    },
+                    //after downloading first set of old entities
+                    new ClientSyncStatus
+                    {
+                        AllLocalEntities = 12,
+                        SyncedLocalEntities = 12,
+                        NewestModifiedAt = oldServerModels1.First().ModifiedAtTicks,
+                        OldestModifiedAt = oldServerModels1.Last().ModifiedAtTicks
+                    },
+                    //after downloading second set of old entities
+                    new ClientSyncStatus
+                    {
+                        AllLocalEntities = 15,
+                        SyncedLocalEntities = 15,
+                        NewestModifiedAt = oldServerModels2.First().ModifiedAtTicks,
+                        OldestModifiedAt = oldServerModels2.Last().ModifiedAtTicks
+                    },
+                });
+                MockSyncCommandHandler.Where_HandleAsync_returns(new List<SyncResult<TestModel>>
+                {
+                    new SyncResult<TestModel>
+                    {
+                        EntitiesToDownloadCount = 6,
+                        EntityBatch = newServerModels1,
+                        TotalActiveEntityCount = 200
+                    },
+                    new SyncResult<TestModel>
+                    {
+                        EntitiesToDownloadCount = 3,
+                        EntityBatch = newServerModels2,
+                        TotalActiveEntityCount = 200
+                    },
+                    new SyncResult<TestModel>
+                    {
+                        EntitiesToDownloadCount = 6,
+                        EntityBatch = oldServerModels1,
+                        TotalActiveEntityCount = 200
+                    },
+                    new SyncResult<TestModel>
+                    {
+                        EntitiesToDownloadCount = 3,
+                        EntityBatch = oldServerModels2,
+                        TotalActiveEntityCount = 200
+                    }
+                });
+
+                //Act
+                Sut.Connect(_syncCommand, ClientSyncRequirement.Minimum(11), MockSyncStatusHandler.Object).Subscribe();
+
+                //Assert
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.OlderThan == null);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.NewerThan == localModels.First().ModifiedAtTicks);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.BatchSize == 3);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.FavouriteFood == "Lasagne");
+
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(1, x => x.OlderThan == null);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(1, x => x.NewerThan == newServerModels1.First().ModifiedAtTicks);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(1, x => x.BatchSize == 3);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(1, x => x.FavouriteFood == "Lasagne");
+
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(2, x => x.OlderThan == localModels.Last().ModifiedAtTicks);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(2, x => x.NewerThan == null);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(2, x => x.BatchSize == 3);
+                MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(2, x => x.FavouriteFood == "Lasagne");
+                MockSyncCommandHandler.Verify_HandleAsync_called_Times(3);
+            }
+
         }
          
     }
