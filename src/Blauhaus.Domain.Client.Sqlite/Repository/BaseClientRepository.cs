@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Blauhaus.Analytics.Abstractions.Operation;
 using Blauhaus.Analytics.Abstractions.Service;
-using Blauhaus.ClientDatabase.Sqlite.Entities;
 using Blauhaus.ClientDatabase.Sqlite.Service;
 using Blauhaus.Domain.Client.Repositories;
+using Blauhaus.Domain.Client.Sqlite.Entities;
 using Blauhaus.Domain.Common.Entities;
 using SqlKata;
 using SqlKata.Compilers;
@@ -13,7 +12,7 @@ namespace Blauhaus.Domain.Client.Sqlite.Repository
 {
     public abstract class BaseClientRepository<TModel, TDto, TRootEntity> : IClientRepository<TModel, TDto> 
         where TModel : class, IClientEntity
-        where TRootEntity : BaseSqliteEntity, new()
+        where TRootEntity : ISyncClientEntity, new()
     {
         protected readonly IAnalyticsService AnalyticsService;
         protected readonly ISqliteDatabaseService DatabaseService;

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Domain.Common.Entities;
+using Blauhaus.Domain.Common.Errors;
 using Blauhaus.Domain.Server.CommandHandlers;
 using Blauhaus.Domain.Server.CommandHandlers.Sync;
 using Blauhaus.Domain.Tests._Base;
@@ -40,330 +42,312 @@ namespace Blauhaus.Domain.Tests.ServerTests
             AddService(MockQueryLoader.Object);
         }
 
-
-        [Test]
-        public async Task SHOULD_trace_success()
+        public class LoadingOlderAndNewerEntites : AuthenticatedSyncCommandHandlerTests
         {
-            //Arrange
-            _command.BatchSize = 3;
-
-            //Act
-            var queryResult = await Sut.HandleAsync(_command, _user, CancellationToken);
-            var result = queryResult.Value;
-
-            //Assert
-            Assert.AreEqual(3, result.Entities.Count);
-            Assert.AreEqual(12, result.TotalEntityCount);
-            Assert.AreEqual(12, result.ModifiedEntityCount);
-            result.Entities.VerifyEntities(new List<TestServerEntity>
+            
+            [Test]
+            public async Task SHOULD_fail()
             {
-                _entities[0],
-                _entities[1],
-                _entities[2]
-            });
-            MockAnalyticsService.VerifyTrace("SyncCommand processed");
-            MockAnalyticsService.VerifyTraceProperty("TotalEntityCount", 12);
-            MockAnalyticsService.VerifyTraceProperty("ModifiedEntityCount", 12);
-            MockAnalyticsService.VerifyTraceProperty("BatchCount", 3);
+                //Arrange
+                _command.OlderThan = 100;
+                _command.NewerThan = 100;
+
+                //Act
+                var queryResult = await Sut.HandleAsync(_command, _user, CancellationToken);
+
+                //Assert
+                Assert.AreEqual(SyncErrors.InvalidSyncCommand.ToString(), queryResult.Error);
+                MockAnalyticsService.VerifyTrace(SyncErrors.InvalidSyncCommand.Code, LogSeverity.Error);
+            }
+
         }
 
-        [Test]
-        public async Task IF_batch_size_is_overriden_SHOULD_return_most_recent_entities()
+        public class LoadingOlderEntities : AuthenticatedSyncCommandHandlerTests
         {
-            //Arrange
-            _command.BatchSize = 3;
-
-            //Act
-            var queryResult = await Sut.HandleAsync(_command, _user, CancellationToken);
-            var result = queryResult.Value;
-
-            //Assert
-            Assert.AreEqual(3, result.Entities.Count);
-            Assert.AreEqual(12, result.TotalEntityCount);
-            Assert.AreEqual(12, result.ModifiedEntityCount);
-            result.Entities.VerifyEntities(new List<TestServerEntity>
+            
+            [Test]
+            public async Task SHOULD_return_entities_modified_before_given_ModifiedBeforeTicks_with_newest_first_and_oldest_excluded()
             {
-                _entities[0],
-                _entities[1],
-                _entities[2]
-            });
-        }
+                //Arrange
+                _command.BatchSize = 3;
+                _command.OlderThan = _entities[5].ModifiedAt.Ticks;
 
-        [Test]
-        public async Task IF_neither_modifiedAfter_nor_modifiedBefore_are_specified_SHOULD_exclude_inactive_entities()
-        {
-            //Arrange
-            _command.ModifiedAfterTicks = default;
-            _command.ModifiedBeforeTicks = default;
-            MockQueryLoader.Mock.Setup(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), _user, CancellationToken))
-                .ReturnsAsync(Result.Success(new List<TestServerEntity>
+                //Act
+                var queryResult = await Sut.HandleAsync(_command, _user, CancellationToken);
+                var result = queryResult.Value;
+
+                //Assert
+                Assert.AreEqual(12, result.TotalActiveEntityCount); 
+                Assert.AreEqual(6, result.EntitiesToDownloadCount); 
+                Assert.AreEqual(3, result.EntityBatch.Count); 
+                result.EntityBatch.VerifyEntities(new List<TestServerEntity>
                 {
-                    new TestServerEntity(Guid.NewGuid(), EntityState.Deleted, DateTime.UtcNow, DateTime.UtcNow)
-                }.AsQueryable()));
+                    _entities[6], 
+                    _entities[7], 
+                    _entities[8]
+                }); 
+                MockAnalyticsService.VerifyTrace("SyncCommand for older entities processed");
+                MockAnalyticsService.VerifyTraceProperty("TotalActiveEntityCount", 12);
+                MockAnalyticsService.VerifyTraceProperty("EntitiesToDownloadCount", 6);
+                MockAnalyticsService.VerifyTraceProperty("EntityBatchCount", 3);
+            }
 
-            //Act
-            var queryResult = await Sut.HandleAsync(_command, _user, CancellationToken);
-            var result = queryResult.Value;
+            [Test]
+            public async Task SHOULD_exclude_inactive_entities()
+            {
+                //Arrange
+                _command.OlderThan = DateTime.UtcNow.Ticks;
+                MockQueryLoader.Mock.Setup(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), _user, CancellationToken))
+                    .ReturnsAsync(Result.Success(new List<TestServerEntity>
+                    {
+                        new TestServerEntity(Guid.NewGuid(), EntityState.Deleted, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
+                        new TestServerEntity(Guid.NewGuid(), EntityState.Active, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
+                    }.AsQueryable()));
 
-            //Assert
-            Assert.AreEqual(0, result.Entities.Count);
-            Assert.AreEqual(0, result.TotalEntityCount); 
-            Assert.AreEqual(0, result.ModifiedEntityCount);
-            Assert.IsNull(result.Entities.FirstOrDefault(x => x.EntityState == EntityState.Deleted));
+                //Act
+                var queryResult = await Sut.HandleAsync(_command, _user, CancellationToken);
+                var result = queryResult.Value;
+
+                //Assert
+                Assert.AreEqual(1, result.EntityBatch.Count);
+                Assert.AreEqual(1, result.TotalActiveEntityCount); 
+                Assert.AreEqual(1, result.EntitiesToDownloadCount);
+                Assert.IsNull(result.EntityBatch.FirstOrDefault(x => x.EntityState == EntityState.Deleted));
+            }
+
+            [Test]
+            public async Task SHOULD_allow_paging_through_dataset()
+            {
+                //Act 1
+                var result1 = await Sut.HandleAsync(new TestSyncCommand
+                {
+                    BatchSize = 4,
+                    OlderThan = _entities[5].ModifiedAt.Ticks
+                }, _user, CancellationToken);
+                Assert.AreEqual(4, result1.Value.EntityBatch.Count);
+                Assert.AreEqual(12, result1.Value.TotalActiveEntityCount);
+                Assert.AreEqual(6, result1.Value.EntitiesToDownloadCount);
+                result1.Value.EntityBatch.VerifyEntities(new List<TestServerEntity>
+                {
+                    _entities[6], 
+                    _entities[7], 
+                    _entities[8], 
+                    _entities[9]
+                }); 
+
+                //Act 2
+                var result2 = await Sut.HandleAsync(new TestSyncCommand
+                {
+                    BatchSize = 4,
+                    OlderThan = result1.Value.EntityBatch.Last().ModifiedAt.Ticks
+                }, _user, CancellationToken);
+                Assert.AreEqual(2, result2.Value.EntityBatch.Count);
+                Assert.AreEqual(12, result2.Value.TotalActiveEntityCount);
+                Assert.AreEqual(2, result2.Value.EntitiesToDownloadCount);
+                result2.Value.EntityBatch.VerifyEntities(new List<TestServerEntity>
+                {
+                    _entities[10], 
+                    _entities[11], 
+                }); 
+            }
+             
+
+
+        }
+
+        public class LoadingNewerEntities : AuthenticatedSyncCommandHandlerTests
+        {
+            [Test]
+            public async Task SHOULD_return_entities_modified_after_given_ModifiedAfterTicks_with_oldest_first_and_newest_excluded()
+            {
+                //Arrange
+                _command.BatchSize = 3;
+                _command.NewerThan = _entities[5].ModifiedAt.Ticks;
+
+                //Act
+                var queryResult = await Sut.HandleAsync(_command, _user, CancellationToken);
+                var result = queryResult.Value;
+
+                //Assert
+                Assert.AreEqual(12, result.TotalActiveEntityCount); 
+                Assert.AreEqual(5, result.EntitiesToDownloadCount); 
+                Assert.AreEqual(3, result.EntityBatch.Count); 
+                result.EntityBatch.VerifyEntities(new List<TestServerEntity>
+                {
+                    _entities[4], 
+                    _entities[3], 
+                    _entities[2]
+                }); 
+                MockAnalyticsService.VerifyTrace("SyncCommand for newer entities processed");
+                MockAnalyticsService.VerifyTraceProperty("TotalActiveEntityCount", 12);
+                MockAnalyticsService.VerifyTraceProperty("EntitiesToDownloadCount", 5);
+                MockAnalyticsService.VerifyTraceProperty("EntityBatchCount", 3);
+            }
+            
+            [Test]
+            public async Task SHOULD_include_inactive_entities()
+            {
+                //Arrange
+                _command.NewerThan = DateTime.UtcNow.AddDays(-11).Ticks;
+                MockQueryLoader.Mock.Setup(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), _user, CancellationToken))
+                    .ReturnsAsync(Result.Success(new List<TestServerEntity>
+                    {
+                        new TestServerEntity(Guid.NewGuid(), EntityState.Deleted, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
+                        new TestServerEntity(Guid.NewGuid(), EntityState.Active, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
+                    }.AsQueryable()));
+
+                //Act
+                var queryResult = await Sut.HandleAsync(_command, _user, CancellationToken);
+                var result = queryResult.Value;
+
+                //Assert
+                Assert.AreEqual(2, result.EntityBatch.Count);
+                Assert.AreEqual(1, result.TotalActiveEntityCount); 
+                Assert.AreEqual(2, result.EntitiesToDownloadCount);
+            }
+            
+            [Test]
+            public async Task SHOULD_allow_paging_through_dataset()
+            {
+                //Act 1
+                var result1 = await Sut.HandleAsync(new TestSyncCommand
+                {
+                    BatchSize = 4,
+                    NewerThan = _entities[5].ModifiedAt.Ticks
+                }, _user, CancellationToken);
+                Assert.AreEqual(4, result1.Value.EntityBatch.Count);
+                Assert.AreEqual(12, result1.Value.TotalActiveEntityCount);
+                Assert.AreEqual(5, result1.Value.EntitiesToDownloadCount);
+                result1.Value.EntityBatch.VerifyEntities(new List<TestServerEntity>
+                {
+                    _entities[4], 
+                    _entities[3], 
+                    _entities[2], 
+                    _entities[1]
+                }); 
+
+                //Act 2
+                var result2 = await Sut.HandleAsync(new TestSyncCommand
+                {
+                    BatchSize = 4,
+                    NewerThan = result1.Value.EntityBatch.Last().ModifiedAt.Ticks
+                }, _user, CancellationToken);
+                Assert.AreEqual(1, result2.Value.EntityBatch.Count);
+                Assert.AreEqual(12, result2.Value.TotalActiveEntityCount);
+                Assert.AreEqual(1, result2.Value.EntitiesToDownloadCount);
+                result2.Value.EntityBatch.VerifyEntities(new List<TestServerEntity>
+                {
+                    _entities[0], 
+                }); 
+            }
+        }
+
+        public class LoadingForFirstTime : AuthenticatedSyncCommandHandlerTests
+        {
+                       
+            [Test]
+            public async Task SHOULD_return_all_entites_with_newest_first_and_oldest_excluded()
+            {
+                //Arrange
+                _command.BatchSize = 3;
+
+                //Act
+                var queryResult = await Sut.HandleAsync(_command, _user, CancellationToken);
+                var result = queryResult.Value;
+
+                //Assert
+                Assert.AreEqual(12, result.TotalActiveEntityCount); 
+                Assert.AreEqual(12, result.EntitiesToDownloadCount); 
+                Assert.AreEqual(3, result.EntityBatch.Count); 
+                result.EntityBatch.VerifyEntities(new List<TestServerEntity>
+                {
+                    _entities[0], 
+                    _entities[1], 
+                    _entities[2]
+                }); 
+                MockAnalyticsService.VerifyTrace("SyncCommand for new device processed");
+                MockAnalyticsService.VerifyTraceProperty("TotalActiveEntityCount", 12);
+                MockAnalyticsService.VerifyTraceProperty("EntitiesToDownloadCount", 12);
+                MockAnalyticsService.VerifyTraceProperty("EntityBatchCount", 3);
+            }
+
+            [Test]
+            public async Task SHOULD_exclude_inactive_entities()
+            {
+                //Arrange
+                MockQueryLoader.Mock.Setup(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), _user, CancellationToken))
+                    .ReturnsAsync(Result.Success(new List<TestServerEntity>
+                    {
+                        new TestServerEntity(Guid.NewGuid(), EntityState.Deleted, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
+                        new TestServerEntity(Guid.NewGuid(), EntityState.Active, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
+                    }.AsQueryable()));
+
+                //Act
+                var queryResult = await Sut.HandleAsync(_command, _user, CancellationToken);
+                var result = queryResult.Value;
+
+                //Assert
+                Assert.AreEqual(1, result.EntityBatch.Count);
+                Assert.AreEqual(1, result.TotalActiveEntityCount); 
+                Assert.AreEqual(1, result.EntitiesToDownloadCount);
+                Assert.IsNull(result.EntityBatch.FirstOrDefault(x => x.EntityState == EntityState.Deleted));
+            }
+                          
+            [Test]
+            public async Task SHOULD_allow_paging_through_dataset()
+            {
+                //Act 1
+                var result1 = await Sut.HandleAsync(new TestSyncCommand
+                {
+                    BatchSize = 5
+                }, _user, CancellationToken);
+                Assert.AreEqual(5, result1.Value.EntityBatch.Count);
+                Assert.AreEqual(12, result1.Value.TotalActiveEntityCount);
+                Assert.AreEqual(12, result1.Value.EntitiesToDownloadCount);
+                result1.Value.EntityBatch.VerifyEntities(new List<TestServerEntity>
+                {
+                    _entities[0], 
+                    _entities[1], 
+                    _entities[2], 
+                    _entities[3], 
+                    _entities[4] 
+                }); 
+
+                //Act 2
+                var result2 = await Sut.HandleAsync(new TestSyncCommand
+                {
+                    BatchSize = 5,
+                    OlderThan = result1.Value.EntityBatch.Last().ModifiedAt.Ticks
+                }, _user, CancellationToken);
+                Assert.AreEqual(5, result2.Value.EntityBatch.Count);
+                Assert.AreEqual(12, result2.Value.TotalActiveEntityCount);
+                Assert.AreEqual(7, result2.Value.EntitiesToDownloadCount);
+                result2.Value.EntityBatch.VerifyEntities(new List<TestServerEntity>
+                {
+                    _entities[5], 
+                    _entities[6], 
+                    _entities[7], 
+                    _entities[8], 
+                    _entities[9] 
+                }); 
+
+                //Act 3
+                var result3 = await Sut.HandleAsync(new TestSyncCommand
+                {
+                    BatchSize = 5,
+                    OlderThan = result2.Value.EntityBatch.Last().ModifiedAt.Ticks
+                }, _user, CancellationToken);
+                Assert.AreEqual(2, result3.Value.EntityBatch.Count); 
+                Assert.AreEqual(12, result3.Value.TotalActiveEntityCount);
+                Assert.AreEqual(2, result3.Value.EntitiesToDownloadCount);
+                result3.Value.EntityBatch.VerifyEntities(new List<TestServerEntity>
+                {
+                    _entities[10], 
+                    _entities[11]
+                }); 
+            }
+
         }
          
-        [Test]
-        public async Task IF_ModifiedBefore_is_specified_SHOULD_return_only_entities_modified_before()
-        {
-            //Arrange
-            _command.BatchSize = 3;
-            _command.ModifiedBeforeTicks = _entities[5].ModifiedAt.Ticks;
-
-            //Act
-            var queryResult = await Sut.HandleAsync(_command, _user, CancellationToken);
-            var result = queryResult.Value;
-
-            //Assert
-            Assert.AreEqual(12, result.TotalEntityCount); 
-            Assert.AreEqual(6, result.ModifiedEntityCount); 
-            Assert.AreEqual(3, result.Entities.Count); 
-            result.Entities.VerifyEntities(new List<TestServerEntity>
-            {
-                _entities[6], 
-                _entities[7], 
-                _entities[8]
-            }); 
-        }
-
-        [Test]
-        public async Task IF_ModifiedBefore_is_specified_and_batch_size_is_smaller_than_result_set_SHOULD_remove_older_items()
-        {
-            //Arrange
-            _command.BatchSize = 2;
-            _command.ModifiedBeforeTicks = _entities[5].ModifiedAt.Ticks;
-
-            //Act
-            var queryResult = await Sut.HandleAsync(_command, _user, CancellationToken);
-            var result = queryResult.Value;
-
-            //Assert
-            Assert.AreEqual(12, result.TotalEntityCount); 
-            Assert.AreEqual(6, result.ModifiedEntityCount); 
-            Assert.AreEqual(2, result.Entities.Count); 
-            result.Entities.VerifyEntities(new List<TestServerEntity>
-            {
-                _entities[6], 
-                _entities[7] 
-            }); 
-        }
-
-        [Test]
-        public async Task IF_ModifiedBefore_and_ModifiedAfter_are_specified_SHOULD_return_entities_matching_either_not_both()
-        {
-            //Arrange
-            _command.ModifiedAfterTicks = _entities[3].ModifiedAt.Ticks;
-            _command.ModifiedBeforeTicks = _entities[8].ModifiedAt.Ticks;
-
-            //Act
-            var queryResult = await Sut.HandleAsync(_command, _user, CancellationToken);
-            var result = queryResult.Value;
-
-            //Assert
-            Assert.AreEqual(6, result.Entities.Count);
-            Assert.AreEqual(12, result.TotalEntityCount); 
-            Assert.AreEqual(6, result.ModifiedEntityCount); 
-            result.Entities.VerifyEntities(new List<TestServerEntity>
-            {
-                _entities[0], 
-                _entities[1], 
-                _entities[2], 
-                _entities[9], 
-                _entities[10], 
-                _entities[11] 
-            }); 
-        }
-
-        [Test]
-        public async Task SHOULD_allow_paging_through_dataset()
-        {
-            //Act 1
-            var result1 = await Sut.HandleAsync(new TestSyncCommand
-            {
-                BatchSize = 5
-            }, _user, CancellationToken);
-            Assert.AreEqual(5, result1.Value.Entities.Count);
-            Assert.AreEqual(12, result1.Value.TotalEntityCount);
-            Assert.AreEqual(12, result1.Value.ModifiedEntityCount);
-            result1.Value.Entities.VerifyEntities(new List<TestServerEntity>
-            {
-                _entities[0], 
-                _entities[1], 
-                _entities[2], 
-                _entities[3], 
-                _entities[4] 
-            }); 
-
-            //Act 2
-            var result2 = await Sut.HandleAsync(new TestSyncCommand
-            {
-                BatchSize = 5,
-                ModifiedBeforeTicks = result1.Value.Entities.Last().ModifiedAt.Ticks
-            }, _user, CancellationToken);
-            Assert.AreEqual(5, result2.Value.Entities.Count);
-            Assert.AreEqual(12, result2.Value.TotalEntityCount);
-            Assert.AreEqual(7, result2.Value.ModifiedEntityCount);
-            result2.Value.Entities.VerifyEntities(new List<TestServerEntity>
-            {
-                _entities[5], 
-                _entities[6], 
-                _entities[7], 
-                _entities[8], 
-                _entities[9] 
-            }); 
-
-            //Act 3
-            var result3 = await Sut.HandleAsync(new TestSyncCommand
-            {
-                BatchSize = 5,
-                ModifiedBeforeTicks = result2.Value.Entities.Last().ModifiedAt.Ticks
-            }, _user, CancellationToken);
-            Assert.AreEqual(2, result3.Value.Entities.Count); 
-            Assert.AreEqual(12, result3.Value.TotalEntityCount);
-            Assert.AreEqual(2, result3.Value.ModifiedEntityCount);
-            result3.Value.Entities.VerifyEntities(new List<TestServerEntity>
-            {
-                _entities[10], 
-                _entities[11]
-            }); 
-
-        }
-
-        [Test]
-        public async Task IF_entity_is_downloaded_during_sync_then_modified_before_sync_completes_SHOULD_ignore_until_next_sync()
-        {
-            //Act 1
-            var result1 = await Sut.HandleAsync(new TestSyncCommand
-            {
-                BatchSize = 5
-            }, _user, CancellationToken);
-            var result2 = await Sut.HandleAsync(new TestSyncCommand
-            {
-                BatchSize = 5,
-                ModifiedBeforeTicks = result1.Value.Entities.Last().ModifiedAt.Ticks
-            }, _user, CancellationToken);
-            Assert.AreEqual(5, result1.Value.Entities.Count);
-            Assert.AreEqual(12, result1.Value.TotalEntityCount);
-            Assert.AreEqual(12, result1.Value.ModifiedEntityCount);
-            result1.Value.Entities.VerifyEntities(new List<TestServerEntity>
-            {
-                _entities[0], 
-                _entities[1], 
-                _entities[2], 
-                _entities[3], 
-                _entities[4] 
-            }); 
-
-            //Act 2
-            Assert.AreEqual(5, result2.Value.Entities.Count);
-            Assert.AreEqual(12, result2.Value.TotalEntityCount);
-            Assert.AreEqual(7, result2.Value.ModifiedEntityCount);
-            result2.Value.Entities.VerifyEntities(new List<TestServerEntity>
-            {
-                _entities[5], 
-                _entities[6], 
-                _entities[7], 
-                _entities[8], 
-                _entities[9] 
-            }); 
-            var userToChange = _entities.First(x => x.Id == result2.Value.Entities[2].Id);
-            userToChange.ModifiedAt = DateTime.UtcNow;
-
-            //Act 3
-            var result3 = await Sut.HandleAsync(new TestSyncCommand
-            {
-                BatchSize = 5,
-                ModifiedBeforeTicks = result2.Value.Entities.Last().ModifiedAt.Ticks
-            }, _user, CancellationToken);
-            Assert.AreEqual(2, result3.Value.Entities.Count); 
-            Assert.AreEqual(12, result3.Value.TotalEntityCount);
-            Assert.AreEqual(2, result3.Value.ModifiedEntityCount);
-            result3.Value.Entities.VerifyEntities(new List<TestServerEntity>
-            {
-                _entities[10], 
-                _entities[11]
-            }); 
-            
-            //Act 4
-            var result4 = await Sut.HandleAsync(new TestSyncCommand
-            {
-                BatchSize = 5,
-                ModifiedAfterTicks = result1.Value.Entities.First().ModifiedAt.Ticks,
-                ModifiedBeforeTicks = result3.Value.Entities.Last().ModifiedAt.Ticks
-            }, _user, CancellationToken);
-            Assert.AreEqual(1, result4.Value.Entities.Count); 
-            Assert.AreEqual(12, result4.Value.TotalEntityCount);
-            Assert.AreEqual(1, result4.Value.ModifiedEntityCount);
-            result4.Value.Entities.VerifyEntities(new List<TestServerEntity>
-            {
-                userToChange
-            }); 
-        }
-        
-        [Test]
-        public async Task IF_sync_is_partially_completed_SHOULD_get_missing_and_new_and_modified_entites_next_time()
-        {
-            //Act 1
-            var result1 = await Sut.HandleAsync(new TestSyncCommand
-            {
-                BatchSize = 5
-            }, _user, CancellationToken);
-
-            //change entity
-            var modifiedUser = _entities.First(x => x.Id == result1.Value.Entities[2].Id);
-            modifiedUser.ModifiedAt = DateTime.UtcNow;
-
-            //add entity
-            var newUser = new TestServerEntity(Guid.NewGuid(), EntityState.Active, DateTime.UtcNow, DateTime.UtcNow);
-            MockQueryLoader.Mock.Setup(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), It.IsAny<TestAuthenticatedUser>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Result.Success(new List<TestServerEntity>(_entities) { newUser }.AsQueryable()));
-
-            //new sync
-            var result2 = await Sut.HandleAsync(new TestSyncCommand()
-            {
-                BatchSize = 5,
-                ModifiedAfterTicks = result1.Value.Entities.First().ModifiedAt.Ticks,
-                ModifiedBeforeTicks = result1.Value.Entities.Last().ModifiedAt.Ticks
-            }, _user, CancellationToken);
-            Assert.AreEqual(5, result2.Value.Entities.Count);
-            Assert.AreEqual(13, result2.Value.TotalEntityCount);
-            Assert.AreEqual(9, result2.Value.ModifiedEntityCount);
-            result2.Value.Entities.VerifyEntities(new List<TestServerEntity>
-            {
-                newUser,
-                modifiedUser,
-                _entities[5], 
-                _entities[6], 
-                _entities[7] 
-            }); 
-
-            //Act 3
-            var result3 = await Sut.HandleAsync(new TestSyncCommand()
-            {
-                BatchSize = 5,
-                ModifiedBeforeTicks = result2.Value.Entities.Last().ModifiedAt.Ticks
-            }, _user, CancellationToken);
-            Assert.AreEqual(4, result3.Value.Entities.Count); 
-            Assert.AreEqual(13, result3.Value.TotalEntityCount);
-            Assert.AreEqual(9, result2.Value.ModifiedEntityCount);
-            result3.Value.Entities.VerifyEntities(new List<TestServerEntity>
-            {
-                _entities[8], 
-                _entities[9], 
-                _entities[10], 
-                _entities[11]
-            }); 
-
-        }
-
     }
 }

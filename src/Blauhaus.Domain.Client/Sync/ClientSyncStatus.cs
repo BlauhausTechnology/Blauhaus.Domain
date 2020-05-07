@@ -2,8 +2,9 @@
 {
     public class ClientSyncStatus
     {
-        public long? LastModifiedAt { get; set; }
-        public long FirstModifiedAt { get; set; }
-        public long TotalCount { get; set; }
+        public long? NewestModifiedAt { get; set; }
+        public long OldestModifiedAt { get; set; }
+        public long AllLocalEntities { get; set; }
+        public long SyncedLocalEntities { get; set; }
     }
 }

@@ -9,8 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="MockBuilders\Client\" />
-    <Folder Include="MockBuilders\Common\" />
     <Folder Include="MockBuilders\Server\" />
   </ItemGroup>
 

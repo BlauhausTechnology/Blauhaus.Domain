@@ -3,7 +3,7 @@ using Blauhaus.TestHelpers.MockBuilders;
 using Moq;
 using SqlKata;
 
-namespace Blauhaus.Domain.TestHelpers.MockBuilders.ClientRepositoryHelpers
+namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.ClientRepositoryHelpers
 {
 
     public class SyncQueryGeneratorMockBuilder<TMock, TSyncCommand> : BaseSyncQueryGeneratorMockBuilder<SyncQueryGeneratorMockBuilder<TMock, TSyncCommand>, ISyncQueryGenerator<TSyncCommand>, TSyncCommand>

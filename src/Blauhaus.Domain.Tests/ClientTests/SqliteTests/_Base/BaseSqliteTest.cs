@@ -6,7 +6,7 @@ using Blauhaus.DeviceServices.Abstractions.DeviceInfo;
 using Blauhaus.DeviceServices.TestHelpers.MockBuilders;
 using Blauhaus.Domain.Client.Sqlite.Repository;
 using Blauhaus.Domain.Client.Sqlite.SyncRepository;
-using Blauhaus.Domain.TestHelpers.MockBuilders.ClientRepositoryHelpers;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Client.ClientRepositoryHelpers;
 using Blauhaus.Domain.Tests.ClientTests.SqliteTests._TestObjects;
 using Blauhaus.TestHelpers.BaseTests;
 using NUnit.Framework;

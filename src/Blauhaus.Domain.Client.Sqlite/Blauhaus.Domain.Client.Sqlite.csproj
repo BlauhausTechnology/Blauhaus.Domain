@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blauhaus.ClientDatabase.Sqlite" Version="0.3.3" />
+    <PackageReference Include="Blauhaus.ClientDatabase.Sqlite" Version="0.4.0" />
     <PackageReference Include="SqlKata" Version="1.1.7" />
   </ItemGroup>
 

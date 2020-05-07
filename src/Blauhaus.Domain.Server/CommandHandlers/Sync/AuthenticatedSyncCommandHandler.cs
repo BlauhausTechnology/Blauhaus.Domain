@@ -5,9 +5,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
+using Blauhaus.Common.Results;
 using Blauhaus.Domain.Common.CommandHandlers;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
 using Blauhaus.Domain.Common.Entities;
+using Blauhaus.Domain.Common.Errors;
 using Blauhaus.Domain.Common.Extensions;
 using CSharpFunctionalExtensions;
 
@@ -32,57 +34,63 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
         public  async Task<Result<SyncResult<TEntity>>> HandleAsync(TSyncCommand command, TUser authenticatedUser, CancellationToken token)
         {
 
-            var dbQueryResult = await _queryLoader.HandleAsync(command, authenticatedUser, token);
-            var dbQuery = dbQueryResult.Value.OrderByDescending(x => x.ModifiedAt).AsQueryable();
+            if (command.IsForNewerEntities() && command.IsForOlderEntities())
+            {
+                return _analyticsService.TraceErrorResult<SyncResult<TEntity>>(this, SyncErrors.InvalidSyncCommand);
+            }
 
+            var dbQueryResult = await _queryLoader.HandleAsync(command, authenticatedUser, token);
+            var dbQuery = dbQueryResult.Value;
+            var traceMessage = string.Empty;
+
+            var totalActiveEntityCount = dbQuery.Count(x => x.EntityState == EntityState.Active);
 
             if (command.IsFirstSyncForDevice())
             {
-                //exclude deleted entities since there is nothing on the device 
-                dbQuery = dbQuery.Where(x => x.EntityState == EntityState.Active);
+                dbQuery = dbQuery.Where(x => x.EntityState == EntityState.Active)
+                    .OrderByDescending(x => x.ModifiedAt);
+                traceMessage = "SyncCommand for new device processed";
             }
 
-            var totalEntityCount = dbQuery.Count();
-
-
-            if (command.IsFirstRequestInSyncSequence())
+            else if (command.IsForOlderEntities())
             {
-                //when both values are provided, a new sync process has been started
-                //we need to return entities modified since the newest one on the device
-                //we also need to return entities modified before the oldest on device in case the sync wasn't completed
+                //we are returning entities that don't exist on device so we can ignore deleted entities
                 dbQuery = dbQuery.Where(x => 
-                    x.ModifiedAt> command.ModifiedAfterTicks.ToUtcDateTime() || 
-                    x.ModifiedAt < command.ModifiedBeforeTicks.ToUtcDateTime());
+                    x.EntityState == EntityState.Active && 
+                    x.ModifiedAt < command.OlderThan.ToUtcDateTime())
+                    .OrderByDescending(x => x.ModifiedAt);
+                traceMessage = "SyncCommand for older entities processed";
             }
-
-            else
+             
+            else if (command.IsForNewerEntities())
             {
-                //subsequent requests during sync only request progressively older items so we can ignore ModifiedAfter
-                if (command.ModifiedBeforeTicks != 0)
-                {
-                    dbQuery = dbQuery.Where(x => x.ModifiedAt <  command.ModifiedBeforeTicks.ToUtcDateTime());
-                }
+                dbQuery = dbQuery.Where(x => x.ModifiedAt > command.NewerThan.ToUtcDateTime())
+                    .OrderBy(x => x.ModifiedAt);
+                traceMessage = "SyncCommand for newer entities processed";
             }
 
+            
             var modifiedEntityCount = dbQuery.Count();
             
             var entities = dbQuery
                 .Take(command.BatchSize)
                 .ToList();
 
-            _analyticsService.TraceVerbose(this, "SyncCommand processed", new Dictionary<string, object>
+            _analyticsService.TraceVerbose(this, traceMessage, new Dictionary<string, object>
             {
-                {"BatchCount", entities.Count},
-                {"TotalEntityCount", totalEntityCount},
-                {"ModifiedEntityCount", modifiedEntityCount}
+                {nameof(SyncResult<TEntity>.EntityBatch) + "Count", entities.Count},
+                {nameof(SyncResult<TEntity>.TotalActiveEntityCount), totalActiveEntityCount},
+                {nameof(SyncResult<TEntity>.EntitiesToDownloadCount), modifiedEntityCount}
             });
 
             return Result.Success(new SyncResult<TEntity>
             {
-                Entities = entities,
-                ModifiedEntityCount = modifiedEntityCount,
-                TotalEntityCount = totalEntityCount
+                EntityBatch = entities,
+                EntitiesToDownloadCount = modifiedEntityCount,
+                TotalActiveEntityCount = totalActiveEntityCount
             });
+
+             
         }
     }
 }

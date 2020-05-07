@@ -6,13 +6,17 @@ namespace Blauhaus.Domain.Common.Extensions
     {
         public static bool IsFirstSyncForDevice(this SyncCommand syncCommand)
         {
-            return (syncCommand.ModifiedAfterTicks == null || syncCommand.ModifiedAfterTicks.Value == 0)
-                   && syncCommand.ModifiedBeforeTicks == 0;
+            return syncCommand.NewerThan == null && syncCommand.OlderThan == null;
         }
-
-        public static bool IsFirstRequestInSyncSequence(this SyncCommand syncCommand)
+         
+        public static bool IsForNewerEntities(this SyncCommand syncCommand)
         {
-            return syncCommand.ModifiedAfterTicks != null && syncCommand.ModifiedBeforeTicks != 0;
+            return syncCommand.NewerThan != null;
+        }
+        
+        public static bool IsForOlderEntities(this SyncCommand syncCommand)
+        {
+            return syncCommand.OlderThan != null;
         }
     }
 }

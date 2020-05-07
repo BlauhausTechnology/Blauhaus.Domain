@@ -13,7 +13,7 @@ using SQLite;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTests
 {
-    public class SaveSyncDtosAsyncTests : BaseSqliteTest<SyncClientRepository<ITestModel, ITestDto, TestSyncCommand, TestRootEntity>>
+    public class SaveSyncedDtosAsyncTests : BaseSqliteTest<SyncClientRepository<ITestModel, ITestDto, TestSyncCommand, TestRootEntity>>
     {
         private Guid _rootId1;
         private Guid _rootId2;
@@ -35,23 +35,27 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             };
 
             var connection = SqliteDatabaseService.GetDatabaseConnectionAsync().Result;
+            MockClientEntityManager.Where_ExtractChildEntitiesFromDto_returns(new List<ISyncClientEntity>());
+            MockClientEntityManager.Where_ExtractRootEntityFromDto_returns(new TestRootEntity());
             connection.InsertAllAsync(entities);
         }
 
         [Test]
-        public async Task IF_root_entity_already_exists_SHOULD_update()
+        public async Task IF_root_entity_already_exists_SHOULD_update_and_set_sync_state_to_InSync()
         {
             //Arrange
             var bob = new TestRootEntity
             {
                 Id = Guid.NewGuid(),
-                RootName = "Bob"
+                RootName = "Bob",
+                SyncState = SyncState.InSync
             };
             await Connection.InsertAsync(bob);
             MockClientEntityManager.Where_ExtractRootEntityFromDto_returns(new TestRootEntity
             {
                 Id = bob.Id,
-                RootName = "Fred"
+                RootName = "Fred",
+                SyncState = SyncState.OutOfSync
             });
 
             //Act
@@ -62,11 +66,11 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             MockClientEntityManager.Mock.Verify(x => x.ExtractRootEntityFromDto(dto));
             var newBob = await Connection.Table<TestRootEntity>().FirstAsync(x => x.Id == bob.Id);
             Assert.AreEqual("Fred", newBob.RootName);
+            Assert.AreEqual(SyncState.InSync, newBob.SyncState);
         } 
-
         
         [Test]
-        public async Task IF_child_entity_already_exists_SHOULD_update()
+        public async Task IF_child_entity_already_exists_SHOULD_updat_and_set_sync_state_to_InSynce()
         {
             //Arrange
             var bob = new TestRootEntity
@@ -81,11 +85,12 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             };
             await Connection.InsertAsync(bob);
             await Connection.InsertAsync(child);
-            MockClientEntityManager.Where_ExtractChildEntitiesFromDto_returns(new List<IClientEntity>
+            MockClientEntityManager.Where_ExtractChildEntitiesFromDto_returns(new List<ISyncClientEntity>
             {
                 new TestChildEntity()
                 {
                     Id = child.Id,
+                    SyncState = SyncState.OutOfSync,
                     ChildName = "Hop"
                 }
             });
@@ -98,17 +103,18 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             MockClientEntityManager.Mock.Verify(x => x.ExtractChildEntitiesFromDto(dto));
             var newChild = await Connection.Table<TestChildEntity>().FirstAsync(x => x.Id == child.Id);
             Assert.AreEqual("Hop", newChild.ChildName);
+            Assert.AreEqual(SyncState.InSync, newChild.SyncState);
         } 
-
         
         [Test]
-        public async Task IF_root_entity_does_not_exist_SHOULD_insert()
+        public async Task IF_root_entity_does_not_exist_SHOULD_insert_and_set_sync_state_to_InSync()
         {
             //Arrange  
             var bob = new TestRootEntity
             {
                 Id = Guid.NewGuid(),
-                RootName = "Fred"
+                RootName = "Fred",
+                SyncState = SyncState.OutOfSync
             };
             MockClientEntityManager.Where_ExtractRootEntityFromDto_returns(bob);
 
@@ -120,6 +126,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             MockClientEntityManager.Mock.Verify(x => x.ExtractRootEntityFromDto(dto));
             var newBob = await Connection.Table<TestRootEntity>().FirstAsync(x => x.Id == bob.Id);
             Assert.AreEqual("Fred", newBob.RootName);
+            Assert.AreEqual(SyncState.InSync, newBob.SyncState);
         } 
         
         [Test]
@@ -134,10 +141,11 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             {
                 Id = Guid.NewGuid(),
                 RootEntityId = bob.Id,
-                ChildName = "Pop"
+                ChildName = "Pop",
+                SyncState = SyncState.OutOfSync
             };
             await Connection.InsertAsync(bob);
-            MockClientEntityManager.Where_ExtractChildEntitiesFromDto_returns(new List<IClientEntity>
+            MockClientEntityManager.Where_ExtractChildEntitiesFromDto_returns(new List<ISyncClientEntity>
             {
                 new TestChildEntity()
                 {
@@ -154,9 +162,9 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             MockClientEntityManager.Mock.Verify(x => x.ExtractChildEntitiesFromDto(dto));
             var newChild = await Connection.Table<TestChildEntity>().FirstAsync(x => x.Id == child.Id);
             Assert.AreEqual("Hop", newChild.ChildName);
+            Assert.AreEqual(SyncState.InSync, newChild.SyncState);
             Assert.AreEqual(1, await Connection.Table<TestChildEntity>().CountAsync());
         } 
-
         
         [Test]
         public async Task SHOULD_return_model_constructed_by_helper()

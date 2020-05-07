@@ -7,38 +7,46 @@ using Blauhaus.TestHelpers.MockBuilders;
 using CSharpFunctionalExtensions;
 using Moq;
 
-namespace Blauhaus.Domain.TestHelpers.MockBuilders.CommandHandlers._Base
+namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base
 {
-    
-    public class VoidAuthenticatedCommandHandlerMockBuilder<TMock, TCommand, TUser> 
-        : VoidAuthenticatedCommandHandlerMockBuilder<VoidAuthenticatedCommandHandlerMockBuilder<TMock, TCommand, TUser>, TMock, TCommand, TUser>
-        where TMock : class, IVoidAuthenticatedCommandHandler<TCommand, TUser>
+
+    public class AuthenticatedCommandHandlerMockBuilder<TMock, TPayload, TCommand, TUser> 
+        : AuthenticatedCommandHandlerMockBuilder<AuthenticatedCommandHandlerMockBuilder<TMock, TPayload, TCommand, TUser>, TMock, TPayload, TCommand, TUser>
+        where TMock : class, IAuthenticatedCommandHandler<TPayload, TCommand, TUser>
     {
+
     }
 
 
-    public class VoidAuthenticatedCommandHandlerMockBuilder<TBuilder, TMock, TCommand, TUser> : BaseMockBuilder<TBuilder, TMock>
-        where TMock : class, IVoidAuthenticatedCommandHandler<TCommand, TUser> 
+    public class AuthenticatedCommandHandlerMockBuilder<TBuilder, TMock, TPayload, TCommand, TUser> : BaseMockBuilder<TBuilder, TMock>
+        where TMock : class, IAuthenticatedCommandHandler<TPayload, TCommand, TUser> 
         where TBuilder : BaseMockBuilder<TBuilder, TMock>
     {
-        public TBuilder Where_HandleAsync_returns_result(Result payload)
+        public TBuilder Where_HandleAsync_returns(TPayload payload)
+        {
+            Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>(), It.IsAny<TUser>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Success(payload));
+            return this as TBuilder;
+        }
+
+        public TBuilder Where_HandleAsync_returns_result(Result<TPayload> payload)
         {
             Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>(),  It.IsAny<TUser>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(payload);
             return this as TBuilder;
         }
 
-        public TBuilder Where_HandleAsync_returns_fail(string error)
+        public TBuilder Where_HandleAsync_returns_fails(string error)
         {
             Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>(), It.IsAny<TUser>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Result.Failure(error));
+                .ReturnsAsync(Result.Failure<TPayload>(error));
             return this as TBuilder;
         }
         
-        public TBuilder Where_HandleAsync_returns_fail(Error error)
+        public TBuilder Where_HandleAsync_returns_fails(Error error)
         {
             Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>(), It.IsAny<TUser>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Result.Failure(error.ToString()));
+                .ReturnsAsync(Result.Failure<TPayload>(error.ToString()));
             return this as TBuilder;
         }
 
