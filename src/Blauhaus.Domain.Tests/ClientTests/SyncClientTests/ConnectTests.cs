@@ -11,8 +11,8 @@ using Blauhaus.Domain.Client.Sync;
 using Blauhaus.Domain.Common.CommandHandlers;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
 using Blauhaus.Domain.Common.Extensions;
-using Blauhaus.Domain.TestHelpers.MockBuilders.CommandHandlers;
-using Blauhaus.Domain.TestHelpers.MockBuilders.Repositories;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers;
 using Blauhaus.Domain.Tests._Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
 using Blauhaus.Domain.Tests.ServerTests.TestObjects;
@@ -26,7 +26,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
     public class ConnectTests : BaseDomainTest<SyncClient<TestModel, TestModelDto, TestSyncCommand>>
     {
         private TestSyncCommand _syncCommand; 
-        private TaskCompletionSource<List<SyncUpdate<TestModel>>> _tcs; 
+        private TaskCompletionSource<List<TestModel>> _tcs; 
         private ClientSyncRequirement _clientSyncRequirement;
         private MockBuilder<ISyncStatusHandler> MockSyncStatusHandler => AddMock<ISyncStatusHandler>().Invoke();
         private ConnectivityServiceMockBuilder MockConnectivityService => AddMock<ConnectivityServiceMockBuilder, IConnectivityService>().Invoke();
@@ -41,7 +41,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
         public override void Setup()
         {
             base.Setup();
-            _tcs = new TaskCompletionSource<List<SyncUpdate<TestModel>>>();
+            _tcs = new TaskCompletionSource<List<TestModel>>();
             _syncCommand = new TestSyncCommand
             {
                 BatchSize = 3,
@@ -137,7 +137,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 { }, ex =>
                 {
                     e = ex;
-                    _tcs.SetResult(new List<SyncUpdate<TestModel>>());
+                    _tcs.SetResult(new List<TestModel>());
                 });
                 await _tcs.Task;
 
@@ -158,7 +158,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                     EntitiesToDownloadCount = newServerModels.Count,
                     TotalActiveEntityCount = 300
                 });
-                var publishedModels = new List<SyncUpdate<TestModel>>();
+                var publishedModels = new List<TestModel>();
 
                 //Act
                 Sut.Connect(_syncCommand, _clientSyncRequirement, MockSyncStatusHandler.Object).Subscribe(next =>
@@ -172,9 +172,9 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 await _tcs.Task;
 
                 //Assert
-                Assert.AreEqual(publishedModels[0].Model.Id, newServerModels[0].Id);
-                Assert.AreEqual(publishedModels[1].Model.Id, newServerModels[1].Id);
-                Assert.AreEqual(publishedModels[2].Model.Id, newServerModels[2].Id);
+                Assert.AreEqual(publishedModels[0].Id, newServerModels[0].Id);
+                Assert.AreEqual(publishedModels[1].Id, newServerModels[1].Id);
+                Assert.AreEqual(publishedModels[2].Id, newServerModels[2].Id);
             }
 
             [Test]
@@ -236,7 +236,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                         OldestModifiedAt = models3.Last().ModifiedAtTicks,
                         NewestModifiedAt = models3.First().ModifiedAtTicks
                     }});
-                var publishedModels = new List<SyncUpdate<TestModel>>();
+                var publishedModels = new List<TestModel>();
 
                 //Act
                 Sut.Connect(_syncCommand, ClientSyncRequirement.Batch, MockSyncStatusHandler.Object).Subscribe(next =>
@@ -320,7 +320,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                         OldestModifiedAt = models3.Last().ModifiedAtTicks,
                         NewestModifiedAt = models3.First().ModifiedAtTicks
                     }});
-                var publishedModels = new List<SyncUpdate<TestModel>>();
+                var publishedModels = new List<TestModel>();
 
                 //Act
                 Sut.Connect(_syncCommand, ClientSyncRequirement.All, MockSyncStatusHandler.Object).Subscribe(next =>
@@ -414,7 +414,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                         OldestModifiedAt = models3.Last().ModifiedAtTicks,
                         NewestModifiedAt = models3.First().ModifiedAtTicks
                     }});
-                var publishedModels = new List<SyncUpdate<TestModel>>();
+                var publishedModels = new List<TestModel>();
 
                 //Act
                 Sut.Connect(_syncCommand, ClientSyncRequirement.Minimum(5), MockSyncStatusHandler.Object).Subscribe(next =>

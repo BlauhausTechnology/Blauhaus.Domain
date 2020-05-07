@@ -5,7 +5,7 @@ using Blauhaus.Domain.Common.Entities;
 using Blauhaus.TestHelpers.MockBuilders;
 using Moq;
 
-namespace Blauhaus.Domain.TestHelpers.MockBuilders.Repositories
+namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories
 { 
     public class ClientRepositoryMockBuilder<TModel, TDto> : ClientRepositoryMockBuilder<ClientRepositoryMockBuilder<TModel, TDto>, IClientRepository<TModel, TDto>, TModel, TDto>
         where TModel : class, IClientEntity

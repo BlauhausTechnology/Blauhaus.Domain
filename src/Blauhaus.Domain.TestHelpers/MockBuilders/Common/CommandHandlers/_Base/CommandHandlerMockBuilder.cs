@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using Blauhaus.Common.ValueObjects.Errors;
@@ -10,7 +9,7 @@ using CSharpFunctionalExtensions;
 using Moq;
 using Newtonsoft.Json;
 
-namespace Blauhaus.Domain.TestHelpers.MockBuilders.CommandHandlers._Base
+namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base
 {
     public class CommandHandlerMockBuilder<TMock, TPayload, TCommand> 
         : CommandHandlerMockBuilder<CommandHandlerMockBuilder<TMock, TPayload, TCommand>, TMock, TPayload, TCommand>

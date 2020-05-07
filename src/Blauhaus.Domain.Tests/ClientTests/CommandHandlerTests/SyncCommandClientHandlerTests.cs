@@ -7,7 +7,7 @@ using Blauhaus.Domain.Client.CommandHandlers.Sync;
 using Blauhaus.Domain.Client.Repositories;
 using Blauhaus.Domain.Common.CommandHandlers;
 using Blauhaus.Domain.Common.Entities;
-using Blauhaus.Domain.TestHelpers.MockBuilders.Repositories;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories;
 using Blauhaus.Domain.Tests._Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
 using Blauhaus.TestHelpers.MockBuilders;

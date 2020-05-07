@@ -7,7 +7,7 @@ using Blauhaus.Domain.Common.CommandHandlers.Sync;
 using Blauhaus.Domain.Common.Entities;
 using Moq;
 
-namespace Blauhaus.Domain.TestHelpers.MockBuilders.Repositories
+namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories
 {
     public class SyncClientRepositoryMockBuilder<TModel, TDto, TSyncCommand> 
         : SyncClientRepositoryMockBuilder<SyncClientRepositoryMockBuilder<TModel, TDto, TSyncCommand>,  ISyncClientRepository<TModel, TDto, TSyncCommand> , TModel, TDto, TSyncCommand>

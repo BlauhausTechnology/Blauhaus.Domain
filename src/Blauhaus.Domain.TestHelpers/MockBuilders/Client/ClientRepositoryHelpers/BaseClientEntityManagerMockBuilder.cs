@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
-using Blauhaus.Domain.Client.Sqlite.Entities;
 using Blauhaus.Domain.Client.Sqlite.Repository;
 using Blauhaus.Domain.Common.Entities;
 using Blauhaus.TestHelpers.MockBuilders;
 using Moq;
 using SQLite;
 
-namespace Blauhaus.Domain.TestHelpers.MockBuilders.ClientRepositoryHelpers
+namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.ClientRepositoryHelpers
 {
     public class ClientEntityManagerMockBuilder<TModel, TDto, TRootEntity> : BaseClientEntityManagerMockBuilder<ClientEntityManagerMockBuilder<TModel, TDto, TRootEntity>, IClientEntityManager<TModel, TDto, TRootEntity>, TModel, TDto, TRootEntity> 
         where TModel : IClientEntity 

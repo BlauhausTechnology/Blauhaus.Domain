@@ -39,11 +39,11 @@ namespace Blauhaus.Domain.Client.Sync
         }
 
 
-        public IObservable<SyncUpdate<TModel>> Connect(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler)
+        public IObservable<TModel> Connect(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler)
         {
             _analyticsService.TraceVerbose(this, $"{typeof(TModel).Name} SyncClient connected", syncCommand.ToObjectDictionary());
 
-            return Observable.Create<SyncUpdate<TModel>>(async observer =>
+            return Observable.Create<TModel>(async observer =>
             {
                 var disposable = new CancellationDisposable();
                 
@@ -82,7 +82,7 @@ namespace Blauhaus.Domain.Client.Sync
             });
         }
 
-        private async Task DownloadModelsAsync(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler, IObserver<SyncUpdate<TModel>> observer, bool isLoadingNewerEntities, CancellationToken token)
+        private async Task DownloadModelsAsync(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler, IObserver<TModel> observer, bool isLoadingNewerEntities, CancellationToken token)
         {
             while (true)
             {
@@ -94,7 +94,7 @@ namespace Blauhaus.Domain.Client.Sync
 
                 foreach (var newModel in serverDownloadResult.Value.EntityBatch)
                 {
-                    observer.OnNext(new SyncUpdate<TModel>(newModel));
+                    observer.OnNext(newModel);
                 }
 
                 var syncResult = serverDownloadResult.Value;
