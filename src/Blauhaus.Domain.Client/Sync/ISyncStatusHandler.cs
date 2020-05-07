@@ -10,7 +10,7 @@
         
         public long? NewlyDownloadedEntities{ get; set; }
 
-        public long? LoadedEntities{ get; set; }
+        public long? PublishedEntities{ get; set; }
         
         public bool IsConnected{ get; set; }
 

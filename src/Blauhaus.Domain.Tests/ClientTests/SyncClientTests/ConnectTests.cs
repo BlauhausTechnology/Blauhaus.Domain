@@ -26,7 +26,6 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
     public class ConnectTests : BaseDomainTest<SyncClient<TestModel, TestModelDto, TestSyncCommand>>
     {
         private TestSyncCommand _syncCommand; 
-        private TaskCompletionSource<List<TestModel>> _tcs; 
         private ClientSyncRequirement _clientSyncRequirement;
         private MockBuilder<ISyncStatusHandler> MockSyncStatusHandler => AddMock<ISyncStatusHandler>().Invoke();
         private ConnectivityServiceMockBuilder MockConnectivityService => AddMock<ConnectivityServiceMockBuilder, IConnectivityService>().Invoke();
@@ -41,7 +40,6 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
         public override void Setup()
         {
             base.Setup();
-            _tcs = new TaskCompletionSource<List<TestModel>>();
             _syncCommand = new TestSyncCommand
             {
                 BatchSize = 3,
@@ -51,6 +49,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
 
             MockSyncCommandHandler.Where_HandleAsync_returns(new SyncResult<TestModel>{EntityBatch = new List<TestModel>()});
             MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new ClientSyncStatus());
+            MockSyncClientRepository.Where_LoadSyncedModelsAsync_returns(new List<TestModel>());
+            MockSyncStatusHandler.Mock.SetupAllProperties();
 
             AddService(MockSyncClientRepository.Object);
             AddService(MockSyncCommandHandler.Object);
@@ -137,9 +137,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 { }, ex =>
                 {
                     e = ex;
-                    _tcs.SetResult(new List<TestModel>());
                 });
-                await _tcs.Task;
+                await Task.Delay(20);
 
                 //Assert
                 Assert.AreEqual("Failed to load TestModel entities from server: oops", e.Message);
@@ -163,18 +162,15 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 //Act
                 Sut.Connect(_syncCommand, _clientSyncRequirement, MockSyncStatusHandler.Object).Subscribe(next =>
                 {
-                    publishedModels.Add(next);
-                    if (publishedModels.Count == 3)
-                    {
-                        _tcs.SetResult(publishedModels);
-                    }
+                    publishedModels.Add(next); 
                 });
-                await _tcs.Task;
+                await Task.Delay(20);
 
                 //Assert
                 Assert.AreEqual(publishedModels[0].Id, newServerModels[0].Id);
                 Assert.AreEqual(publishedModels[1].Id, newServerModels[1].Id);
                 Assert.AreEqual(publishedModels[2].Id, newServerModels[2].Id);
+                Assert.AreEqual(3, newServerModels.Count);
             }
 
             [Test]
@@ -239,20 +235,22 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 var publishedModels = new List<TestModel>();
 
                 //Act
-                Sut.Connect(_syncCommand, ClientSyncRequirement.Batch, MockSyncStatusHandler.Object).Subscribe(next =>
-                {
-                    publishedModels.Add(next);
-                    if (publishedModels.Count == 3)
-                    {
-                        _tcs.SetResult(publishedModels);
-                    }
-                });
-                await _tcs.Task;
+                Sut.Connect(_syncCommand, ClientSyncRequirement.Batch, MockSyncStatusHandler.Object)
+                    .Subscribe(next => publishedModels.Add(next));
+                await Task.Delay(20);
 
                 //Assert
+                Assert.AreEqual(3, publishedModels.Count);
+                Assert.AreEqual(models1[0].Id, publishedModels[0].Id);
+                Assert.AreEqual(models1[1].Id, publishedModels[1].Id);
+                Assert.AreEqual(models1[2].Id, publishedModels[2].Id);
                 MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.NewerThan == null);
                 MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.OlderThan == null); 
                 MockSyncCommandHandler.Verify_HandleAsync_called_Times(1);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 1);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 2);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 3);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 4, Times.Never);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.NewlyDownloadedEntities = 3);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.AllLocalEntities = 3);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.AllServerEntities = 9);
@@ -260,10 +258,10 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 MockAnalyticsService.VerifyTrace("3 TestModel entities downloaded");
                 MockSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync(), Times.Exactly(2));
             }
-            
+
             [Test]
-            public async Task WHEN_SyncRequirement_is_all_SHOULD_download_and_publish_all_while_updating_client_status()
-            { 
+            public void WHEN_SyncRequirement_is_All_SHOULD_download_all_but_publish_only_one_batch()
+            {
                 //Arrange
                 var models1 = TestModel.GenerateList(3).ToList();
                 var models2 = TestModel.GenerateList(3).ToList();
@@ -276,13 +274,13 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                         EntityBatch = models1,
                         EntitiesToDownloadCount = 9,
                         TotalActiveEntityCount = 9
-                    },                    
+                    },
                     new SyncResult<TestModel>
                     {
                         EntityBatch = models2,
                         EntitiesToDownloadCount = 6,
                         TotalActiveEntityCount = 9
-                    },                    
+                    },
                     new SyncResult<TestModel>
                     {
                         EntityBatch = models3,
@@ -305,7 +303,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                         AllLocalEntities = 3,
                         OldestModifiedAt = models1.Last().ModifiedAtTicks,
                         NewestModifiedAt = models1.First().ModifiedAtTicks
-                    },                    
+                    },
                     new ClientSyncStatus
                     {
                         SyncedLocalEntities = 6,
@@ -323,17 +321,14 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 var publishedModels = new List<TestModel>();
 
                 //Act
-                Sut.Connect(_syncCommand, ClientSyncRequirement.All, MockSyncStatusHandler.Object).Subscribe(next =>
-                {
-                    publishedModels.Add(next);
-                    if (publishedModels.Count == 9)
-                    {
-                        _tcs.SetResult(publishedModels);
-                    }
-                });
-                await _tcs.Task;
+                Sut.Connect(_syncCommand, ClientSyncRequirement.All, MockSyncStatusHandler.Object)
+                    .Subscribe(next => publishedModels.Add(next));
 
                 //Assert
+                Assert.AreEqual(3, publishedModels.Count);
+                Assert.AreEqual(models1[0].Id, publishedModels[0].Id);
+                Assert.AreEqual(models1[1].Id, publishedModels[1].Id);
+                Assert.AreEqual(models1[2].Id, publishedModels[2].Id);
                 MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.NewerThan == null);
                 MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.OlderThan == null);
                 MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(1, x => x.NewerThan == null);
@@ -341,6 +336,11 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(2, x => x.NewerThan == null);
                 MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(2, x => x.OlderThan == models2.Last().ModifiedAtTicks);
                 MockSyncCommandHandler.Verify_HandleAsync_called_Times(3);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 1);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 2);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 3);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 6, Times.Never);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 9, Times.Never);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.NewlyDownloadedEntities = 3);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.NewlyDownloadedEntities = 6);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.NewlyDownloadedEntities = 9);
@@ -354,9 +354,9 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 MockAnalyticsService.VerifyTrace("3 TestModel entities downloaded");
                 MockSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync(), Times.Exactly(4));
             }
-            
+
             [Test]
-            public async Task WHEN_SyncRequirement_has_minimum_SHOULD_download_and_publish_until_minimum_is_reached()
+            public async Task WHEN_SyncRequirement_has_minimum_SHOULD_download_until_minimum_is_reached_but_publish_only_batch()
             { 
                 //Arrange
                 var models1 = TestModel.GenerateList(3).ToList();
@@ -417,22 +417,24 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 var publishedModels = new List<TestModel>();
 
                 //Act
-                Sut.Connect(_syncCommand, ClientSyncRequirement.Minimum(5), MockSyncStatusHandler.Object).Subscribe(next =>
-                {
-                    publishedModels.Add(next);
-                    if (publishedModels.Count == 6)
-                    {
-                        _tcs.SetResult(publishedModels);
-                    }
-                });
-                await _tcs.Task;
+                Sut.Connect(_syncCommand, ClientSyncRequirement.Minimum(5), MockSyncStatusHandler.Object)
+                    .Subscribe(next => publishedModels.Add(next));
+                await Task.Delay(20);
 
                 //Assert
+                Assert.AreEqual(3, publishedModels.Count);
+                Assert.AreEqual(models1[0].Id, publishedModels[0].Id);
+                Assert.AreEqual(models1[1].Id, publishedModels[1].Id);
+                Assert.AreEqual(models1[2].Id, publishedModels[2].Id);
                 MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.NewerThan == null);
                 MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.OlderThan == null);
                 MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(1, x => x.NewerThan == null);
                 MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(1, x => x.OlderThan == models1.Last().ModifiedAtTicks);
                 MockSyncCommandHandler.Verify_HandleAsync_called_Times(2);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 1);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 2);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 3);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 4, Times.Never);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.NewlyDownloadedEntities = 3);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.NewlyDownloadedEntities = 6);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.AllLocalEntities = 3);
@@ -448,10 +450,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
 
         public class NotFirstTimeSync : ConnectTests
         { 
-            
-
             [Test]
-            public async Task WHEN_SyncRequirement_All_SHOULD_load_all_newer_and_older_entities_from_server()
+            public async Task WHEN_SyncRequirement_All_SHOULD_load_all_local_and_all_newer_and_older_entities_from_server_but_publish_only_batch()
             {
                  //Arrange
                 var localModels = TestModel.GenerateList(3).OrderByDescending(x => x.ModifiedAtTicks).ToList();
@@ -510,32 +510,62 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                     {
                         EntitiesToDownloadCount = 6,
                         EntityBatch = newServerModels1,
-                        TotalActiveEntityCount = 200
+                        TotalActiveEntityCount = 15
                     },
                     new SyncResult<TestModel>
                     {
                         EntitiesToDownloadCount = 3,
                         EntityBatch = newServerModels2,
-                        TotalActiveEntityCount = 200
+                        TotalActiveEntityCount = 15
                     },
                     new SyncResult<TestModel>
                     {
                         EntitiesToDownloadCount = 6,
                         EntityBatch = oldServerModels1,
-                        TotalActiveEntityCount = 200
+                        TotalActiveEntityCount = 15
                     },
                     new SyncResult<TestModel>
                     {
                         EntitiesToDownloadCount = 3,
                         EntityBatch = oldServerModels2,
-                        TotalActiveEntityCount = 200
+                        TotalActiveEntityCount = 15
                     }
                 });
+                var publishedModels = new List<TestModel>();
 
                 //Act
-                Sut.Connect(_syncCommand, ClientSyncRequirement.All, MockSyncStatusHandler.Object).Subscribe();
+                Sut.Connect(_syncCommand, ClientSyncRequirement.All, MockSyncStatusHandler.Object)
+                    .Subscribe(next => publishedModels.Add(next));
+                await Task.Delay(20);
 
                 //Assert
+                MockSyncClientRepository.Mock.Verify(x => x.LoadModelsAsync(_syncCommand));
+                Assert.AreEqual(3, publishedModels.Count);
+                Assert.AreEqual(localModels[0].Id, publishedModels[0].Id);
+                Assert.AreEqual(localModels[1].Id, publishedModels[1].Id);
+                Assert.AreEqual(localModels[2].Id, publishedModels[2].Id);
+                
+                MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 1);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 2);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 3);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 4, Times.Never);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.NewlyDownloadedEntities = 3);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.NewlyDownloadedEntities = 6);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.NewlyDownloadedEntities = 9);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.NewlyDownloadedEntities = 12);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.NewlyDownloadedEntities = 15, Times.Never);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.AllLocalEntities = 3);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.AllLocalEntities = 6);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.AllLocalEntities = 9);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.AllLocalEntities = 12);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.AllLocalEntities = 15);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.AllServerEntities = 15);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 3);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 6);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 9);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 12);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 15);
+
                 MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.OlderThan == null);
                 MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.NewerThan == localModels.First().ModifiedAtTicks);
                 MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.BatchSize == 3);
@@ -686,32 +716,62 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                     {
                         EntitiesToDownloadCount = 6,
                         EntityBatch = newServerModels1,
-                        TotalActiveEntityCount = 200
+                        TotalActiveEntityCount = 15
                     },
                     new SyncResult<TestModel>
                     {
                         EntitiesToDownloadCount = 3,
                         EntityBatch = newServerModels2,
-                        TotalActiveEntityCount = 200
+                        TotalActiveEntityCount = 15
                     },
                     new SyncResult<TestModel>
                     {
                         EntitiesToDownloadCount = 6,
                         EntityBatch = oldServerModels1,
-                        TotalActiveEntityCount = 200
+                        TotalActiveEntityCount = 15
                     },
                     new SyncResult<TestModel>
                     {
                         EntitiesToDownloadCount = 3,
                         EntityBatch = oldServerModels2,
-                        TotalActiveEntityCount = 200
+                        TotalActiveEntityCount = 15
                     }
                 });
+                var publishedModels = new List<TestModel>();
 
                 //Act
-                Sut.Connect(_syncCommand, ClientSyncRequirement.Minimum(11), MockSyncStatusHandler.Object).Subscribe();
+                Sut.Connect(_syncCommand, ClientSyncRequirement.Minimum(11), MockSyncStatusHandler.Object)
+                    .Subscribe(next => publishedModels.Add(next));
+                await Task.Delay(10);
 
                 //Assert
+                MockSyncClientRepository.Mock.Verify(x => x.LoadModelsAsync(_syncCommand));
+                Assert.AreEqual(3, publishedModels.Count);
+                Assert.AreEqual(localModels[0].Id, publishedModels[0].Id);
+                Assert.AreEqual(localModels[1].Id, publishedModels[1].Id);
+                Assert.AreEqual(localModels[2].Id, publishedModels[2].Id);
+
+                MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 1);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 2);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 3);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 4, Times.Never);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.NewlyDownloadedEntities = 3);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.NewlyDownloadedEntities = 6);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.NewlyDownloadedEntities = 9);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.NewlyDownloadedEntities = 12, Times.Never);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.NewlyDownloadedEntities = 15, Times.Never);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.AllLocalEntities = 3);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.AllLocalEntities = 6);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.AllLocalEntities = 9);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.AllLocalEntities = 12);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.AllLocalEntities = 15, Times.Never);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.AllServerEntities = 15);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 3);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 6);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 9);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 12);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 15, Times.Never);
+
                 MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.OlderThan == null);
                 MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.NewerThan == localModels.First().ModifiedAtTicks);
                 MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.BatchSize == 3);
