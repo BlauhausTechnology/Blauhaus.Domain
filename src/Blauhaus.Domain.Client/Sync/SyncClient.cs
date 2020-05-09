@@ -43,11 +43,14 @@ namespace Blauhaus.Domain.Client.Sync
             _syncCommandHandler = syncCommandHandler;
         }
 
-
         public IObservable<TModel> Connect(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler)
         {
-            _analyticsService.TraceVerbose(this, $"{typeof(TModel).Name} SyncClient connected", syncCommand.ToObjectDictionary());
-            
+            TraceStatus(syncStatusHandler,  $"{typeof(TModel).Name} SyncClient connected. Required: {syncRequirement} (batch size {syncCommand.BatchSize})", new Dictionary<string, object>
+            {
+                {"SyncCommand", syncCommand},
+                {"SyncRequirement", syncRequirement}
+            });
+
             _numberOfModelsToPublish = syncCommand.BatchSize;
             syncStatusHandler.PublishedEntities = 0;
 
@@ -57,7 +60,8 @@ namespace Blauhaus.Domain.Client.Sync
                 
                 ClientSyncStatus syncStatus = await _syncClientRepository.GetSyncStatusAsync();
 
-                _analyticsService.TraceVerbose(this, $"Initializing sync for {typeof(TModel).Name}", syncStatus.ToObjectDictionary(nameof(ClientSyncStatus)));
+                TraceStatus(syncStatusHandler, $"Initializing sync for {typeof(TModel).Name}. Local status {syncStatus}", syncStatus.ToObjectDictionary(nameof(ClientSyncStatus)));
+                
                 syncStatusHandler.IsConnected = _connectivityService.IsConnectedToInternet;
                 syncStatusHandler.AllLocalEntities = syncStatus.AllLocalEntities;
                 syncStatusHandler.SyncedLocalEntities = syncStatus.SyncedLocalEntities;
@@ -90,20 +94,28 @@ namespace Blauhaus.Domain.Client.Sync
 
                 if (syncStatus.SyncedLocalEntities == 0)
                 {
-                    //first time sync
+                    TraceStatus(syncStatusHandler, "No local data, checking server...");
                     syncCommand.NewerThan = null;
                     syncCommand.OlderThan = null;
+                    syncStatusHandler.State = SyncClientState.DownloadingOld;
 
                     await DownloadModelsAsync(syncCommand, syncRequirement, syncStatusHandler, observer, false, cancellation.Token);
+
+                    syncStatusHandler.State = SyncClientState.Completed;
                 }
 
                 else
                 {
                     //first load and publish local models
+                    syncStatusHandler.State = SyncClientState.LoadingLocal;
+                    TraceStatus(syncStatusHandler, "Loading data from local store");
                     var localModels = await _syncClientRepository.LoadModelsAsync(syncCommand);
                     PublishModelsIfRequired(localModels, observer, syncStatusHandler);
 
+                    TraceStatus(syncStatusHandler, $"Loaded {localModels.Count} local models");
+
                     //first update any new or modified entities
+                    syncStatusHandler.State = SyncClientState.DownloadingNew;
                     syncCommand.NewerThan = syncStatus.NewestModifiedAt;
                     await DownloadModelsAsync(syncCommand, syncRequirement, syncStatusHandler, observer, true, cancellation.Token);
                     
@@ -112,8 +124,11 @@ namespace Blauhaus.Domain.Client.Sync
                     {
                         syncCommand.NewerThan = null;
                         syncCommand.OlderThan = syncStatus.OldestModifiedAt;
+                        syncStatusHandler.State = SyncClientState.DownloadingOld;
                         await DownloadModelsAsync(syncCommand, syncRequirement, syncStatusHandler, observer, false, cancellation.Token);
                     }
+                    
+                    syncStatusHandler.State = SyncClientState.Completed;
                 }
 
                 return new CompositeDisposable(cancellation, loadMoreSubscription);
@@ -124,7 +139,13 @@ namespace Blauhaus.Domain.Client.Sync
         {
             LoadMoreEvent?.Invoke(this, EventArgs.Empty);
         }
-        
+
+        private void TraceStatus(ISyncStatusHandler statusHandler, string message, Dictionary<string, object>? properties = null)
+        {
+            statusHandler.StatusMessage = message;
+            _analyticsService.TraceVerbose(this, message, properties ?? statusHandler.ToObjectDictionary("SyncStatus"));
+        }
+
 
         private async Task DownloadModelsAsync(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler, IObserver<TModel> observer, bool isLoadingNewerEntities, CancellationToken token)
         {
@@ -146,8 +167,7 @@ namespace Blauhaus.Domain.Client.Sync
                 syncStatusHandler.AllLocalEntities = updatedClientStatus.AllLocalEntities;
                 syncStatusHandler.SyncedLocalEntities = updatedClientStatus.SyncedLocalEntities;
 
-                _analyticsService.TraceVerbose(this, $"{syncResult.EntityBatch.Count} {typeof(TModel).Name} entities downloaded", syncStatusHandler.ToObjectDictionary("SyncStatus"));
-
+                
                 long stillToDownload = 0;
 
                 //when loading newer items than what we have on device we always try and sync them all
@@ -159,6 +179,11 @@ namespace Blauhaus.Domain.Client.Sync
                 {
                     stillToDownload = syncRequirement.SyncMinimumQuantity.Value - updatedClientStatus.SyncedLocalEntities;
                 }
+
+                stillToDownload = Math.Max(0, stillToDownload);
+
+                var newerOrOlder = isLoadingNewerEntities ? "newer" : "older";
+                TraceStatus(syncStatusHandler, $"{syncResult.EntityBatch.Count} {newerOrOlder} {typeof(TModel).Name} entities downloaded ({syncStatusHandler.NewlyDownloadedEntities} in total). {stillToDownload} of {syncResult.TotalActiveEntityCount} still to download");
 
                 if (stillToDownload > 0)
                 {
@@ -201,5 +226,6 @@ namespace Blauhaus.Domain.Client.Sync
             syncStatusHandler.StatusMessage = error;
             return new Exception(error);
         }
+
     }
 }

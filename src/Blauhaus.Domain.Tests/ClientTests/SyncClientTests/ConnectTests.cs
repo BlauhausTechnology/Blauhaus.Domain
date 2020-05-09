@@ -27,6 +27,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
     {
         private TestSyncCommand _syncCommand; 
         private ClientSyncRequirement _clientSyncRequirement;
+        private List<string> _statusMessages;
+        private List<SyncClientState> _stateUpdates;
         private MockBuilder<ISyncStatusHandler> MockSyncStatusHandler => AddMock<ISyncStatusHandler>().Invoke();
         private ConnectivityServiceMockBuilder MockConnectivityService => AddMock<ConnectivityServiceMockBuilder, IConnectivityService>().Invoke();
         private MockBuilder<ITimeService> MockTimeService => AddMock<ITimeService>().Invoke();
@@ -50,7 +52,15 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             MockSyncCommandHandler.Where_HandleAsync_returns(new SyncResult<TestModel>{EntityBatch = new List<TestModel>()});
             MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new ClientSyncStatus());
             MockSyncClientRepository.Where_LoadSyncedModelsAsync_returns(new List<TestModel>());
+            
             MockSyncStatusHandler.Mock.SetupAllProperties();
+            _statusMessages = new List<string>();
+            MockSyncStatusHandler.Mock.SetupSet(x => x.StatusMessage)
+                .Callback(message => _statusMessages.Add(message));
+
+            _stateUpdates = new List<SyncClientState>();
+            MockSyncStatusHandler.Mock.SetupSet(x => x.State)
+                .Callback(state => _stateUpdates.Add(state));
 
             AddService(MockSyncClientRepository.Object);
             AddService(MockSyncCommandHandler.Object);
@@ -61,7 +71,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
         public class ApplicableToAllCases : ConnectTests
         {
             [Test]
-            public void SHOULD_initialize_sync_status_and_trace()
+            public void SHOULD_initialize_sync_status()
             {
                 //Arrange
                 var clientSyncStatus = new ClientSyncStatus
@@ -78,7 +88,6 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
 
                 //Assert
                 MockSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync());
-                MockAnalyticsService.VerifyTrace("Initializing sync for TestModel");
                 MockAnalyticsService.VerifyTraceProperty(nameof(ClientSyncStatus), clientSyncStatus);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.AllLocalEntities = 3);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 2);
@@ -255,8 +264,82 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 MockSyncStatusHandler.Mock.VerifySet(x => x.AllLocalEntities = 3);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.AllServerEntities = 9);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 3);
-                MockAnalyticsService.VerifyTrace("3 TestModel entities downloaded");
                 MockSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync(), Times.Exactly(2));
+            }
+            
+            [Test]
+            public async Task WHEN_SyncRequirement_is_Batch_SHOULD_trace_status_messages()
+            { 
+                //Arrange
+                var models1 = TestModel.GenerateList(3).ToList();
+                var models2 = TestModel.GenerateList(3).ToList();
+                var models3 = TestModel.GenerateList(3).ToList();
+                MockSyncCommandHandler.Where_HandleAsync_returns(new List<SyncResult<TestModel>>
+                {
+                    new SyncResult<TestModel>
+                    {
+                        EntityBatch = models1,
+                        EntitiesToDownloadCount = 9,
+                        TotalActiveEntityCount = 9
+                    },                    
+                    new SyncResult<TestModel>
+                    {
+                        EntityBatch = models2,
+                        EntitiesToDownloadCount = 6,
+                        TotalActiveEntityCount = 9
+                    },                    
+                    new SyncResult<TestModel>
+                    {
+                        EntityBatch = models3,
+                        EntitiesToDownloadCount = 3,
+                        TotalActiveEntityCount = 9
+                    }
+                });
+                MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
+                {
+                    new ClientSyncStatus
+                    {
+                        SyncedLocalEntities = 0,
+                        AllLocalEntities = 0,
+                        OldestModifiedAt = 0,
+                        NewestModifiedAt = 0
+                    },
+                    new ClientSyncStatus
+                    {
+                        SyncedLocalEntities = 3,
+                        AllLocalEntities = 3,
+                        OldestModifiedAt = models1.Last().ModifiedAtTicks,
+                        NewestModifiedAt = models1.First().ModifiedAtTicks
+                    },                    
+                    new ClientSyncStatus
+                    {
+                        SyncedLocalEntities = 6,
+                        AllLocalEntities = 6,
+                        OldestModifiedAt = models2.Last().ModifiedAtTicks,
+                        NewestModifiedAt = models2.First().ModifiedAtTicks
+                    },
+                    new ClientSyncStatus
+                    {
+                        SyncedLocalEntities = 9,
+                        AllLocalEntities = 9,
+                        OldestModifiedAt = models3.Last().ModifiedAtTicks,
+                        NewestModifiedAt = models3.First().ModifiedAtTicks
+                    }});
+                var publishedModels = new List<TestModel>();
+
+
+                //Act
+                Sut.Connect(_syncCommand, ClientSyncRequirement.Batch, MockSyncStatusHandler.Object)
+                    .Subscribe(next => publishedModels.Add(next));
+                await Task.Delay(20);
+
+                //Assert
+                Assert.AreEqual("TestModel SyncClient connected. Required: Batch (batch size 3)", _statusMessages[0]);
+                Assert.AreEqual("Initializing sync for TestModel. Local status Synced: 0. (total: 0)", _statusMessages[1]);
+                Assert.AreEqual("No local data, checking server...", _statusMessages[2]);
+                Assert.AreEqual("3 older TestModel entities downloaded (3 in total). 0 of 9 still to download", _statusMessages[3]);
+                Assert.AreEqual(SyncClientState.DownloadingOld, _stateUpdates[0]);
+                Assert.AreEqual(SyncClientState.Completed, _stateUpdates[1]);
             }
 
             [Test]
@@ -351,8 +434,82 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 3);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 6);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 9);
-                MockAnalyticsService.VerifyTrace("3 TestModel entities downloaded");
                 MockSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync(), Times.Exactly(4));
+            }
+
+            [Test]
+            public void WHEN_SyncRequirement_is_All_SHOULD_trace_status_messages()
+            {
+                //Arrange
+                var models1 = TestModel.GenerateList(3).ToList();
+                var models2 = TestModel.GenerateList(3).ToList();
+                var models3 = TestModel.GenerateList(3).ToList();
+                MockSyncCommandHandler.Where_HandleAsync_returns(new List<SyncResult<TestModel>>
+                {
+                    new SyncResult<TestModel>
+                    {
+                        EntityBatch = models1,
+                        EntitiesToDownloadCount = 9,
+                        TotalActiveEntityCount = 9
+                    },
+                    new SyncResult<TestModel>
+                    {
+                        EntityBatch = models2,
+                        EntitiesToDownloadCount = 6,
+                        TotalActiveEntityCount = 9
+                    },
+                    new SyncResult<TestModel>
+                    {
+                        EntityBatch = models3,
+                        EntitiesToDownloadCount = 3,
+                        TotalActiveEntityCount = 9
+                    }
+                });
+                MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
+                {
+                    new ClientSyncStatus
+                    {
+                        SyncedLocalEntities = 0,
+                        AllLocalEntities = 0,
+                        OldestModifiedAt = 0,
+                        NewestModifiedAt = 0
+                    },
+                    new ClientSyncStatus
+                    {
+                        SyncedLocalEntities = 3,
+                        AllLocalEntities = 3,
+                        OldestModifiedAt = models1.Last().ModifiedAtTicks,
+                        NewestModifiedAt = models1.First().ModifiedAtTicks
+                    },
+                    new ClientSyncStatus
+                    {
+                        SyncedLocalEntities = 6,
+                        AllLocalEntities = 6,
+                        OldestModifiedAt = models2.Last().ModifiedAtTicks,
+                        NewestModifiedAt = models2.First().ModifiedAtTicks
+                    },
+                    new ClientSyncStatus
+                    {
+                        SyncedLocalEntities = 9,
+                        AllLocalEntities = 9,
+                        OldestModifiedAt = models3.Last().ModifiedAtTicks,
+                        NewestModifiedAt = models3.First().ModifiedAtTicks
+                    }});
+                var publishedModels = new List<TestModel>();
+
+                //Act
+                Sut.Connect(_syncCommand, ClientSyncRequirement.All, MockSyncStatusHandler.Object)
+                    .Subscribe(next => publishedModels.Add(next));
+
+                //Assert
+                Assert.AreEqual("TestModel SyncClient connected. Required: All (batch size 3)", _statusMessages[0]);
+                Assert.AreEqual("Initializing sync for TestModel. Local status Synced: 0. (total: 0)", _statusMessages[1]);
+                Assert.AreEqual("No local data, checking server...", _statusMessages[2]);
+                Assert.AreEqual("3 older TestModel entities downloaded (3 in total). 6 of 9 still to download", _statusMessages[3]);
+                Assert.AreEqual("3 older TestModel entities downloaded (6 in total). 3 of 9 still to download", _statusMessages[4]);
+                Assert.AreEqual("3 older TestModel entities downloaded (9 in total). 0 of 9 still to download", _statusMessages[5]);
+                Assert.AreEqual(SyncClientState.DownloadingOld, _stateUpdates[0]);
+                Assert.AreEqual(SyncClientState.Completed, _stateUpdates[1]);
             }
 
             [Test]
@@ -442,8 +599,81 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 MockSyncStatusHandler.Mock.VerifySet(x => x.AllServerEntities = 9);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 3);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 6);
-                MockAnalyticsService.VerifyTrace("3 TestModel entities downloaded");
                 MockSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync(), Times.Exactly(3));
+            }
+
+            [Test]
+            public async Task WHEN_SyncRequirement_has_minimum_SHOULD_update_status_messages()
+            { 
+                //Arrange
+                var models1 = TestModel.GenerateList(3).ToList();
+                var models2 = TestModel.GenerateList(3).ToList();
+                var models3 = TestModel.GenerateList(3).ToList(); 
+                MockSyncCommandHandler.Where_HandleAsync_returns(new List<SyncResult<TestModel>>
+                {
+                    new SyncResult<TestModel>
+                    {
+                        EntityBatch = models1,
+                        EntitiesToDownloadCount = 9,
+                        TotalActiveEntityCount = 9
+                    },                    
+                    new SyncResult<TestModel>
+                    {
+                        EntityBatch = models2,
+                        EntitiesToDownloadCount = 6,
+                        TotalActiveEntityCount = 9
+                    },                    
+                    new SyncResult<TestModel>
+                    {
+                        EntityBatch = models3,
+                        EntitiesToDownloadCount = 3,
+                        TotalActiveEntityCount = 9
+                    }
+                });
+                MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
+                {
+                    new ClientSyncStatus
+                    {
+                        SyncedLocalEntities = 0,
+                        AllLocalEntities = 0,
+                        OldestModifiedAt = 0,
+                        NewestModifiedAt = 0
+                    },
+                    new ClientSyncStatus
+                    {
+                        SyncedLocalEntities = 3,
+                        AllLocalEntities = 3,
+                        OldestModifiedAt = models1.Last().ModifiedAtTicks,
+                        NewestModifiedAt = models1.First().ModifiedAtTicks
+                    },                    
+                    new ClientSyncStatus
+                    {
+                        SyncedLocalEntities = 6,
+                        AllLocalEntities = 6,
+                        OldestModifiedAt = models2.Last().ModifiedAtTicks,
+                        NewestModifiedAt = models2.First().ModifiedAtTicks
+                    },
+                    new ClientSyncStatus
+                    {
+                        SyncedLocalEntities = 9,
+                        AllLocalEntities = 9,
+                        OldestModifiedAt = models3.Last().ModifiedAtTicks,
+                        NewestModifiedAt = models3.First().ModifiedAtTicks
+                    }});
+
+                //Act
+                Sut.Connect(_syncCommand, ClientSyncRequirement.Minimum(5), MockSyncStatusHandler.Object)
+                    .Subscribe(next => {});
+                await Task.Delay(20);
+
+                //Assert
+                Assert.AreEqual("TestModel SyncClient connected. Required: Minimum 5 (batch size 3)", _statusMessages[0]);
+                Assert.AreEqual("Initializing sync for TestModel. Local status Synced: 0. (total: 0)", _statusMessages[1]);
+                Assert.AreEqual("No local data, checking server...", _statusMessages[2]);
+                Assert.AreEqual("3 older TestModel entities downloaded (3 in total). 2 of 9 still to download", _statusMessages[3]);
+                Assert.AreEqual("3 older TestModel entities downloaded (6 in total). 0 of 9 still to download", _statusMessages[4]);
+                Assert.AreEqual(SyncClientState.DownloadingOld, _stateUpdates[0]);
+                Assert.AreEqual(SyncClientState.Completed, _stateUpdates[1]);
             }
 
         }
@@ -664,8 +894,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 var newServerModels1 = TestModel.GenerateList(3).OrderBy(x => x.ModifiedAtTicks).ToList();
                 var newServerModels2 = TestModel.GenerateList(3).OrderBy(x => x.ModifiedAtTicks).ToList();
                 var oldServerModels1 = TestModel.GenerateList(3).OrderByDescending(x => x.ModifiedAtTicks).ToList();
-                var oldServerModels2 = TestModel.GenerateList(3).OrderByDescending(x => x.ModifiedAtTicks).ToList();
-
+                var oldServerModels2 = TestModel.GenerateList(3).OrderByDescending(x => x.ModifiedAtTicks).ToList(); 
                 MockSyncClientRepository.Where_LoadSyncedModelsAsync_returns(localModels);
                 MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
                 {
@@ -787,6 +1016,18 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(2, x => x.BatchSize == 3);
                 MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(2, x => x.FavouriteFood == "Lasagne");
                 MockSyncCommandHandler.Verify_HandleAsync_called_Times(3);
+                
+                Assert.AreEqual("TestModel SyncClient connected. Required: Minimum 11 (batch size 3)", _statusMessages[0]);
+                Assert.AreEqual("Initializing sync for TestModel. Local status Synced: 3. (total: 3)", _statusMessages[1]);
+                Assert.AreEqual("Loading data from local store", _statusMessages[2]);
+                Assert.AreEqual("Loaded 3 local models", _statusMessages[3]);
+                Assert.AreEqual("3 newer TestModel entities downloaded (3 in total). 3 of 15 still to download", _statusMessages[4]);
+                Assert.AreEqual("3 newer TestModel entities downloaded (6 in total). 0 of 15 still to download", _statusMessages[5]);
+                Assert.AreEqual("3 older TestModel entities downloaded (9 in total). 0 of 15 still to download", _statusMessages[6]);
+                Assert.AreEqual(SyncClientState.LoadingLocal, _stateUpdates[0]);
+                Assert.AreEqual(SyncClientState.DownloadingNew, _stateUpdates[1]);
+                Assert.AreEqual(SyncClientState.DownloadingOld, _stateUpdates[2]);
+                Assert.AreEqual(SyncClientState.Completed, _stateUpdates[3]) ;
             }
 
         }
