@@ -338,8 +338,12 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 Assert.AreEqual("Initializing sync for TestModel. Local status Synced: 0. (total: 0)", _statusMessages[1]);
                 Assert.AreEqual("No local data, checking server...", _statusMessages[2]);
                 Assert.AreEqual("3 older TestModel entities downloaded (3 in total). 0 of 9 still to download", _statusMessages[3]);
-                Assert.AreEqual(SyncClientState.DownloadingOld, _stateUpdates[0]);
-                Assert.AreEqual(SyncClientState.Completed, _stateUpdates[1]);
+                Assert.AreEqual(5, _stateUpdates.Count);
+                Assert.AreEqual(SyncClientState.Starting, _stateUpdates[0]);
+                Assert.AreEqual(SyncClientState.Starting, _stateUpdates[1]);
+                Assert.AreEqual(SyncClientState.DownloadingOld, _stateUpdates[2]);
+                Assert.AreEqual(SyncClientState.DownloadingOld, _stateUpdates[3]);
+                Assert.AreEqual(SyncClientState.Completed, _stateUpdates[4]);
             }
 
             [Test]
@@ -508,8 +512,14 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 Assert.AreEqual("3 older TestModel entities downloaded (3 in total). 6 of 9 still to download", _statusMessages[3]);
                 Assert.AreEqual("3 older TestModel entities downloaded (6 in total). 3 of 9 still to download", _statusMessages[4]);
                 Assert.AreEqual("3 older TestModel entities downloaded (9 in total). 0 of 9 still to download", _statusMessages[5]);
-                Assert.AreEqual(SyncClientState.DownloadingOld, _stateUpdates[0]);
-                Assert.AreEqual(SyncClientState.Completed, _stateUpdates[1]);
+                Assert.AreEqual(7, _stateUpdates.Count);
+                Assert.AreEqual(SyncClientState.Starting, _stateUpdates[0]);
+                Assert.AreEqual(SyncClientState.Starting, _stateUpdates[1]);
+                Assert.AreEqual(SyncClientState.DownloadingOld, _stateUpdates[2]);
+                Assert.AreEqual(SyncClientState.DownloadingOld, _stateUpdates[3]);
+                Assert.AreEqual(SyncClientState.DownloadingOld, _stateUpdates[4]);
+                Assert.AreEqual(SyncClientState.DownloadingOld, _stateUpdates[5]);
+                Assert.AreEqual(SyncClientState.Completed, _stateUpdates[6]);
             }
 
             [Test]
@@ -672,8 +682,13 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 Assert.AreEqual("No local data, checking server...", _statusMessages[2]);
                 Assert.AreEqual("3 older TestModel entities downloaded (3 in total). 2 of 9 still to download", _statusMessages[3]);
                 Assert.AreEqual("3 older TestModel entities downloaded (6 in total). 0 of 9 still to download", _statusMessages[4]);
-                Assert.AreEqual(SyncClientState.DownloadingOld, _stateUpdates[0]);
-                Assert.AreEqual(SyncClientState.Completed, _stateUpdates[1]);
+                Assert.AreEqual(SyncClientState.Starting, _stateUpdates[0]);
+                Assert.AreEqual(SyncClientState.Starting, _stateUpdates[1]);
+                Assert.AreEqual(SyncClientState.DownloadingOld, _stateUpdates[2]);
+                Assert.AreEqual(SyncClientState.DownloadingOld, _stateUpdates[3]);
+                Assert.AreEqual(SyncClientState.DownloadingOld, _stateUpdates[4]);
+                Assert.AreEqual(SyncClientState.Completed, _stateUpdates[5]);
+                Assert.AreEqual(6, _stateUpdates.Count);
             }
 
         }
@@ -1024,10 +1039,16 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 Assert.AreEqual("3 newer TestModel entities downloaded (3 in total). 3 of 15 still to download", _statusMessages[4]);
                 Assert.AreEqual("3 newer TestModel entities downloaded (6 in total). 0 of 15 still to download", _statusMessages[5]);
                 Assert.AreEqual("3 older TestModel entities downloaded (9 in total). 0 of 15 still to download", _statusMessages[6]);
-                Assert.AreEqual(SyncClientState.LoadingLocal, _stateUpdates[0]);
-                Assert.AreEqual(SyncClientState.DownloadingNew, _stateUpdates[1]);
-                Assert.AreEqual(SyncClientState.DownloadingOld, _stateUpdates[2]);
-                Assert.AreEqual(SyncClientState.Completed, _stateUpdates[3]) ;
+                Assert.AreEqual(9, _stateUpdates.Count);
+                Assert.AreEqual(SyncClientState.Starting, _stateUpdates[0]);
+                Assert.AreEqual(SyncClientState.Starting, _stateUpdates[1]);
+                Assert.AreEqual(SyncClientState.LoadingLocal, _stateUpdates[2]);
+                Assert.AreEqual(SyncClientState.DownloadingNew, _stateUpdates[3]);
+                Assert.AreEqual(SyncClientState.DownloadingNew, _stateUpdates[4]);
+                Assert.AreEqual(SyncClientState.DownloadingNew, _stateUpdates[5]);
+                Assert.AreEqual(SyncClientState.DownloadingOld, _stateUpdates[6]);
+                Assert.AreEqual(SyncClientState.DownloadingOld, _stateUpdates[7]);
+                Assert.AreEqual(SyncClientState.Completed, _stateUpdates[8]);
             }
 
         }

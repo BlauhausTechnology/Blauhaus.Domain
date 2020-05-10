@@ -45,7 +45,7 @@ namespace Blauhaus.Domain.Client.Sync
 
         public IObservable<TModel> Connect(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler)
         {
-            TraceStatus(syncStatusHandler,  $"{typeof(TModel).Name} SyncClient connected. Required: {syncRequirement} (batch size {syncCommand.BatchSize})", new Dictionary<string, object>
+            TraceStatus(SyncClientState.Starting, $"{typeof(TModel).Name} SyncClient connected. Required: {syncRequirement} (batch size {syncCommand.BatchSize})", syncStatusHandler, new Dictionary<string, object>
             {
                 {"SyncCommand", syncCommand},
                 {"SyncRequirement", syncRequirement}
@@ -60,7 +60,7 @@ namespace Blauhaus.Domain.Client.Sync
                 
                 ClientSyncStatus syncStatus = await _syncClientRepository.GetSyncStatusAsync();
 
-                TraceStatus(syncStatusHandler, $"Initializing sync for {typeof(TModel).Name}. Local status {syncStatus}", syncStatus.ToObjectDictionary(nameof(ClientSyncStatus)));
+                TraceStatus(SyncClientState.Starting, $"Initializing sync for {typeof(TModel).Name}. Local status {syncStatus}", syncStatusHandler, syncStatus.ToObjectDictionary(nameof(ClientSyncStatus)));
                 
                 syncStatusHandler.IsConnected = _connectivityService.IsConnectedToInternet;
                 syncStatusHandler.AllLocalEntities = syncStatus.AllLocalEntities;
@@ -68,36 +68,16 @@ namespace Blauhaus.Domain.Client.Sync
 
                 async void HandleLoadMore(object s, EventArgs e)
                 {
-                    //maybe cancel any existing background sync? Since we are using the same sync command there will be blood
-
-                    _analyticsService.TraceVerbose(this, "LoadMore invoked", syncStatusHandler.ToObjectDictionary());
-                    _numberOfModelsToPublish += syncCommand.BatchSize;
-                    if (syncStatusHandler.PublishedEntities + syncCommand.BatchSize <= syncStatusHandler.SyncedLocalEntities)
-                    {
-                        //there are more local entities to load
-                        syncCommand.OlderThan = _oldestModelPublished;
-                        syncCommand.NewerThan = null;
-                        var localModels = await _syncClientRepository.LoadModelsAsync(syncCommand);
-                        PublishModelsIfRequired(localModels, observer, syncStatusHandler);
-                    }
-                    else
-                    {
-                        // we need more from the server
-                        syncCommand.OlderThan = _oldestModelPublished;
-                        syncCommand.NewerThan = null;
-                        var serverModels = await _syncCommandHandler.HandleAsync(syncCommand, CancellationToken.None);
-                        PublishModelsIfRequired(serverModels.Value.EntityBatch, observer, syncStatusHandler);
-                    }
+                    await LoadMoreAsync(syncCommand, syncRequirement, syncStatusHandler, observer);
                 }
 
                 var loadMoreSubscription = Observable.FromEventPattern(x => LoadMoreEvent += HandleLoadMore, x => LoadMoreEvent -= HandleLoadMore).Subscribe();
 
                 if (syncStatus.SyncedLocalEntities == 0)
                 {
-                    TraceStatus(syncStatusHandler, "No local data, checking server...");
+                    TraceStatus(SyncClientState.DownloadingOld, "No local data, checking server...", syncStatusHandler);
                     syncCommand.NewerThan = null;
                     syncCommand.OlderThan = null;
-                    syncStatusHandler.State = SyncClientState.DownloadingOld;
 
                     await DownloadModelsAsync(syncCommand, syncRequirement, syncStatusHandler, observer, false, cancellation.Token);
 
@@ -107,15 +87,12 @@ namespace Blauhaus.Domain.Client.Sync
                 else
                 {
                     //first load and publish local models
-                    syncStatusHandler.State = SyncClientState.LoadingLocal;
-                    TraceStatus(syncStatusHandler, "Loading data from local store");
+                    TraceStatus(SyncClientState.LoadingLocal, "Loading data from local store", syncStatusHandler);
                     var localModels = await _syncClientRepository.LoadModelsAsync(syncCommand);
                     PublishModelsIfRequired(localModels, observer, syncStatusHandler);
 
-                    TraceStatus(syncStatusHandler, $"Loaded {localModels.Count} local models");
-
-                    //first update any new or modified entities
-                    syncStatusHandler.State = SyncClientState.DownloadingNew;
+                    //then update any new or modified entities
+                    TraceStatus(SyncClientState.DownloadingNew, $"Loaded {localModels.Count} local models", syncStatusHandler);
                     syncCommand.NewerThan = syncStatus.NewestModifiedAt;
                     await DownloadModelsAsync(syncCommand, syncRequirement, syncStatusHandler, observer, true, cancellation.Token);
                     
@@ -140,12 +117,39 @@ namespace Blauhaus.Domain.Client.Sync
             LoadMoreEvent?.Invoke(this, EventArgs.Empty);
         }
 
-        private void TraceStatus(ISyncStatusHandler statusHandler, string message, Dictionary<string, object>? properties = null)
+        private async Task LoadMoreAsync(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler, IObserver<TModel> observer)
+        {
+            //maybe cancel any existing background sync? Since we are using the same sync command there will be blood
+            _numberOfModelsToPublish += syncCommand.BatchSize;
+            if (syncStatusHandler.PublishedEntities + syncCommand.BatchSize <= syncStatusHandler.SyncedLocalEntities)
+            {
+                //there are more local entities to load
+                TraceStatus(SyncClientState.LoadingLocal, $"LoadMore invoked. Loading next {syncCommand.BatchSize} of {_numberOfModelsToPublish} from device", syncStatusHandler);
+                syncCommand.OlderThan = _oldestModelPublished;
+                syncCommand.NewerThan = null;
+                var localModels = await _syncClientRepository.LoadModelsAsync(syncCommand);
+                PublishModelsIfRequired(localModels, observer, syncStatusHandler);
+            }
+            else
+            {
+                // we need more from the server
+                TraceStatus(SyncClientState.DownloadingOld, $"LoadMore invoked. Loading next {syncCommand.BatchSize} of {_numberOfModelsToPublish} from server", syncStatusHandler);
+                syncCommand.OlderThan = _oldestModelPublished;
+                syncCommand.NewerThan = null;
+                var serverModels = await _syncCommandHandler.HandleAsync(syncCommand, CancellationToken.None);
+                PublishModelsIfRequired(serverModels.Value.EntityBatch, observer, syncStatusHandler);
+            }
+
+            TraceStatus(SyncClientState.Completed, $"LoadMore completed.", syncStatusHandler);
+
+        }
+       
+        private void TraceStatus(SyncClientState state, string message, ISyncStatusHandler statusHandler, Dictionary<string, object>? properties = null)
         {
             statusHandler.StatusMessage = message;
-            _analyticsService.TraceVerbose(this, message, properties ?? statusHandler.ToObjectDictionary("SyncStatus"));
+            statusHandler.State = state;
+            _analyticsService.TraceVerbose(this, $"{state}: {message}", properties ?? statusHandler.ToObjectDictionary("SyncStatus"));
         }
-
 
         private async Task DownloadModelsAsync(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler, IObserver<TModel> observer, bool isLoadingNewerEntities, CancellationToken token)
         {
@@ -183,7 +187,8 @@ namespace Blauhaus.Domain.Client.Sync
                 stillToDownload = Math.Max(0, stillToDownload);
 
                 var newerOrOlder = isLoadingNewerEntities ? "newer" : "older";
-                TraceStatus(syncStatusHandler, $"{syncResult.EntityBatch.Count} {newerOrOlder} {typeof(TModel).Name} entities downloaded ({syncStatusHandler.NewlyDownloadedEntities} in total). {stillToDownload} of {syncResult.TotalActiveEntityCount} still to download");
+                var syncState = isLoadingNewerEntities ? SyncClientState.DownloadingNew : SyncClientState.DownloadingOld;
+                TraceStatus(syncState, $"{syncResult.EntityBatch.Count} {newerOrOlder} {typeof(TModel).Name} entities downloaded ({syncStatusHandler.NewlyDownloadedEntities} in total). {stillToDownload} of {syncResult.TotalActiveEntityCount} still to download", syncStatusHandler);
 
                 if (stillToDownload > 0)
                 {
@@ -204,7 +209,7 @@ namespace Blauhaus.Domain.Client.Sync
             }
         }
 
-        private void PublishModelsIfRequired(IEnumerable<TModel> models,IObserver<TModel> observer,  ISyncStatusHandler syncStatusHandler)
+        private void PublishModelsIfRequired(IEnumerable<TModel> models, IObserver<TModel> observer,  ISyncStatusHandler syncStatusHandler)
         {
             foreach (var localModel in models)
             {
@@ -223,6 +228,7 @@ namespace Blauhaus.Domain.Client.Sync
         private Exception HandleError(string error, ISyncStatusHandler syncStatusHandler)
         {
             _analyticsService.TraceError(this, error);
+            syncStatusHandler.State = SyncClientState.Error;
             syncStatusHandler.StatusMessage = error;
             return new Exception(error);
         }

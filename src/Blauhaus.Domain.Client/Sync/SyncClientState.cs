@@ -3,9 +3,11 @@
     public enum SyncClientState
     {
         NotStarted,
+        Starting,
         LoadingLocal,
         DownloadingNew,
         DownloadingOld,
-        Completed
+        Completed,
+        Error
     }
 }

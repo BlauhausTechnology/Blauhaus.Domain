@@ -24,6 +24,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
     {
         private ClientSyncRequirement _clientSyncRequirement;
         private TestSyncCommand _syncCommand;
+        private List<string> _statusMessages;
+        private List<SyncClientState> _stateUpdates;
         private MockBuilder<ISyncStatusHandler> MockSyncStatusHandler => AddMock<ISyncStatusHandler>().Invoke();
         private ConnectivityServiceMockBuilder MockConnectivityService => AddMock<ConnectivityServiceMockBuilder, IConnectivityService>().Invoke();
         private MockBuilder<ITimeService> MockTimeService => AddMock<ITimeService>().Invoke();
@@ -48,6 +50,14 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new ClientSyncStatus());
             MockSyncClientRepository.Where_LoadSyncedModelsAsync_returns(new List<TestModel>());
             MockSyncStatusHandler.Mock.SetupAllProperties();
+            
+            _statusMessages = new List<string>();
+            MockSyncStatusHandler.Mock.SetupSet(x => x.StatusMessage)
+                .Callback(message => _statusMessages.Add(message));
+
+            _stateUpdates = new List<SyncClientState>();
+            MockSyncStatusHandler.Mock.SetupSet(x => x.State)
+                .Callback(state => _stateUpdates.Add(state));
 
             AddService(MockSyncClientRepository.Object);
             AddService(MockSyncCommandHandler.Object);
@@ -98,6 +108,28 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 5);
             MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 6);
             MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 7, Times.Never);
+
+            Assert.AreEqual(10, _stateUpdates.Count);
+            Assert.AreEqual(SyncClientState.Starting, _stateUpdates[0]);
+            Assert.AreEqual(SyncClientState.Starting, _stateUpdates[1]);
+            Assert.AreEqual(SyncClientState.LoadingLocal, _stateUpdates[2]);
+            Assert.AreEqual(SyncClientState.DownloadingNew, _stateUpdates[3]);
+            Assert.AreEqual(SyncClientState.DownloadingNew, _stateUpdates[4]);
+            Assert.AreEqual(SyncClientState.DownloadingOld, _stateUpdates[5]);
+            Assert.AreEqual(SyncClientState.DownloadingOld, _stateUpdates[6]);
+            Assert.AreEqual(SyncClientState.Completed, _stateUpdates[7]);
+            Assert.AreEqual(SyncClientState.LoadingLocal, _stateUpdates[8]);
+            Assert.AreEqual(SyncClientState.Completed, _stateUpdates[9]);
+            
+            Assert.AreEqual(8, _statusMessages.Count);
+            Assert.AreEqual("TestModel SyncClient connected. Required: All (batch size 3)", _statusMessages[0]);
+            Assert.AreEqual("Initializing sync for TestModel. Local status Synced: 6. (total: 6)", _statusMessages[1]);
+            Assert.AreEqual("Loading data from local store", _statusMessages[2]);
+            Assert.AreEqual("Loaded 3 local models", _statusMessages[3]);
+            Assert.AreEqual("0 newer TestModel entities downloaded (0 in total). 0 of 0 still to download", _statusMessages[4]);
+            Assert.AreEqual("0 older TestModel entities downloaded (0 in total). 0 of 0 still to download", _statusMessages[5]);
+            Assert.AreEqual("LoadMore invoked. Loading next 3 of 6 from device", _statusMessages[6]);
+            Assert.AreEqual("LoadMore completed.", _statusMessages[7]);
         }
 
                 
@@ -147,6 +179,28 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 5);
             MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 6);
             MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 7, Times.Never);
+
+            Assert.AreEqual(10, _stateUpdates.Count);
+            Assert.AreEqual(SyncClientState.Starting, _stateUpdates[0]);
+            Assert.AreEqual(SyncClientState.Starting, _stateUpdates[1]);
+            Assert.AreEqual(SyncClientState.LoadingLocal, _stateUpdates[2]);
+            Assert.AreEqual(SyncClientState.DownloadingNew, _stateUpdates[3]);
+            Assert.AreEqual(SyncClientState.DownloadingNew, _stateUpdates[4]);
+            Assert.AreEqual(SyncClientState.DownloadingOld, _stateUpdates[5]);
+            Assert.AreEqual(SyncClientState.DownloadingOld, _stateUpdates[6]);
+            Assert.AreEqual(SyncClientState.Completed, _stateUpdates[7]);
+            Assert.AreEqual(SyncClientState.DownloadingOld, _stateUpdates[8]);
+            Assert.AreEqual(SyncClientState.Completed, _stateUpdates[9]);
+            
+            Assert.AreEqual(8, _statusMessages.Count);
+            Assert.AreEqual("TestModel SyncClient connected. Required: All (batch size 3)", _statusMessages[0]);
+            Assert.AreEqual("Initializing sync for TestModel. Local status Synced: 3. (total: 3)", _statusMessages[1]);
+            Assert.AreEqual("Loading data from local store", _statusMessages[2]);
+            Assert.AreEqual("Loaded 3 local models", _statusMessages[3]);
+            Assert.AreEqual("0 newer TestModel entities downloaded (0 in total). 0 of 0 still to download", _statusMessages[4]);
+            Assert.AreEqual("0 older TestModel entities downloaded (0 in total). 0 of 0 still to download", _statusMessages[5]);
+            Assert.AreEqual("LoadMore invoked. Loading next 3 of 6 from server", _statusMessages[6]);
+            Assert.AreEqual("LoadMore completed.", _statusMessages[7]);
         }
 
 
