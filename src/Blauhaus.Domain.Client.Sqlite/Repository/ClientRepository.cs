@@ -12,8 +12,8 @@ namespace Blauhaus.Domain.Client.Sqlite.Repository
         public ClientRepository(
             IAnalyticsService analyticsService,
             ISqliteDatabaseService sqliteDatabaseService, 
-            IClientEntityManager<TModel, TDto, TRootEntity> helper) 
-                : base(analyticsService, sqliteDatabaseService, helper)
+            IClientEntityConverter<TModel, TDto, TRootEntity> clientEntityConverter) 
+                : base(analyticsService, sqliteDatabaseService, clientEntityConverter)
         {
         }
     }

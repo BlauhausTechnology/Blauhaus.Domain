@@ -22,9 +22,9 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
         public BaseSyncClientRepository(
             IAnalyticsService analyticsService,
             ISqliteDatabaseService sqliteDatabaseService, 
-            IClientEntityManager<TModel, TDto, TRootEntity> entityManager,
+            IClientEntityConverter<TModel, TDto, TRootEntity> entityConverter,
             ISyncQueryGenerator<TSyncCommand> syncQueryGenerator) 
-                : base(analyticsService, sqliteDatabaseService, entityManager)
+                : base(analyticsService, sqliteDatabaseService, entityConverter)
         {
             _syncQueryGenerator = syncQueryGenerator;
         }
@@ -72,7 +72,7 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
 
                 foreach (var entity in entities)
                 {
-                    models.Add(EntityManager.ConstructModelFromRootEntity(entity, connection));
+                    models.Add(EntityConverter.ConstructModelFromRootEntity(entity, connection));
                 }
             });
 
@@ -89,18 +89,18 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
             {
                 foreach (var dto in dtos)
                 {
-                    var rootEntity = EntityManager.ExtractRootEntityFromDto(dto);
+                    var rootEntity = EntityConverter.ExtractRootEntityFromDto(dto);
                     rootEntity.SyncState = SyncState.InSync;
                     entities.Add(rootEntity);
 
-                    var childEntities = EntityManager.ExtractChildEntitiesFromDto(dto);
+                    var childEntities = EntityConverter.ExtractChildEntitiesFromDto(dto);
                     foreach (var childEntity in childEntities)
                     {
                         childEntity.SyncState = SyncState.InSync;
                         entities.Add(childEntity);
                     }
 
-                    models.Add(EntityManager.ConstructModelFromRootEntity(rootEntity, connection));
+                    models.Add(EntityConverter.ConstructModelFromRootEntity(rootEntity, connection));
                 }
 
                 foreach (var entity in entities)

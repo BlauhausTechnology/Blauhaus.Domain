@@ -5,7 +5,7 @@ using SQLite;
 
 namespace Blauhaus.Domain.Client.Sqlite.Repository
 {
-    public interface IClientEntityManager<TModel, TDto, TRootEntity> 
+    public interface IClientEntityConverter<TModel, TDto, TRootEntity> 
         where TModel : IClientEntity
         where TRootEntity: ISyncClientEntity
     {

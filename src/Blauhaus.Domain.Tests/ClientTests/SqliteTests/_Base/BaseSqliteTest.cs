@@ -35,7 +35,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests._Base
         protected DeviceInfoServiceMockBuilder MockDeviceInfoService => AddMock<DeviceInfoServiceMockBuilder, IDeviceInfoService>().Invoke();
 
         protected ClientEntityManagerMockBuilder<ITestModel, ITestDto, TestRootEntity> MockClientEntityManager 
-            => AddMock<ClientEntityManagerMockBuilder<ITestModel, ITestDto, TestRootEntity>, IClientEntityManager<ITestModel, ITestDto, TestRootEntity>>().Invoke();
+            => AddMock<ClientEntityManagerMockBuilder<ITestModel, ITestDto, TestRootEntity>, IClientEntityConverter<ITestModel, ITestDto, TestRootEntity>>().Invoke();
 
         protected SyncQueryGeneratorMockBuilder<ISyncQueryGenerator<TestSyncCommand>, TestSyncCommand> MockSyncQueryGenerator
             => AddMock<SyncQueryGeneratorMockBuilder<ISyncQueryGenerator<TestSyncCommand>, TestSyncCommand>, ISyncQueryGenerator<TestSyncCommand>>().Invoke();

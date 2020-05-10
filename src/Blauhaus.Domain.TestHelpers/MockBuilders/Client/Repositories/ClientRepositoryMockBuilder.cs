@@ -7,15 +7,15 @@ using Moq;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories
 { 
-    public class ClientRepositoryMockBuilder<TModel, TDto> : ClientRepositoryMockBuilder<ClientRepositoryMockBuilder<TModel, TDto>, IClientRepository<TModel, TDto>, TModel, TDto>
+    public class ClientRepositoryMockBuilder<TModel, TDto> : BaseClientRepositoryMockBuilder<ClientRepositoryMockBuilder<TModel, TDto>, IClientRepository<TModel, TDto>, TModel, TDto>
         where TModel : class, IClientEntity
     {
 
     }
 
 
-    public abstract class ClientRepositoryMockBuilder<TBuilder, TMock, TModel, TDto> : BaseMockBuilder<TBuilder, TMock> 
-        where TBuilder : ClientRepositoryMockBuilder<TBuilder, TMock, TModel, TDto>
+    public abstract class BaseClientRepositoryMockBuilder<TBuilder, TMock, TModel, TDto> : BaseMockBuilder<TBuilder, TMock> 
+        where TBuilder : BaseClientRepositoryMockBuilder<TBuilder, TMock, TModel, TDto>
         where TMock : class, IClientRepository<TModel, TDto>
         where TModel : class, IClientEntity
     {

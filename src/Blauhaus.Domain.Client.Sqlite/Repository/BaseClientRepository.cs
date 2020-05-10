@@ -16,7 +16,7 @@ namespace Blauhaus.Domain.Client.Sqlite.Repository
     {
         protected readonly IAnalyticsService AnalyticsService;
         protected readonly ISqliteDatabaseService DatabaseService;
-        protected readonly IClientEntityManager<TModel, TDto, TRootEntity> EntityManager;
+        protected readonly IClientEntityConverter<TModel, TDto, TRootEntity> EntityConverter;
 
         protected readonly SqliteCompiler SqlCompiler = new SqliteCompiler();
         protected Query SqlQuery() => new Query(typeof(TRootEntity).Name);
@@ -24,11 +24,11 @@ namespace Blauhaus.Domain.Client.Sqlite.Repository
         protected BaseClientRepository(
             IAnalyticsService analyticsService,
             ISqliteDatabaseService sqliteDatabaseService, 
-            IClientEntityManager<TModel, TDto, TRootEntity> entityManager)
+            IClientEntityConverter<TModel, TDto, TRootEntity> entityConverter)
         {
             AnalyticsService = analyticsService;
             DatabaseService = sqliteDatabaseService;
-            EntityManager = entityManager;
+            EntityConverter = entityConverter;
         }
 
 
@@ -44,7 +44,7 @@ namespace Blauhaus.Domain.Client.Sqlite.Repository
 
                 if (entity != null)
                 {
-                    model = EntityManager.ConstructModelFromRootEntity(entity, connection);
+                    model = EntityConverter.ConstructModelFromRootEntity(entity, connection);
                 }
 
             });
@@ -60,16 +60,16 @@ namespace Blauhaus.Domain.Client.Sqlite.Repository
 
             await db.RunInTransactionAsync(connection =>
             {
-                var rootEntity = EntityManager.ExtractRootEntityFromDto(dto);
+                var rootEntity = EntityConverter.ExtractRootEntityFromDto(dto);
                 connection.InsertOrReplace(rootEntity);
 
-                foreach (var childEntity in EntityManager.ExtractChildEntitiesFromDto(dto))
+                foreach (var childEntity in EntityConverter.ExtractChildEntitiesFromDto(dto))
                 {
                     connection.InsertOrReplace(childEntity);
                 }
                 connection.InsertOrReplace(rootEntity);
 
-                model = EntityManager.ConstructModelFromRootEntity(rootEntity, connection);
+                model = EntityConverter.ConstructModelFromRootEntity(rootEntity, connection);
             });
 
             return model;
