@@ -7,6 +7,7 @@
         LoadingLocal,
         DownloadingNew,
         DownloadingOld,
+        Cancelled,
         Completed,
         Error
     }
