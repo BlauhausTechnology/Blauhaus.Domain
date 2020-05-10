@@ -15,6 +15,7 @@
         public bool IsConnected{ get; set; }
 
         public string StatusMessage { get; set; }
+        public SyncClientState State { get; set; }
 
     }
 }

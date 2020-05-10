@@ -15,6 +15,21 @@
         public static readonly ClientSyncRequirement All = new ClientSyncRequirement(true, null);
         public static readonly ClientSyncRequirement Batch = new ClientSyncRequirement(false, null);
 
+        public override string ToString()
+        {
+            if (SyncAll)
+            {
+                return "All";
+            }
+
+            if (SyncMinimumQuantity == null)
+            {
+                return "Batch";
+            }
+
+            return "Minimum " + SyncMinimumQuantity.Value;
+        }
+
         public bool IsFulfilled(long? syncedLocalEntities)
         {
 
