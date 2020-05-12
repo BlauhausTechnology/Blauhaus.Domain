@@ -9,6 +9,7 @@ using Blauhaus.Domain.Client.Sqlite.Repository;
 using Blauhaus.Domain.Client.Sync;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
 using Blauhaus.Domain.Common.Entities;
+using SqlKata;
 
 namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
 {
@@ -17,33 +18,56 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
         where TModel : class, IClientEntity 
         where TSyncCommand : SyncCommand
     {
-        private readonly ISyncQueryGenerator<TSyncCommand> _syncQueryGenerator;
+        private readonly ISyncQueryGenerator<TRootEntity, TSyncCommand> _syncQueryGenerator;
+        protected Query CreateSqlQuery(TSyncCommand syncCommand) => _syncQueryGenerator.GenerateQuery(syncCommand);
          
         public BaseSyncClientRepository(
             IAnalyticsService analyticsService,
             ISqliteDatabaseService sqliteDatabaseService, 
             IClientEntityConverter<TModel, TDto, TRootEntity> entityConverter,
-            ISyncQueryGenerator<TSyncCommand> syncQueryGenerator) 
+            ISyncQueryGenerator<TRootEntity, TSyncCommand> syncQueryGenerator) 
                 : base(analyticsService, sqliteDatabaseService, entityConverter)
         {
             _syncQueryGenerator = syncQueryGenerator;
         }
         
 
-        public async Task<ClientSyncStatus> GetSyncStatusAsync()
+
+        public async Task<ClientSyncStatus> GetSyncStatusAsync(TSyncCommand syncCommand)
         {
             var syncStatus = new ClientSyncStatus();
             var db = await DatabaseService.GetDatabaseConnectionAsync();
             await db.RunInTransactionAsync(connection =>
             {
-                var orderedQuery = connection.Table<TRootEntity>()
-                    .Where(x => x.SyncState == SyncState.InSync)
-                    .OrderByDescending(x => x.ModifiedAtTicks);
+
+                var newestModifiedQuery = CreateSqlQuery(syncCommand)
+                    .Where(nameof(ISyncClientEntity.SyncState), "=", SyncState.InSync)
+                    .OrderByDesc(nameof(IClientEntity.ModifiedAtTicks))
+                    .Take(1);
+                var newestModifiedSql = SqlCompiler.Compile(newestModifiedQuery).ToString();
+                var newestModified = connection.Query<TRootEntity>(newestModifiedSql);
+
+                var oldesModifiedQuery =  CreateSqlQuery(syncCommand)
+                    .Where(nameof(ISyncClientEntity.SyncState), "=", SyncState.InSync)
+                    .OrderBy(nameof(IClientEntity.ModifiedAtTicks))
+                    .Take(1);
+                var oldestModifiedSql = SqlCompiler.Compile(oldesModifiedQuery).ToString();
+                var oldestModified = connection.Query<TRootEntity>(oldestModifiedSql);
+
+                var syncedCountQuery =  CreateSqlQuery(syncCommand)
+                    .Where(nameof(ISyncClientEntity.SyncState), "=", SyncState.InSync).AsCount();
+                var syncedCountSql = SqlCompiler.Compile(syncedCountQuery).ToString();
+                var syncedCount = connection.ExecuteScalar<long>(syncedCountSql);
+
+                var allCountQuery = CreateSqlQuery(syncCommand);
+                var allCountSql = SqlCompiler.Compile(allCountQuery.AsCount()).ToString();
+                var allCount = connection.ExecuteScalar<long>(allCountSql);
                 
-                syncStatus.NewestModifiedAt = orderedQuery.FirstOrDefault()?.ModifiedAtTicks;
-                syncStatus.OldestModifiedAt = orderedQuery.LastOrDefault()?.ModifiedAtTicks ?? 0;
-                syncStatus.SyncedLocalEntities = orderedQuery.Count();
-                syncStatus.AllLocalEntities = connection.Table<TRootEntity>().Count();
+                syncStatus.NewestModifiedAt = newestModified.FirstOrDefault()?.ModifiedAtTicks;
+                syncStatus.OldestModifiedAt = oldestModified.LastOrDefault()?.ModifiedAtTicks ?? 0;
+                syncStatus.SyncedLocalEntities = syncedCount;
+                syncStatus.AllLocalEntities = allCount;
+
             });
 
             return syncStatus;
@@ -56,7 +80,7 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
 
             await db.RunInTransactionAsync(connection =>
             {
-                var query = SqlQuery()
+                var query = CreateSqlQuery(syncCommand)
                     .OrderByDesc(nameof(IClientEntity.ModifiedAtTicks))
                     .Take(syncCommand.BatchSize);
 
@@ -64,8 +88,7 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
                 {
                     query = query.Where(nameof(IClientEntity.ModifiedAtTicks), "<", syncCommand.OlderThan);
                 }
-
-                query = _syncQueryGenerator.ExtendQuery(query, syncCommand);
+                 
 
                 var sql = SqlCompiler.Compile(query).ToString();
                 var entities = connection.Query<TRootEntity>(sql);

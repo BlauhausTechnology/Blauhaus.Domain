@@ -10,36 +10,36 @@ namespace Blauhaus.Domain.Client.Sqlite._Ioc
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddClientRepository<TModel, TDto, TRootEntity, TEntityManager>(this IServiceCollection services) 
+        public static IServiceCollection AddClientRepository<TModel, TDto, TRootEntity, TEntityConverter>(this IServiceCollection services) 
             where TModel : class, IClientEntity 
             where TRootEntity : BaseSyncClientEntity, new() 
-            where TEntityManager : class, IClientEntityConverter<TModel, TDto, TRootEntity>
+            where TEntityConverter : class, IClientEntityConverter<TModel, TDto, TRootEntity>
         {
             services.AddTransient<IClientRepository<TModel, TDto>, ClientRepository<TModel, TDto, TRootEntity>>();
-            services.AddTransient<IClientEntityConverter<TModel, TDto, TRootEntity>, TEntityManager>();
+            services.AddTransient<IClientEntityConverter<TModel, TDto, TRootEntity>, TEntityConverter>();
             return services;
         }
-        public static IServiceCollection AddSyncClientRepository<TModel, TDto, TRootEntity, TEntityManager>(this IServiceCollection services) 
+        public static IServiceCollection AddSyncClientRepository<TModel, TDto, TRootEntity, TEntityConverter>(this IServiceCollection services) 
             where TModel : class, IClientEntity 
             where TRootEntity : BaseSyncClientEntity, new() 
-            where TEntityManager : class, IClientEntityConverter<TModel, TDto, TRootEntity>
+            where TEntityConverter : class, IClientEntityConverter<TModel, TDto, TRootEntity>
         {
             services.AddTransient<ISyncClientRepository<TModel, TDto, SyncCommand>, SyncClientRepository<TModel, TDto, SyncCommand, TRootEntity>>();
-            services.AddTransient<IClientEntityConverter<TModel, TDto, TRootEntity>, TEntityManager>();
-            services.AddTransient<ISyncQueryGenerator<SyncCommand>, SyncQueryGenerator>();
+            services.AddTransient<IClientEntityConverter<TModel, TDto, TRootEntity>, TEntityConverter>();
+            services.AddTransient<ISyncQueryGenerator<TRootEntity, SyncCommand>, DefaultSyncQueryGenerator<TRootEntity>>();
             return services;
         }
 
-        public static IServiceCollection AddSyncClientRepository<TModel, TDto, TSyncCommand, TRootEntity, TEntityManager, TSyncQueryGenerator>(this IServiceCollection services) 
+        public static IServiceCollection AddSyncClientRepository<TModel, TDto, TSyncCommand, TRootEntity, TEntityConverter, TSyncQueryGenerator>(this IServiceCollection services) 
             where TModel : class, IClientEntity 
             where TRootEntity : BaseSyncClientEntity, new() 
-            where TEntityManager : class, IClientEntityConverter<TModel, TDto, TRootEntity>
+            where TEntityConverter : class, IClientEntityConverter<TModel, TDto, TRootEntity>
             where TSyncCommand : SyncCommand
-            where TSyncQueryGenerator : class, ISyncQueryGenerator<TSyncCommand>
+            where TSyncQueryGenerator : class, ISyncQueryGenerator<TRootEntity, TSyncCommand>
         {
             services.AddTransient<ISyncClientRepository<TModel, TDto, TSyncCommand>, SyncClientRepository<TModel, TDto, TSyncCommand, TRootEntity>>();
-            services.AddTransient<IClientEntityConverter<TModel, TDto, TRootEntity>, TEntityManager>();
-            services.AddTransient<ISyncQueryGenerator<TSyncCommand>, TSyncQueryGenerator>();
+            services.AddTransient<IClientEntityConverter<TModel, TDto, TRootEntity>, TEntityConverter>();
+            services.AddTransient<ISyncQueryGenerator<TRootEntity, TSyncCommand>, TSyncQueryGenerator>();
             return services;
         }
     }

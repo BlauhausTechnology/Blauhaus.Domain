@@ -46,7 +46,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories
         
         public TBuilder Where_GetSyncStatusAsync_throws(Exception e)
         {
-            Mock.Setup(x => x.GetSyncStatusAsync())
+            Mock.Setup(x => x.GetSyncStatusAsync(It.IsAny<TSyncCommand>()))
                 .ThrowsAsync(e);
             return this as TBuilder;
         }
@@ -61,7 +61,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories
         
         public TBuilder Where_GetSyncStatusAsync_returns(ClientSyncStatus value)
         {
-            Mock.Setup(x => x.GetSyncStatusAsync())
+            Mock.Setup(x => x.GetSyncStatusAsync(It.IsAny<TSyncCommand>()))
                 .ReturnsAsync(value);
             return this as TBuilder;
         }
@@ -69,7 +69,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories
         public TBuilder Where_GetSyncStatusAsync_returns(List<ClientSyncStatus> values)
         {
             var queue = new Queue<ClientSyncStatus>(values.ToList());
-            Mock.Setup(x => x.GetSyncStatusAsync())
+            Mock.Setup(x => x.GetSyncStatusAsync(It.IsAny<TSyncCommand>()))
                 .ReturnsAsync(queue.Dequeue);
             return this as TBuilder;
         }

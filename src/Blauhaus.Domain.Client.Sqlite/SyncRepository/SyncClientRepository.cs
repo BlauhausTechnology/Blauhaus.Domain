@@ -16,7 +16,7 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
             IAnalyticsService analyticsService,
             ISqliteDatabaseService sqliteDatabaseService, 
             IClientEntityConverter<TModel, TDto, TRootEntity> entityConverter,
-            ISyncQueryGenerator<TSyncCommand> syncQueryGenerator) 
+            ISyncQueryGenerator<TRootEntity, TSyncCommand> syncQueryGenerator) 
                 : base(analyticsService, sqliteDatabaseService, entityConverter, syncQueryGenerator)
         {
         }
