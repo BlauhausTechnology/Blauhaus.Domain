@@ -75,14 +75,14 @@ namespace Blauhaus.Domain.Server._Ioc
             return services;
         }
 
-        public static IServiceCollection AddAuthenticatedSyncCommandHandler<TEntity,TSyncQuery, TQueryLoader, TUser>(this IServiceCollection services) 
+        public static IServiceCollection AddAuthenticatedSyncCommandHandler<TEntity, TSyncCommand, TQueryLoader, TUser>(this IServiceCollection services) 
             where TEntity : IServerEntity 
             where TUser : class
-            where TQueryLoader : class, IAuthenticatedSyncQueryLoader<TEntity, TSyncQuery, TUser>
-            where TSyncQuery : SyncCommand
+            where TQueryLoader : class, IAuthenticatedSyncQueryLoader<TEntity, TSyncCommand, TUser>
+            where TSyncCommand : SyncCommand
         {
-            services.AddAuthenticatedCommandHandler<SyncResult<TEntity>, SyncCommand, TUser, AuthenticatedSyncCommandHandler<TEntity, SyncCommand, TUser>>();
-            services.AddScoped<IAuthenticatedSyncQueryLoader<TEntity, TSyncQuery, TUser>, TQueryLoader>();
+            services.AddAuthenticatedCommandHandler<SyncResult<TEntity>, TSyncCommand, TUser, AuthenticatedSyncCommandHandler<TEntity, TSyncCommand, TUser>>();
+            services.AddScoped<IAuthenticatedSyncQueryLoader<TEntity, TSyncCommand, TUser>, TQueryLoader>();
             return services;
         }
         
