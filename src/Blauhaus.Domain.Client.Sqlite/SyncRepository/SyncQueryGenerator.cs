@@ -9,7 +9,7 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
     {
         public Query GenerateQuery(SyncCommand syncCommand)
         {
-            return new Query(nameof(TRootEntity));
+            return new Query(typeof(TRootEntity).Name);
         }
     }
 }
