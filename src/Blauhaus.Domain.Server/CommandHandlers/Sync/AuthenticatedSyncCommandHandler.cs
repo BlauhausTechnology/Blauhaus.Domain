@@ -69,6 +69,11 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
                 traceMessage = "SyncCommand for newer entities processed";
             }
 
+            if (command.IsForSingleEntity())
+            {
+                dbQuery = dbQuery.Where(x => x.Id == command.IdFilter);
+                traceMessage = "SyncCommand for single entity processed";
+            }
             
             var modifiedEntityCount = dbQuery.Count();
             

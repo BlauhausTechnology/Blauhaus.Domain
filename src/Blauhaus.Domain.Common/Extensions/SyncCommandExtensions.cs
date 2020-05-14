@@ -20,34 +20,15 @@ namespace Blauhaus.Domain.Common.Extensions
         {
             return syncCommand.OlderThan != null;
         }
-
-        public static SyncCommand WithFilter(this SyncCommand syncCommand, string name, object value)
+        
+        public static bool IsForSingleEntity(this SyncCommand syncCommand)
         {
-            syncCommand.Filters ??= new Dictionary<string, object>();
-            syncCommand.Filters[name] = value;
-            return syncCommand;
+            return syncCommand.IdFilter != null && syncCommand.IdFilter != Guid.Empty;
         }
         
-        public static bool TryGetFilterValue<TValue>(this SyncCommand syncCommand, string name, out TValue? value) where TValue : class
+        public static bool IsFilteredByParentEntity(this SyncCommand syncCommand)
         {
-            value = null;
-
-            if (syncCommand.Filters != null)
-            {
-                foreach (var syncCommandFilter in syncCommand.Filters)
-                {
-                    if (syncCommandFilter.Key.Equals(name, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        value = syncCommandFilter.Value as TValue;
-                        if (value != null)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            return false;
+            return syncCommand.ParentIdFilter != null && syncCommand.ParentIdFilter != Guid.Empty;
         }
     }
 }

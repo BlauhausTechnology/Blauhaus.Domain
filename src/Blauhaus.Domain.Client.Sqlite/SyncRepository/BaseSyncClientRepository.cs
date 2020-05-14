@@ -18,17 +18,17 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
         where TModel : class, IClientEntity 
         where TSyncCommand : SyncCommand
     {
-        private readonly ISyncQueryLoader<TRootEntity, TSyncCommand> _syncQueryGenerator;
-        protected Query CreateSqlQuery(TSyncCommand syncCommand) => _syncQueryGenerator.GenerateQuery(syncCommand);
+        private readonly ISyncQueryLoader<TSyncCommand> _syncQueryLoader;
+        protected Query CreateSqlQuery(TSyncCommand syncCommand) => _syncQueryLoader.GenerateQuery(syncCommand);
          
         public BaseSyncClientRepository(
             IAnalyticsService analyticsService,
             ISqliteDatabaseService sqliteDatabaseService, 
             IClientEntityConverter<TModel, TDto, TRootEntity> entityConverter,
-            ISyncQueryLoader<TRootEntity, TSyncCommand> syncQueryGenerator) 
+            ISyncQueryLoader<TSyncCommand> syncQueryLoader) 
                 : base(analyticsService, sqliteDatabaseService, entityConverter)
         {
-            _syncQueryGenerator = syncQueryGenerator;
+            _syncQueryLoader = syncQueryLoader;
         }
         
 

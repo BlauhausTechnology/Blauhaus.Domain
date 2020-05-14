@@ -7,13 +7,6 @@ namespace Blauhaus.Domain.Common.CommandHandlers.Sync
     {
 
         /// <summary>
-        /// Optional addition filters used to define a subset of the entity to be synced.
-        /// Must be implemented in the server-side IAuthenticatedSyncQueryLoader and the client-side ISyncQueryLoader
-        /// So that both client and server return the same filtered subset
-        /// </summary>
-        public Dictionary<string, object> Filters { get; set; } = new Dictionary<string, object>();
-        
-        /// <summary>
         /// Used only when asking for entities that have been modified after the last sync. Returns older entities first
         /// </summary>
         public long? NewerThan { get; set; }
@@ -27,6 +20,16 @@ namespace Blauhaus.Domain.Common.CommandHandlers.Sync
         /// Specifies the number of entities to be downloaded from the server and published to the client in each batch
         /// </summary>
         public int BatchSize { get; set; } = 100;
+
+        /// <summary>
+        /// Optional. Can be used to filter entities by their parent. Must be applied in SyncQueryLoaders on the client and the server.
+        /// </summary>
+        public Guid? ParentIdFilter { get; set; }
+        
+        /// <summary>
+        /// Optional. Can be used to sync a single entity. Handled automatically. 
+        /// </summary>
+        public Guid? IdFilter { get; set; }
 
     }
 }

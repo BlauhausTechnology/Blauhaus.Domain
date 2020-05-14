@@ -44,7 +44,6 @@ namespace Blauhaus.Domain.Tests.ServerTests
 
         public class LoadingOlderAndNewerEntites : AuthenticatedSyncCommandHandlerTests
         {
-            
             [Test]
             public async Task SHOULD_fail()
             {
@@ -64,7 +63,6 @@ namespace Blauhaus.Domain.Tests.ServerTests
 
         public class LoadingOlderEntities : AuthenticatedSyncCommandHandlerTests
         {
-            
             [Test]
             public async Task SHOULD_return_entities_modified_before_given_ModifiedBeforeTicks_with_newest_first_and_oldest_excluded()
             {
@@ -150,13 +148,60 @@ namespace Blauhaus.Domain.Tests.ServerTests
                     _entities[11], 
                 }); 
             }
-             
-
 
         }
 
         public class LoadingNewerEntities : AuthenticatedSyncCommandHandlerTests
         {
+            
+            [Test]
+            public async Task IF_Id_is_Specified_and_entity_has_been_modified_SHOULD_return_only_that_entity()
+            {
+                //Arrange
+                _command.BatchSize = 3;
+                _command.IdFilter = _entities[5].Id;
+                _command.NewerThan = _entities[7].ModifiedAt.Ticks;
+
+                //Act
+                var queryResult = await Sut.HandleAsync(_command, _user, CancellationToken);
+                var result = queryResult.Value;
+
+                //Assert
+                Assert.AreEqual(12, result.TotalActiveEntityCount); 
+                Assert.AreEqual(1, result.EntitiesToDownloadCount); 
+                Assert.AreEqual(1, result.EntityBatch.Count); 
+                result.EntityBatch.VerifyEntities(new List<TestServerEntity>
+                {
+                    _entities[5]
+                }); 
+                MockAnalyticsService.VerifyTrace("SyncCommand for single entity processed");
+                MockAnalyticsService.VerifyTraceProperty("TotalActiveEntityCount", 12);
+                MockAnalyticsService.VerifyTraceProperty("EntitiesToDownloadCount", 1);
+                MockAnalyticsService.VerifyTraceProperty("EntityBatchCount", 1);
+            }
+
+            [Test]
+            public async Task IF_Id_is_Specified_and_entity_has_not_been_modified_SHOULD_return_nothing()
+            {
+                //Arrange
+                _command.BatchSize = 3;
+                _command.IdFilter = _entities[5].Id;
+                _command.NewerThan = _entities[3].ModifiedAt.Ticks;
+
+                //Act
+                var queryResult = await Sut.HandleAsync(_command, _user, CancellationToken);
+                var result = queryResult.Value;
+
+                //Assert
+                Assert.AreEqual(12, result.TotalActiveEntityCount); 
+                Assert.AreEqual(0, result.EntitiesToDownloadCount); 
+                Assert.AreEqual(0, result.EntityBatch.Count);  
+                MockAnalyticsService.VerifyTrace("SyncCommand for single entity processed");
+                MockAnalyticsService.VerifyTraceProperty("TotalActiveEntityCount", 12);
+                MockAnalyticsService.VerifyTraceProperty("EntitiesToDownloadCount", 0);
+                MockAnalyticsService.VerifyTraceProperty("EntityBatchCount", 0);
+            }
+
             [Test]
             public async Task SHOULD_return_entities_modified_after_given_ModifiedAfterTicks_with_oldest_first_and_newest_excluded()
             {
@@ -269,6 +314,32 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 MockAnalyticsService.VerifyTraceProperty("TotalActiveEntityCount", 12);
                 MockAnalyticsService.VerifyTraceProperty("EntitiesToDownloadCount", 12);
                 MockAnalyticsService.VerifyTraceProperty("EntityBatchCount", 3);
+            }
+
+                      
+            [Test]
+            public async Task IF_Id_is_Specified_SHOULD_return_only_that_entity()
+            {
+                //Arrange
+                _command.BatchSize = 3;
+                _command.IdFilter = _entities[1].Id;
+
+                //Act
+                var queryResult = await Sut.HandleAsync(_command, _user, CancellationToken);
+                var result = queryResult.Value;
+
+                //Assert
+                Assert.AreEqual(12, result.TotalActiveEntityCount); 
+                Assert.AreEqual(1, result.EntitiesToDownloadCount); 
+                Assert.AreEqual(1, result.EntityBatch.Count); 
+                result.EntityBatch.VerifyEntities(new List<TestServerEntity>
+                {
+                    _entities[1]
+                }); 
+                MockAnalyticsService.VerifyTrace("SyncCommand for single entity processed");
+                MockAnalyticsService.VerifyTraceProperty("TotalActiveEntityCount", 12);
+                MockAnalyticsService.VerifyTraceProperty("EntitiesToDownloadCount", 1);
+                MockAnalyticsService.VerifyTraceProperty("EntityBatchCount", 1);
             }
 
             [Test]
