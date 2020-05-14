@@ -73,7 +73,7 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
 
                 _analyticsService.TraceVerbose(this, "SyncStatus loaded", syncStatus.ToObjectDictionary()
                     .WithValue("Newest query", newestModifiedSql)
-                    .WithValue("Oldest query", oldesModifiedQuery)
+                    .WithValue("Oldest query", oldestModifiedSql)
                     .WithValue("Synced count query", syncedCountSql)
                     .WithValue("All count query", allCountSql));
 
