@@ -26,7 +26,7 @@ namespace Blauhaus.Domain.Client.Sqlite._Ioc
         {
             services.AddTransient<ISyncClientRepository<TModel, TDto, SyncCommand>, SyncClientRepository<TModel, TDto, SyncCommand, TRootEntity>>();
             services.AddTransient<IClientEntityConverter<TModel, TDto, TRootEntity>, TEntityConverter>();
-            services.AddTransient<ISyncQueryGenerator<TRootEntity, SyncCommand>, DefaultSyncQueryGenerator<TRootEntity>>();
+            services.AddTransient<ISyncQueryLoader<TRootEntity, SyncCommand>, DefaultSyncQueryGenerator<TRootEntity>>();
             return services;
         }
 
@@ -35,11 +35,11 @@ namespace Blauhaus.Domain.Client.Sqlite._Ioc
             where TRootEntity : BaseSyncClientEntity, new() 
             where TEntityConverter : class, IClientEntityConverter<TModel, TDto, TRootEntity>
             where TSyncCommand : SyncCommand
-            where TSyncQueryGenerator : class, ISyncQueryGenerator<TRootEntity, TSyncCommand>
+            where TSyncQueryGenerator : class, ISyncQueryLoader<TRootEntity, TSyncCommand>
         {
             services.AddTransient<ISyncClientRepository<TModel, TDto, TSyncCommand>, SyncClientRepository<TModel, TDto, TSyncCommand, TRootEntity>>();
             services.AddTransient<IClientEntityConverter<TModel, TDto, TRootEntity>, TEntityConverter>();
-            services.AddTransient<ISyncQueryGenerator<TRootEntity, TSyncCommand>, TSyncQueryGenerator>();
+            services.AddTransient<ISyncQueryLoader<TRootEntity, TSyncCommand>, TSyncQueryGenerator>();
             return services;
         }
     }

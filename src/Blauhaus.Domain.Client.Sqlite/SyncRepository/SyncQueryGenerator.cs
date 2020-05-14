@@ -4,7 +4,7 @@ using SqlKata;
 
 namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
 {
-    public class DefaultSyncQueryGenerator<TRootEntity> : ISyncQueryGenerator<TRootEntity, SyncCommand>
+    public class DefaultSyncQueryGenerator<TRootEntity> : ISyncQueryLoader<TRootEntity, SyncCommand>
         where TRootEntity : ISyncClientEntity
     {
         public Query GenerateQuery(SyncCommand syncCommand)
