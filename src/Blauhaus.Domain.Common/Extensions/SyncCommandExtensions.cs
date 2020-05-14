@@ -1,4 +1,6 @@
-﻿using Blauhaus.Domain.Common.CommandHandlers.Sync;
+﻿using System;
+using System.Collections.Generic;
+using Blauhaus.Domain.Common.CommandHandlers.Sync;
 
 namespace Blauhaus.Domain.Common.Extensions
 {
@@ -17,6 +19,11 @@ namespace Blauhaus.Domain.Common.Extensions
         public static bool IsForOlderEntities(this SyncCommand syncCommand)
         {
             return syncCommand.OlderThan != null;
+        }
+         
+        public static bool IsFilteredByParentEntity(this SyncCommand syncCommand)
+        {
+            return syncCommand.ParentIdFilter != null && syncCommand.ParentIdFilter != Guid.Empty;
         }
     }
 }

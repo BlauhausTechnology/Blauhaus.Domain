@@ -67,7 +67,7 @@ namespace Blauhaus.Domain.Client.Sync
                 _cancellationTokenSource = new CancellationTokenSource();
                 _token = _cancellationTokenSource.Token;
                 
-                ClientSyncStatus syncStatus = await _syncClientRepository.GetSyncStatusAsync();
+                ClientSyncStatus syncStatus = await _syncClientRepository.GetSyncStatusAsync(syncCommand);
 
                 TraceStatus(SyncClientState.Starting, $"Initializing sync for {typeof(TModel).Name}. Local status {syncStatus}", syncStatusHandler, syncStatus.ToObjectDictionary(nameof(ClientSyncStatus)));
                 
@@ -187,7 +187,7 @@ namespace Blauhaus.Domain.Client.Sync
 
         private async Task RefreshAsync(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler, IObserver<TModel> observer, CancellationToken token)
         {
-            ClientSyncStatus syncStatus = await _syncClientRepository.GetSyncStatusAsync();
+            ClientSyncStatus syncStatus = await _syncClientRepository.GetSyncStatusAsync(syncCommand);
             TraceStatus(SyncClientState.DownloadingNew, $"Refresh invoked. Loading up to {syncCommand.BatchSize} new from server", syncStatusHandler);
             syncCommand.OlderThan = null;
             syncCommand.NewerThan = syncStatus.NewestModifiedAt;
@@ -212,7 +212,7 @@ namespace Blauhaus.Domain.Client.Sync
                 PublishModelsIfRequired(serverDownloadResult.Value.EntityBatch, observer, syncStatusHandler);
 
                 var syncResult = serverDownloadResult.Value;
-                var updatedClientStatus = await _syncClientRepository.GetSyncStatusAsync();
+                var updatedClientStatus = await _syncClientRepository.GetSyncStatusAsync(syncCommand);
 
                 syncStatusHandler.AllServerEntities = syncResult.TotalActiveEntityCount;
                 syncStatusHandler.NewlyDownloadedEntities = syncStatusHandler.NewlyDownloadedEntities == null ? syncResult.EntityBatch.Count : syncStatusHandler.NewlyDownloadedEntities + syncResult.EntityBatch.Count;

@@ -1,13 +1,15 @@
 ﻿using Blauhaus.Domain.Common.CommandHandlers.Sync;
+using Blauhaus.Domain.Common.Entities;
 using SqlKata;
 
 namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
 {
-    public class SyncQueryGenerator : ISyncQueryGenerator<SyncCommand>
+    public class SyncQueryGenerator<TRootEntity> : ISyncQueryLoader<SyncCommand>
+        where TRootEntity : ISyncClientEntity
     {
-        public Query ExtendQuery(Query query, SyncCommand syncCommand)
+        public Query GenerateQuery(SyncCommand syncCommand)
         {
-            return query;
+            return new Query(typeof(TRootEntity).Name);
         }
     }
 }

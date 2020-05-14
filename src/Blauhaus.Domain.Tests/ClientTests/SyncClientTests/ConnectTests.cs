@@ -46,7 +46,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 Sut.Connect(SyncCommand, ClientSyncRequirement, MockSyncStatusHandler.Object).Subscribe();
 
                 //Assert
-                MockSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync());
+                MockSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync(SyncCommand));
                 MockAnalyticsService.VerifyTraceProperty(nameof(ClientSyncStatus), clientSyncStatus);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.AllLocalEntities = 3);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 2);
@@ -223,7 +223,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 MockSyncStatusHandler.Mock.VerifySet(x => x.AllLocalEntities = 3);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.AllServerEntities = 9);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 3);
-                MockSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync(), Times.Exactly(2));
+                MockSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync(SyncCommand), Times.Exactly(2));
             }
             
             [Test]
@@ -399,7 +399,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 3);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 6);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 9);
-                MockSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync(), Times.Exactly(4));
+                MockSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync(SyncCommand), Times.Exactly(4));
             }
 
             [Test]
@@ -571,7 +571,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 MockSyncStatusHandler.Mock.VerifySet(x => x.AllServerEntities = 9);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 3);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 6);
-                MockSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync(), Times.Exactly(3));
+                MockSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync(SyncCommand), Times.Exactly(3));
             }
 
             [Test]
