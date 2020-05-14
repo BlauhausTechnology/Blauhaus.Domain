@@ -21,7 +21,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
         {
             base.Setup();
             _syncCommand = new TestSyncCommand();
-            MockSyncQueryGenerator.Where_ExtendQuery_returns(() => new Query(nameof(TestRootEntity)));
+            MockSyncQueryGenerator.Where_GenerateQuery_returns(() => new Query(nameof(TestRootEntity)));
         }
 
         [Test]
@@ -96,7 +96,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
                 new TestRootEntity{ModifiedAtTicks = 4000, RootName = ""},
             };
             await Connection.InsertAllAsync(entities); 
-            MockSyncQueryGenerator.Where_ExtendQuery_returns(() => new Query(nameof(TestRootEntity))
+            MockSyncQueryGenerator.Where_GenerateQuery_returns(() => new Query(nameof(TestRootEntity))
                 .WhereContains(nameof(TestRootEntity.RootName), "ggy"));
 
             //Act

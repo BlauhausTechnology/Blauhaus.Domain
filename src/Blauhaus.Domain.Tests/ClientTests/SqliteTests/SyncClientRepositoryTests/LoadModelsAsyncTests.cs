@@ -41,7 +41,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             Connection.InsertAllAsync(entities);
 
             _entitiesConstructed = new List<TestRootEntity>();
-            MockSyncQueryGenerator.Where_ExtendQuery_returns(() => new Query(nameof(TestRootEntity)));
+            MockSyncQueryGenerator.Where_GenerateQuery_returns(() => new Query(nameof(TestRootEntity)));
             MockClientEntityManager.Mock.Setup(x => x.ConstructModelFromRootEntity(Capture.In(_entitiesConstructed), It.IsAny<SQLiteConnection>()))
                 .Returns((TestRootEntity root, SQLiteConnection conn)=> new MockBuilder<ITestModel>()
                     .With(x => x.Id, root.Id)
@@ -93,7 +93,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
         public async Task WHEN_QueryGenerator_modifies_query_SHOULD_apply()
         {
             //Arrange
-            MockSyncQueryGenerator.Where_ExtendQuery_returns(() => new Query(nameof(TestRootEntity))
+            MockSyncQueryGenerator.Where_GenerateQuery_returns(() => new Query(nameof(TestRootEntity))
                 .WhereContains(nameof(TestRootEntity.RootName), "ggy"));
             
             //Act

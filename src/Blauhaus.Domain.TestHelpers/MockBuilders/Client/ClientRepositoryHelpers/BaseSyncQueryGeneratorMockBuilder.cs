@@ -26,7 +26,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.ClientRepositoryHelper
     {
  
 
-        public TBuilder Where_ExtendQuery_returns(Func<Query> query) 
+        public TBuilder Where_GenerateQuery_returns(Func<Query> query) 
         {
             Mock.Setup(x => x.GenerateQuery(It.IsAny<TSyncCommand>()))
                 .Returns(query.Invoke);
