@@ -1,4 +1,6 @@
-﻿using Blauhaus.Domain.Common.CommandHandlers.Sync;
+﻿using System;
+using System.Collections.Generic;
+using Blauhaus.Domain.Common.CommandHandlers.Sync;
 
 namespace Blauhaus.Domain.Common.Extensions
 {
@@ -17,6 +19,31 @@ namespace Blauhaus.Domain.Common.Extensions
         public static bool IsForOlderEntities(this SyncCommand syncCommand)
         {
             return syncCommand.OlderThan != null;
+        }
+
+        public static SyncCommand WithFilter(this SyncCommand syncCommand, string name, object value)
+        {
+            syncCommand.Filters ??= new Dictionary<string, object>();
+            syncCommand.Filters[name] = value;
+            return syncCommand;
+        }
+        
+        public static bool TryGetFilterValue<TValue>(this SyncCommand syncCommand, string name, out TValue value) where TValue : class
+        {
+            if (syncCommand.Filters == null || syncCommand.Filters.Count == 0)
+            {
+                value = default;
+                return false;
+            }
+
+            foreach (var syncCommandFilter in syncCommand.Filters)
+            {
+                if (syncCommandFilter.Key.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    value = syncCommandFilter.Value as TValue;
+                    return value != null;
+                }
+            }
         }
     }
 }
