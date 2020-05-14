@@ -41,6 +41,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             Connection.InsertAllAsync(entities);
 
             _entitiesConstructed = new List<TestRootEntity>();
+            MockSyncQueryGenerator.Where_GenerateQuery_returns(() => new Query(nameof(TestRootEntity)));
             MockClientEntityManager.Mock.Setup(x => x.ConstructModelFromRootEntity(Capture.In(_entitiesConstructed), It.IsAny<SQLiteConnection>()))
                 .Returns((TestRootEntity root, SQLiteConnection conn)=> new MockBuilder<ITestModel>()
                     .With(x => x.Id, root.Id)
@@ -91,12 +92,14 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
         [Test]
         public async Task WHEN_QueryGenerator_modifies_query_SHOULD_apply()
         {
-            //Act
-            MockSyncQueryGenerator.Where_ExtendQuery_returns(new Query(nameof(TestRootEntity))
+            //Arrange
+            MockSyncQueryGenerator.Where_GenerateQuery_returns(() => new Query(nameof(TestRootEntity))
                 .WhereContains(nameof(TestRootEntity.RootName), "ggy"));
+            
+            //Act
             var result = await Sut.LoadModelsAsync(new TestSyncCommand { BatchSize = 3 });
 
-            //Arrance
+            //Assert
             Assert.AreEqual(2, result.Count);
             Assert.IsNotNull(result.FirstOrDefault(x => x.Id == _twiggyId));
             Assert.IsNotNull(result.FirstOrDefault(x => x.Id == _ziggyId)); 

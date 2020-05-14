@@ -19,7 +19,7 @@ namespace Blauhaus.Domain.Client.Repositories
         where TModel : class, IClientEntity
         where TSyncCommand : SyncCommand
     {
-        Task<ClientSyncStatus> GetSyncStatusAsync();
+        Task<ClientSyncStatus> GetSyncStatusAsync(TSyncCommand syncCommand);
         Task<IReadOnlyList<TModel>> LoadModelsAsync(TSyncCommand syncCommand);
         Task<IReadOnlyList<TModel>> SaveSyncedDtosAsync(IEnumerable<TDto> dtos); 
     }

@@ -19,7 +19,7 @@ namespace Blauhaus.Domain.Client.Sqlite.Repository
         protected readonly IClientEntityConverter<TModel, TDto, TRootEntity> EntityConverter;
 
         protected readonly SqliteCompiler SqlCompiler = new SqliteCompiler();
-        protected Query SqlQuery() => new Query(typeof(TRootEntity).Name);
+        protected virtual Query CreateSqlQuery() => new Query(typeof(TRootEntity).Name);
 
         protected BaseClientRepository(
             IAnalyticsService analyticsService,

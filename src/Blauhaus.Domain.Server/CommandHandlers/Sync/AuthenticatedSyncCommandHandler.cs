@@ -68,8 +68,7 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
                     .OrderBy(x => x.ModifiedAt);
                 traceMessage = "SyncCommand for newer entities processed";
             }
-
-            
+             
             var modifiedEntityCount = dbQuery.Count();
             
             var entities = dbQuery

@@ -44,7 +44,6 @@ namespace Blauhaus.Domain.Tests.ServerTests
 
         public class LoadingOlderAndNewerEntites : AuthenticatedSyncCommandHandlerTests
         {
-            
             [Test]
             public async Task SHOULD_fail()
             {
@@ -64,7 +63,6 @@ namespace Blauhaus.Domain.Tests.ServerTests
 
         public class LoadingOlderEntities : AuthenticatedSyncCommandHandlerTests
         {
-            
             [Test]
             public async Task SHOULD_return_entities_modified_before_given_ModifiedBeforeTicks_with_newest_first_and_oldest_excluded()
             {
@@ -150,13 +148,12 @@ namespace Blauhaus.Domain.Tests.ServerTests
                     _entities[11], 
                 }); 
             }
-             
-
 
         }
 
         public class LoadingNewerEntities : AuthenticatedSyncCommandHandlerTests
         {
+            
             [Test]
             public async Task SHOULD_return_entities_modified_after_given_ModifiedAfterTicks_with_oldest_first_and_newest_excluded()
             {

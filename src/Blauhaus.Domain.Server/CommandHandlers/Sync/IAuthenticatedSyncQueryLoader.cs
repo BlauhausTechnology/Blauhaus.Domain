@@ -5,8 +5,8 @@ using Blauhaus.Domain.Common.Entities;
 
 namespace Blauhaus.Domain.Server.CommandHandlers.Sync
 {
-    public interface IAuthenticatedSyncQueryLoader<TEntity, TSyncQuery, TUser> : IAuthenticatedCommandHandler<IQueryable<TEntity>, TSyncQuery, TUser>
-        where TSyncQuery : SyncCommand
+    public interface IAuthenticatedSyncQueryLoader<TEntity, TSyncCommand, TUser> : IAuthenticatedCommandHandler<IQueryable<TEntity>, TSyncCommand, TUser>
+        where TSyncCommand : SyncCommand
         where TUser : notnull
         where TEntity : IEntity
     {
