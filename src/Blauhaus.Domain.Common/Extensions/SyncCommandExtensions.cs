@@ -28,22 +28,26 @@ namespace Blauhaus.Domain.Common.Extensions
             return syncCommand;
         }
         
-        public static bool TryGetFilterValue<TValue>(this SyncCommand syncCommand, string name, out TValue value) where TValue : class
+        public static bool TryGetFilterValue<TValue>(this SyncCommand syncCommand, string name, out TValue? value) where TValue : class
         {
-            if (syncCommand.Filters == null || syncCommand.Filters.Count == 0)
-            {
-                value = default;
-                return false;
-            }
+            value = null;
 
-            foreach (var syncCommandFilter in syncCommand.Filters)
+            if (syncCommand.Filters != null)
             {
-                if (syncCommandFilter.Key.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+                foreach (var syncCommandFilter in syncCommand.Filters)
                 {
-                    value = syncCommandFilter.Value as TValue;
-                    return value != null;
+                    if (syncCommandFilter.Key.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        value = syncCommandFilter.Value as TValue;
+                        if (value != null)
+                        {
+                            return true;
+                        }
+                    }
                 }
             }
+
+            return false;
         }
     }
 }
