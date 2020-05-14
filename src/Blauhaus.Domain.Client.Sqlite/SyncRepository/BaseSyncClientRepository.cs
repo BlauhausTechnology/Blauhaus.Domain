@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.ClientDatabase.Sqlite.Service;
 using Blauhaus.Domain.Client.Repositories;
@@ -18,6 +19,7 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
         where TModel : class, IClientEntity 
         where TSyncCommand : SyncCommand
     {
+        private readonly IAnalyticsService _analyticsService;
         private readonly ISyncQueryLoader<TSyncCommand> _syncQueryLoader;
         protected Query CreateSqlQuery(TSyncCommand syncCommand) => _syncQueryLoader.GenerateQuery(syncCommand);
          
@@ -28,6 +30,7 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
             ISyncQueryLoader<TSyncCommand> syncQueryLoader) 
                 : base(analyticsService, sqliteDatabaseService, entityConverter)
         {
+            _analyticsService = analyticsService;
             _syncQueryLoader = syncQueryLoader;
         }
         
@@ -67,6 +70,12 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
                 syncStatus.OldestModifiedAt = oldestModified.LastOrDefault()?.ModifiedAtTicks ?? 0;
                 syncStatus.SyncedLocalEntities = syncedCount;
                 syncStatus.AllLocalEntities = allCount;
+
+                _analyticsService.TraceVerbose(this, "SyncStatus loaded", syncStatus.ToObjectDictionary()
+                    .WithValue("Newest query", newestModifiedSql)
+                    .WithValue("Oldest query", oldesModifiedQuery)
+                    .WithValue("Synced count query", syncedCountSql)
+                    .WithValue("All count query", allCountSql));
 
             });
 
