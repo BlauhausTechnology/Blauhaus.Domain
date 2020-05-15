@@ -97,6 +97,10 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
                 {
                     query = query.Where(nameof(IClientEntity.ModifiedAtTicks), "<", syncCommand.OlderThan);
                 }
+                else if (syncCommand.NewerThan > 0)
+                {
+                    query = query.Where(nameof(IClientEntity.ModifiedAtTicks), ">", syncCommand.NewerThan);
+                }
                  
 
                 var sql = SqlCompiler.Compile(query).ToString();
@@ -106,6 +110,13 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
                 {
                     models.Add(EntityConverter.ConstructModelFromRootEntity(entity, connection));
                 }
+                
+                _analyticsService.TraceVerbose(this, "Models loaded", new Dictionary<string, object>
+                    {
+                        {"Count", models.Count},
+                        {"SQL query", sql}
+                    });
+
             });
 
             return models;

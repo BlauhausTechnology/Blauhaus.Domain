@@ -65,15 +65,15 @@ namespace Blauhaus.Domain.Server._Ioc
 
         //Sync
 
-        public static IServiceCollection AddAuthenticatedSyncCommandHandler<TEntity, TSyncCommand, TUser>(this IServiceCollection services) 
-            where TEntity : IServerEntity 
-            where TSyncCommand : SyncCommand
-            where TUser : notnull
-        {
-            services.AddAuthenticatedCommandHandler<SyncResult<TEntity>, TSyncCommand, TUser, 
-                AuthenticatedSyncCommandHandler<TEntity, TSyncCommand, TUser>>();
-            return services;
-        }
+        //this one does not add the Query Loader so what is it for?
+        //public static IServiceCollection AddAuthenticatedSyncCommandHandler<TEntity, TSyncCommand, TUser>(this IServiceCollection services) 
+        //    where TEntity : IServerEntity 
+        //    where TSyncCommand : SyncCommand
+        //    where TUser : notnull
+        //{
+        //    services.AddAuthenticatedCommandHandler<SyncResult<TEntity>, TSyncCommand, TUser, AuthenticatedSyncCommandHandler<TEntity, TSyncCommand, TUser>>();
+        //    return services;
+        //}
 
         public static IServiceCollection AddAuthenticatedSyncCommandHandler<TEntity, TSyncCommand, TQueryLoader, TUser>(this IServiceCollection services) 
             where TEntity : IServerEntity 
