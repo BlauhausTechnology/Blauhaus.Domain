@@ -671,7 +671,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 var oldServerModels1 = oldServerModels.Skip(0).Take(3).ToList();
                 var oldServerModels2 = oldServerModels.Skip(3).Take(3).ToList();
 
-                MockSyncClientRepository.Where_LoadSyncedModelsAsync_returns(localModels);
+                MockSyncClientRepository.Where_LoadModelsAsync_returns(localModels);
                 MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
                 {
                     //local entities
@@ -811,7 +811,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 //Arrange
                 var localModels = TestModel.GenerateList(15).OrderByDescending(x => x.ModifiedAtTicks).ToList(); 
 
-                MockSyncClientRepository.Where_LoadSyncedModelsAsync_returns(localModels);
+                MockSyncClientRepository.Where_LoadModelsAsync_returns(localModels);
                 MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new ClientSyncStatus
                 {
                     AllLocalEntities = 15,
@@ -848,7 +848,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 //Arrange
                 var localModels = TestModel.GenerateList(15).OrderByDescending(x => x.ModifiedAtTicks).ToList(); 
 
-                MockSyncClientRepository.Where_LoadSyncedModelsAsync_returns(localModels);
+                MockSyncClientRepository.Where_LoadModelsAsync_returns(localModels);
                 MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new ClientSyncStatus
                 {
                     AllLocalEntities = 15,
@@ -886,7 +886,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                  var oldServerModels = TestModel.GenerateOlderThan(now.AddDays(-12), 6);
                  var oldServerModels1 = oldServerModels.Skip(0).Take(3).ToList();
                  var oldServerModels2 = oldServerModels.Skip(3).Take(3).ToList();
-                MockSyncClientRepository.Where_LoadSyncedModelsAsync_returns(localModels);
+                MockSyncClientRepository.Where_LoadModelsAsync_returns(localModels);
                 MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
                 {
                     //local entities

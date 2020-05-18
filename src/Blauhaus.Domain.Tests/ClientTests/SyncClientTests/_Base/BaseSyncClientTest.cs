@@ -56,7 +56,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests._Base
             
             MockSyncCommandHandler.Where_HandleAsync_returns(new SyncResult<TestModel>{EntityBatch = new List<TestModel>()});
             MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new ClientSyncStatus());
-            MockSyncClientRepository.Where_LoadSyncedModelsAsync_returns(new List<TestModel>());
+            MockSyncClientRepository.Where_LoadModelsAsync_returns(new List<TestModel>());
 
             AddService(MockSyncClientRepository.Object);
             AddService(MockSyncCommandHandler.Object);

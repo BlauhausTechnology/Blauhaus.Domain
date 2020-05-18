@@ -12,18 +12,18 @@ using NUnit.Framework;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
 {
-    public class RefreshTests : BaseSyncClientTest
+    public class LoadNewFromClientTests : BaseSyncClientTest
     {
                 
         [Test]
-        public async Task SHOULD_load_and_publish_any_newer_models_from_server()
+        public async Task SHOULD_load_and_publish_any_newer_models_from_client()
         {
             //Arrange
             var publishedModels = new List<TestModel>();
             var now = DateTime.UtcNow;
             var localModels = TestModel.GenerateOlderThan(now, 3); 
-            var serverModels = TestModel.GenerateNewerThan(now, 3); 
-            MockSyncClientRepository.Where_LoadSyncedModelsAsync_returns(localModels);
+            var newLocalModels = TestModel.GenerateNewerThan(now, 3); 
+            var invokedWithCommands = MockSyncClientRepository.Where_LoadModelsAsync_returns(new List<List<TestModel>>{ localModels, newLocalModels });
             MockSyncClientRepository.Where_GetSyncStatusAsync_returns( 
                 new ClientSyncStatus
                 {
@@ -35,34 +35,32 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             Sut.Connect(SyncCommand, ClientSyncRequirement.All, MockSyncStatusHandler.Object)
                 .Subscribe(next => publishedModels.Add(next));
             publishedModels.Clear();
-
-            MockSyncCommandHandler.Where_HandleAsync_returns(new SyncResult<TestModel>
-            {
-                EntityBatch = serverModels
-            });
             MockSyncCommandHandler.Mock.Invocations.Clear(); 
 
             //Act
-            Sut.Refresh();
+            Sut.LoadNewFromClient();
             await Task.Delay(20);
 
             //Assert
-            MockSyncCommandHandler.Mock.Verify(x => x.HandleAsync(It.Is<TestSyncCommand>(y => 
-                y.FavouriteFood == "Lasagne" &&
-                y.BatchSize == 3 && 
-                y.NewerThan == localModels.First().ModifiedAtTicks && 
-                y.OlderThan == null), It.IsAny<CancellationToken>()));
+            Assert.AreEqual("Lasagne", invokedWithCommands[0].FavouriteFood);
+            Assert.AreEqual(3, invokedWithCommands[0].BatchSize);
+            Assert.AreEqual(null, invokedWithCommands[0].NewerThan);
+            Assert.AreEqual(null, invokedWithCommands[0].OlderThan);
+            Assert.AreEqual("Lasagne", invokedWithCommands[1].FavouriteFood);
+            Assert.AreEqual(3, invokedWithCommands[1].BatchSize);
+            Assert.AreEqual( localModels.First().ModifiedAtTicks, invokedWithCommands[1].NewerThan);
+            Assert.AreEqual(null, invokedWithCommands[1].OlderThan);
             Assert.AreEqual(3, publishedModels.Count);
-            Assert.AreEqual(serverModels[0].Id, publishedModels[0].Id);
-            Assert.AreEqual(serverModels[1].Id, publishedModels[1].Id);
-            Assert.AreEqual(serverModels[2].Id, publishedModels[2].Id);
+            Assert.AreEqual(newLocalModels[0].Id, publishedModels[0].Id);
+            Assert.AreEqual(newLocalModels[1].Id, publishedModels[1].Id);
+            Assert.AreEqual(newLocalModels[2].Id, publishedModels[2].Id);
 
             MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 4);
             MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 5);
             MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 6);
             MockSyncStatusHandler.Mock.VerifySet(x => x.PublishedEntities = 7, Times.Never);
 
-            Assert.AreEqual(11, StateUpdates.Count);
+            Assert.AreEqual(10, StateUpdates.Count);
             Assert.AreEqual(SyncClientState.Starting, StateUpdates[0]);
             Assert.AreEqual(SyncClientState.Starting, StateUpdates[1]);
             Assert.AreEqual(SyncClientState.LoadingLocal, StateUpdates[2]);
@@ -71,20 +69,18 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             Assert.AreEqual(SyncClientState.DownloadingOld, StateUpdates[5]);
             Assert.AreEqual(SyncClientState.DownloadingOld, StateUpdates[6]);
             Assert.AreEqual(SyncClientState.Completed, StateUpdates[7]);
-            Assert.AreEqual(SyncClientState.DownloadingNew, StateUpdates[8]);
-            Assert.AreEqual(SyncClientState.DownloadingNew, StateUpdates[9]);
-            Assert.AreEqual(SyncClientState.Completed, StateUpdates[10]);
+            Assert.AreEqual(SyncClientState.LoadingLocal, StateUpdates[8]);
+            Assert.AreEqual(SyncClientState.Completed, StateUpdates[9]);
             
-            Assert.AreEqual(9, StatusMessages.Count);
+            Assert.AreEqual(8, StatusMessages.Count);
             Assert.AreEqual("TestModel SyncClient connected. Required: All (batch size 3)", StatusMessages[0]);
             Assert.AreEqual("Initializing sync for TestModel. Local status Synced: 3. (total: 3)", StatusMessages[1]);
             Assert.AreEqual("Loading data from local store", StatusMessages[2]);
             Assert.AreEqual("Loaded 3 local models", StatusMessages[3]);
             Assert.AreEqual("0 newer TestModel entities downloaded (0 in total). 0 of 0 still to download", StatusMessages[4]);
             Assert.AreEqual("0 older TestModel entities downloaded (0 in total). 0 of 0 still to download", StatusMessages[5]);
-            Assert.AreEqual("Refresh invoked. Loading up to 3 new from server", StatusMessages[6]);
-            Assert.AreEqual("3 newer TestModel entities downloaded (3 in total). 0 of 0 still to download", StatusMessages[7]);
-            Assert.AreEqual("Refresh completed", StatusMessages[8]);
+            Assert.AreEqual("Load new from client invoked. Loading any updated models from local store", StatusMessages[6]);
+            Assert.AreEqual("Load new from client completed. 3 loaded", StatusMessages[7]); 
         }
 
 

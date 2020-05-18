@@ -49,7 +49,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
         }
 
         [Test]
-        public async Task WHEN_ModifiedBeforeTicks_and_batch_size_are_given_SHOULD_return_correct_quantity_in_correct_order()
+        public async Task WHEN_OlderThan_and_batch_size_are_given_SHOULD_return_correct_quantity_in_correct_order()
         {
             //Act
             var result = await Sut.LoadModelsAsync(new TestSyncCommand
@@ -67,10 +67,38 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             Assert.AreEqual(5000, _entitiesConstructed[0].ModifiedAtTicks);
             Assert.AreEqual(4000, _entitiesConstructed [1].ModifiedAtTicks);
             Assert.AreEqual(3000, _entitiesConstructed[2].ModifiedAtTicks);
+            MockAnalyticsService.VerifyTrace("Models loaded");
+            MockAnalyticsService.VerifyTraceProperty("Count", 3);
+            MockAnalyticsService.VerifyTraceProperty("SQL query", "SELECT * FROM \"TestRootEntity\" WHERE \"ModifiedAtTicks\" < 6000 ORDER BY \"ModifiedAtTicks\" DESC LIMIT 3");
+        } 
+
+        
+        [Test]
+        public async Task WHEN_NewerThan_and_batch_size_are_given_SHOULD_return_correct_quantity_with_oldest_first()
+        {
+            //Act
+            var result = await Sut.LoadModelsAsync(new TestSyncCommand
+            {
+                OlderThan = null,
+                NewerThan = 6000,
+                BatchSize = 3
+            });
+
+            //Arrance
+            Assert.AreEqual(2, result.Count);
+            Assert.AreEqual(9000, result[0].ModifiedAtTicks);
+            Assert.AreEqual(8000, result [1].ModifiedAtTicks);
+            Assert.AreEqual(2, _entitiesConstructed.Count);
+            Assert.AreEqual(9000, _entitiesConstructed[0].ModifiedAtTicks);
+            Assert.AreEqual(8000, _entitiesConstructed [1].ModifiedAtTicks);
+            MockAnalyticsService.VerifyTrace("Models loaded");
+            MockAnalyticsService.VerifyTraceProperty("Count", 2);
+            MockAnalyticsService.VerifyTraceProperty("SQL query", "SELECT * FROM \"TestRootEntity\" WHERE \"ModifiedAtTicks\" > 6000 ORDER BY \"ModifiedAtTicks\" DESC LIMIT 3");
+
         } 
 
         [Test]
-        public async Task WHEN_ModifiedBeforeTicks_is_not_given_SHOULD_return_correct_quantity_in_correct_order()
+        public async Task WHEN_OlderThan_and_NewerThan_are_not_given_SHOULD_return_correct_quantity_in_correct_order()
         {
             //Act
             var result = await Sut.LoadModelsAsync(new TestSyncCommand
