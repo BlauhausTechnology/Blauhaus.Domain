@@ -143,6 +143,7 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
                         entities.Add(childEntity);
                     }
 
+                    //todo this depends on having saved the child entities already. Perhaps just pass the child entities since we already have them. 
                     models.Add(EntityConverter.ConstructModelFromRootEntity(rootEntity, connection));
                 }
 
