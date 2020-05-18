@@ -12,7 +12,7 @@ using NUnit.Framework;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
 {
-    public class LoadMoreTests : BaseSyncClientTest
+    public class LoadNextBatchTests : BaseSyncClientTest
     {
         [Test]
         public async Task WHEN_another_batch_exists_locally_SHOULD_load_and_publish_it()
@@ -21,7 +21,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             var publishedModels = new List<TestModel>();
             var localModels = TestModel.GenerateList(6).OrderByDescending(x => x.ModifiedAtTicks).ToList();
             var firstBatchOfLocalModels = localModels.Take(3).ToList(); 
-            MockSyncClientRepository.Where_LoadSyncedModelsAsync_returns(firstBatchOfLocalModels);
+            MockSyncClientRepository.Where_LoadModelsAsync_returns(firstBatchOfLocalModels);
             MockSyncClientRepository.Where_GetSyncStatusAsync_returns( 
                 new ClientSyncStatus
                 {
@@ -35,11 +35,11 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             publishedModels.Clear();
 
             var secondBatchOfLocalModels = localModels.Skip(3).Take(3).ToList(); 
-            MockSyncClientRepository.Where_LoadSyncedModelsAsync_returns(secondBatchOfLocalModels);
+            MockSyncClientRepository.Where_LoadModelsAsync_returns(secondBatchOfLocalModels);
             MockSyncClientRepository.Mock.Invocations.Clear(); 
 
             //Act
-            Sut.LoadMore();
+            Sut.LoadNextBatch();
             await Task.Delay(20);
 
             //Assert
@@ -89,7 +89,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             var publishedModels = new List<TestModel>();
             var models = TestModel.GenerateList(6).OrderByDescending(x => x.ModifiedAtTicks).ToList();
             var localModels = models.Take(3).ToList(); 
-            MockSyncClientRepository.Where_LoadSyncedModelsAsync_returns(localModels);
+            MockSyncClientRepository.Where_LoadModelsAsync_returns(localModels);
             MockSyncClientRepository.Where_GetSyncStatusAsync_returns( 
                 new ClientSyncStatus
                 {
@@ -110,7 +110,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             MockSyncCommandHandler.Mock.Invocations.Clear(); 
 
             //Act
-            Sut.LoadMore();
+            Sut.LoadNextBatch();
             await Task.Delay(20);
 
             //Assert

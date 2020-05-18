@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.ClientDatabase.Sqlite.Service;
 using Blauhaus.Domain.Client.Repositories;
@@ -18,16 +19,18 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
         where TModel : class, IClientEntity 
         where TSyncCommand : SyncCommand
     {
-        private readonly ISyncQueryLoader<TSyncCommand> _syncQueryLoader;
+        private readonly IAnalyticsService _analyticsService;
+        private readonly ISyncQueryLoader<TSyncCommand, TRootEntity> _syncQueryLoader;
         protected Query CreateSqlQuery(TSyncCommand syncCommand) => _syncQueryLoader.GenerateQuery(syncCommand);
          
         public BaseSyncClientRepository(
             IAnalyticsService analyticsService,
             ISqliteDatabaseService sqliteDatabaseService, 
             IClientEntityConverter<TModel, TDto, TRootEntity> entityConverter,
-            ISyncQueryLoader<TSyncCommand> syncQueryLoader) 
+            ISyncQueryLoader<TSyncCommand, TRootEntity> syncQueryLoader) 
                 : base(analyticsService, sqliteDatabaseService, entityConverter)
         {
+            _analyticsService = analyticsService;
             _syncQueryLoader = syncQueryLoader;
         }
         
@@ -68,6 +71,12 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
                 syncStatus.SyncedLocalEntities = syncedCount;
                 syncStatus.AllLocalEntities = allCount;
 
+                _analyticsService.TraceVerbose(this, "SyncStatus loaded", syncStatus.ToObjectDictionary()
+                    .WithValue("Newest query", newestModifiedSql)
+                    .WithValue("Oldest query", oldestModifiedSql)
+                    .WithValue("Synced count query", syncedCountSql)
+                    .WithValue("All count query", allCountSql));
+
             });
 
             return syncStatus;
@@ -88,6 +97,10 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
                 {
                     query = query.Where(nameof(IClientEntity.ModifiedAtTicks), "<", syncCommand.OlderThan);
                 }
+                else if (syncCommand.NewerThan > 0)
+                {
+                    query = query.Where(nameof(IClientEntity.ModifiedAtTicks), ">", syncCommand.NewerThan);
+                }
                  
 
                 var sql = SqlCompiler.Compile(query).ToString();
@@ -97,6 +110,13 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
                 {
                     models.Add(EntityConverter.ConstructModelFromRootEntity(entity, connection));
                 }
+                
+                _analyticsService.TraceVerbose(this, "Models loaded", new Dictionary<string, object>
+                    {
+                        {"Count", models.Count},
+                        {"SQL query", sql}
+                    });
+
             });
 
             return models;

@@ -6,6 +6,7 @@ using Blauhaus.Domain.Client.Sync;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
 using Blauhaus.Domain.Common.Entities;
 using Moq;
+using Newtonsoft.Json;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories
 {
@@ -24,23 +25,38 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories
         where TSyncCommand : SyncCommand
     {
         
-        public TBuilder Where_LoadSyncedModelsAsync_returns(TModel model)
+        public TBuilder Where_LoadModelsAsync_returns(TModel model)
         {
             Mock.Setup(x => x.LoadModelsAsync(It.IsAny<TSyncCommand>()))
                 .ReturnsAsync(new List<TModel>{model});
-            return this as TBuilder;
+            return (TBuilder) this;
         }
-        public TBuilder Where_LoadSyncedModelsAsync_returns(List<TModel> models)
+
+        public TBuilder Where_LoadModelsAsync_returns(List<TModel> models)
         {
             Mock.Setup(x => x.LoadModelsAsync(It.IsAny<TSyncCommand>()))
                 .ReturnsAsync(models);
-            return this as TBuilder;
+            return (TBuilder) this;
         }
-        public TBuilder Where_LoadSyncedModelsAsync_throws(Exception e)
+        
+        public List<TSyncCommand> Where_LoadModelsAsync_returns(List<List<TModel>> models)
+        {
+            var invokedWithCommands = new List<TSyncCommand>();
+            var queue = new Queue<List<TModel>>(models);
+            Mock.Setup(x => x.LoadModelsAsync(It.IsAny<TSyncCommand>()))
+                .Callback((TSyncCommand syncCommand) =>
+                {
+                    invokedWithCommands.Add(JsonConvert.DeserializeObject<TSyncCommand>(JsonConvert.SerializeObject(syncCommand)));
+                })
+                .ReturnsAsync(queue.Dequeue);
+            return invokedWithCommands;
+        }
+
+        public TBuilder Where_LoadModelsAsync_throws(Exception e)
         {
             Mock.Setup(x => x.LoadModelsAsync(It.IsAny<TSyncCommand>()))
                 .ThrowsAsync(e);
-            return this as TBuilder;
+            return (TBuilder) this;
         }
 
         
@@ -48,7 +64,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories
         {
             Mock.Setup(x => x.GetSyncStatusAsync(It.IsAny<TSyncCommand>()))
                 .ThrowsAsync(e);
-            return this as TBuilder;
+            return (TBuilder) this;
         }
 
         
@@ -56,14 +72,14 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories
         {
             Mock.Setup(x => x.SaveSyncedDtosAsync(It.IsAny<IReadOnlyList<TDto>>()))
                 .ReturnsAsync(models);
-            return this as TBuilder;
+            return (TBuilder) this;
         }
         
         public TBuilder Where_GetSyncStatusAsync_returns(ClientSyncStatus value)
         {
             Mock.Setup(x => x.GetSyncStatusAsync(It.IsAny<TSyncCommand>()))
                 .ReturnsAsync(value);
-            return this as TBuilder;
+            return (TBuilder) this;
         }
 
         public TBuilder Where_GetSyncStatusAsync_returns(List<ClientSyncStatus> values)
@@ -71,7 +87,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories
             var queue = new Queue<ClientSyncStatus>(values.ToList());
             Mock.Setup(x => x.GetSyncStatusAsync(It.IsAny<TSyncCommand>()))
                 .ReturnsAsync(queue.Dequeue);
-            return this as TBuilder;
+            return (TBuilder) this;
         }
          
     

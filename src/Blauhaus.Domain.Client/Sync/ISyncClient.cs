@@ -10,8 +10,9 @@ namespace Blauhaus.Domain.Client.Sync
     {
         IObservable<TModel> Connect(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler);
 
-        void LoadMore();
-        void Refresh();
+        void LoadNextBatch();
+        void LoadNewFromServer();
+        void LoadNewFromClient();
         void Cancel();
     }
 }

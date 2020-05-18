@@ -26,8 +26,9 @@ namespace Blauhaus.Domain.Client.Sync
         private readonly ISyncClientRepository<TModel, TDto, TSyncCommand> _syncClientRepository;
         private readonly ICommandHandler<SyncResult<TModel>, TSyncCommand> _syncCommandHandler;
 
-        private event EventHandler LoadMoreEvent;
-        private event EventHandler RefreshEvent;
+        private event EventHandler LoadNextBatchEvent;
+        private event EventHandler LoadNewFromServerEvent;
+        private event EventHandler LoadNewFromClientEvent;
         private event EventHandler CancelEvent;
 
         private long OldestModelPublished => _publishedModels.Count == 0 ? 0 : _publishedModels.Values.Min();
@@ -75,17 +76,21 @@ namespace Blauhaus.Domain.Client.Sync
                 syncStatusHandler.AllLocalEntities = syncStatus.AllLocalEntities;
                 syncStatusHandler.SyncedLocalEntities = syncStatus.SyncedLocalEntities;
 
-                async void HandleLoadMore(object s, EventArgs e)
-                    => await LoadMoreAsync(syncCommand, syncRequirement, syncStatusHandler, observer, _token);
+                async void HandleLoadNextBatch(object s, EventArgs e)
+                    => await LoadNextBatchAsync(syncCommand, syncRequirement, syncStatusHandler, observer, _token);
                 
-                async void HandleRefresh(object s, EventArgs e)
-                    => await RefreshAsync(syncCommand, syncRequirement, syncStatusHandler, observer, _token);
+                async void HandleLoadNewFromClient(object s, EventArgs e)
+                    => await LoadNewFromClientAsync(syncCommand, syncRequirement, syncStatusHandler, observer, _token);
+
+                async void HandleLoadNewFromServer(object s, EventArgs e)
+                    => await LoadNewFromServerAsync(syncCommand, syncRequirement, syncStatusHandler, observer, _token);
 
                 void HandleCancel(object s, EventArgs e)
                     => Cancel(syncStatusHandler, _token);
 
-                var loadMoreSubscription = Observable.FromEventPattern(x => LoadMoreEvent += HandleLoadMore, x => LoadMoreEvent -= HandleLoadMore).Subscribe();
-                var refreshSubscription = Observable.FromEventPattern(x => RefreshEvent += HandleRefresh, x => RefreshEvent -= HandleRefresh).Subscribe();
+                var loadNextBatchSubscription = Observable.FromEventPattern(x => LoadNextBatchEvent += HandleLoadNextBatch, x => LoadNextBatchEvent -= HandleLoadNextBatch).Subscribe();
+                var loadNewFromServerSubscription = Observable.FromEventPattern(x => LoadNewFromServerEvent += HandleLoadNewFromServer, x => LoadNewFromServerEvent -= HandleLoadNewFromServer).Subscribe();
+                var loadNewFromClientSubscription = Observable.FromEventPattern(x => LoadNewFromClientEvent += HandleLoadNewFromClient, x => LoadNewFromClientEvent -= HandleLoadNewFromClient).Subscribe();
                 var cancelSubscription = Observable.FromEventPattern(x => CancelEvent += HandleCancel, x => CancelEvent -= HandleCancel).Subscribe();
 
                 if (syncStatus.SyncedLocalEntities == 0)
@@ -123,16 +128,16 @@ namespace Blauhaus.Domain.Client.Sync
                     syncStatusHandler.State = SyncClientState.Completed;
                 }
 
-                return new CompositeDisposable(loadMoreSubscription, refreshSubscription);
+                return new CompositeDisposable(loadNextBatchSubscription, loadNewFromServerSubscription, loadNewFromClientSubscription, cancelSubscription);
             });
         }
 
-        public void LoadMore()
+        public void LoadNextBatch()
         {
-            LoadMoreEvent?.Invoke(this, EventArgs.Empty);
+            LoadNextBatchEvent?.Invoke(this, EventArgs.Empty);
         }
         
-        private async Task LoadMoreAsync(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler, IObserver<TModel> observer, CancellationToken token)
+        private async Task LoadNextBatchAsync(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler, IObserver<TModel> observer, CancellationToken token)
         {
             if (!token.IsCancellationRequested)
             {
@@ -163,9 +168,20 @@ namespace Blauhaus.Domain.Client.Sync
             } 
         }
 
-        public void Refresh()
+        public void LoadNewFromClient()
         {
-            RefreshEvent?.Invoke(this, EventArgs.Empty);
+            LoadNewFromClientEvent?.Invoke(this, EventArgs.Empty);
+        }
+
+        private async Task LoadNewFromClientAsync(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler, IObserver<TModel> observer, CancellationToken token)
+        {
+            TraceStatus(SyncClientState.LoadingLocal, $"Load new from client invoked. Loading any updated models from local store", syncStatusHandler);
+            ClientSyncStatus syncStatus = await _syncClientRepository.GetSyncStatusAsync(syncCommand);
+            syncCommand.OlderThan = null;
+            syncCommand.NewerThan = syncStatus.NewestModifiedAt;
+            var localModels = await _syncClientRepository.LoadModelsAsync(syncCommand);
+            PublishModelsIfRequired(localModels, observer, syncStatusHandler);
+            TraceStatus(SyncClientState.Completed, $"Load new from client completed. {localModels.Count} loaded", syncStatusHandler);
         }
 
         public void Cancel()
@@ -184,8 +200,13 @@ namespace Blauhaus.Domain.Client.Sync
                 _token = _cancellationTokenSource.Token;
             }
         }
+        
+        public void LoadNewFromServer()
+        {
+            LoadNewFromServerEvent?.Invoke(this, EventArgs.Empty);
+        }
 
-        private async Task RefreshAsync(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler, IObserver<TModel> observer, CancellationToken token)
+        private async Task LoadNewFromServerAsync(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler, IObserver<TModel> observer, CancellationToken token)
         {
             ClientSyncStatus syncStatus = await _syncClientRepository.GetSyncStatusAsync(syncCommand);
             TraceStatus(SyncClientState.DownloadingNew, $"Refresh invoked. Loading up to {syncCommand.BatchSize} new from server", syncStatusHandler);
