@@ -53,9 +53,9 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
 
             //Assert
             MockClientEntityConverter.Mock.Verify(x => x.ConstructModel(
-                It.Is<TestRootEntity>(y => y.Id == _rootId2), It.IsAny<IEnumerable<ISyncClientEntity>>()));
+                It.Is<TestRootEntity>(y => y.Id == _rootId2), It.IsAny<List<ISyncClientEntity>>()));
             MockClientEntityConverter.Mock.Verify(x => x.ConstructModel(
-                It.IsAny<TestRootEntity>(), It.Is<IEnumerable<ISyncClientEntity>>(y => y.First().ModifiedAtTicks == 13)));
+                It.IsAny<TestRootEntity>(), It.Is<List<ISyncClientEntity>>(y => y.First().ModifiedAtTicks == 13)));
         }
 
 

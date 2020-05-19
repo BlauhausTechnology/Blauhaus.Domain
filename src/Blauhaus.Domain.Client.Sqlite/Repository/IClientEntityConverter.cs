@@ -11,7 +11,7 @@ namespace Blauhaus.Domain.Client.Sqlite.Repository
         where TRootEntity: ISyncClientEntity
     {
         Tuple<TRootEntity, List<ISyncClientEntity>> ExtractEntitiesFromDto(TDto dto);
-        TModel ConstructModel(TRootEntity rootEntity, IEnumerable<ISyncClientEntity> childEntities);
-        IEnumerable<ISyncClientEntity> LoadChildEntities(TRootEntity rootEntity, SQLiteConnection conn);
+        TModel ConstructModel(TRootEntity rootEntity, List<ISyncClientEntity> childEntities);
+        List<ISyncClientEntity> LoadChildEntities(TRootEntity rootEntity, SQLiteConnection conn);
     }
 }

@@ -183,7 +183,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             var result =  await Sut.SaveSyncedDtosAsync(new List<ITestDto>{dto});
 
             //Assert
-            MockClientEntityConverter.Mock.Verify(x => x.ConstructModel(bob, It.IsAny<IEnumerable<ISyncClientEntity>>()));
+            MockClientEntityConverter.Mock.Verify(x => x.ConstructModel(bob, It.IsAny<List<ISyncClientEntity>>()));
             Assert.AreEqual(model, result[0]);
         } 
     }

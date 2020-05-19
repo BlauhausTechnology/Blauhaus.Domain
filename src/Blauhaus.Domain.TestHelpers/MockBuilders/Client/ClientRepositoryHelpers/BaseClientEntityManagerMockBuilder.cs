@@ -26,7 +26,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.ClientRepositoryHelper
 
         public TBuilder Where_ConstructModel_returns(TModel value)
         {
-            Mock.Setup(x => x.ConstructModel(It.IsAny<TRootEntity>(), It.IsAny<IEnumerable<ISyncClientEntity>>()))
+            Mock.Setup(x => x.ConstructModel(It.IsAny<TRootEntity>(), It.IsAny<List<ISyncClientEntity>>()))
                 .Returns(value);
             return (TBuilder) this;
         }
