@@ -25,7 +25,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
                 RootName = "Bob"
             };
             await Connection.InsertAsync(bob);
-            MockClientEntityManager.Where_ExtractRootEntityFromDto_returns(new TestRootEntity
+            MockClientEntityConverter.Where_ExtractEntitiesFromDto_returns_root(new TestRootEntity
             {
                 Id = bob.Id,
                 RootName = "Fred"
@@ -36,7 +36,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
             await Sut.SaveDtoAsync(dto);
 
             //Assert
-            MockClientEntityManager.Mock.Verify(x => x.ExtractRootEntityFromDto(dto));
+            MockClientEntityConverter.Mock.Verify(x => x.ExtractEntitiesFromDto(dto));
             var newBob = await Connection.Table<TestRootEntity>().FirstAsync(x => x.Id == bob.Id);
             Assert.AreEqual("Fred", newBob.RootName);
             Assert.AreEqual(1, await Connection.Table<TestRootEntity>().CountAsync());
@@ -58,7 +58,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
             };
             await Connection.InsertAsync(bob);
             await Connection.InsertAsync(child);
-            MockClientEntityManager.Where_ExtractChildEntitiesFromDto_returns(new List<ISyncClientEntity>
+            MockClientEntityConverter.Where_ExtractEntitiesFromDto_returns(new TestRootEntity(), new List<ISyncClientEntity>
             {
                 new TestChildEntity()
                 {
@@ -72,7 +72,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
             await Sut.SaveDtoAsync(dto);
 
             //Assert
-            MockClientEntityManager.Mock.Verify(x => x.ExtractChildEntitiesFromDto(dto));
+            MockClientEntityConverter.Mock.Verify(x => x.ExtractEntitiesFromDto(dto));
             var newChild = await Connection.Table<TestChildEntity>().FirstAsync(x => x.Id == child.Id);
             Assert.AreEqual("Hop", newChild.ChildName);
             Assert.AreEqual(1, await Connection.Table<TestChildEntity>().CountAsync());
@@ -87,14 +87,14 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
                 Id = Guid.NewGuid(),
                 RootName = "Fred"
             };
-            MockClientEntityManager.Where_ExtractRootEntityFromDto_returns(bob);
+            MockClientEntityConverter.Where_ExtractEntitiesFromDto_returns_root(bob);
 
             //Act
             var dto = new MockBuilder<ITestDto>().Object;
             await Sut.SaveDtoAsync(dto);
 
             //Assert
-            MockClientEntityManager.Mock.Verify(x => x.ExtractRootEntityFromDto(dto));
+            MockClientEntityConverter.Mock.Verify(x => x.ExtractEntitiesFromDto(dto));
             var newBob = await Connection.Table<TestRootEntity>().FirstAsync(x => x.Id == bob.Id);
             Assert.AreEqual("Fred", newBob.RootName);
             Assert.AreEqual(1, await Connection.Table<TestRootEntity>().CountAsync());
@@ -115,7 +115,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
                 ChildName = "Pop"
             };
             await Connection.InsertAsync(bob);
-            MockClientEntityManager.Where_ExtractChildEntitiesFromDto_returns(new List<ISyncClientEntity>
+            MockClientEntityConverter.Where_ExtractEntitiesFromDto_returns(new TestRootEntity(), new List<ISyncClientEntity>
             {
                 new TestChildEntity()
                 {
@@ -129,7 +129,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
             await Sut.SaveDtoAsync(dto);
 
             //Assert
-            MockClientEntityManager.Mock.Verify(x => x.ExtractChildEntitiesFromDto(dto));
+            MockClientEntityConverter.Mock.Verify(x => x.ExtractEntitiesFromDto(dto));
             var newChild = await Connection.Table<TestChildEntity>().FirstAsync(x => x.Id == child.Id);
             Assert.AreEqual("Hop", newChild.ChildName);
             Assert.AreEqual(1, await Connection.Table<TestChildEntity>().CountAsync());
@@ -145,16 +145,16 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
                 Id = Guid.NewGuid(),
                 RootName = "Fred"
             };
-            MockClientEntityManager.Where_ExtractRootEntityFromDto_returns(bob);
+            MockClientEntityConverter.Where_ExtractEntitiesFromDto_returns(bob, new List<ISyncClientEntity>());
             var model = new MockBuilder<ITestModel>().Object;
-            MockClientEntityManager.Where_ConstructModelFromRootEntity_returns(model);
+            MockClientEntityConverter.Where_ConstructModel_returns(model);
 
             //Act
             var dto = new MockBuilder<ITestDto>().Object;
             var result = await Sut.SaveDtoAsync(dto); 
 
             //Assert
-            MockClientEntityManager.Mock.Verify(x => x.ConstructModelFromRootEntity(bob, It.IsAny<SQLiteConnection>()));
+            MockClientEntityConverter.Mock.Verify(x => x.ConstructModel(bob, It.IsAny<IEnumerable<ISyncClientEntity>>()));
             Assert.AreEqual(model, result);
         } 
     }

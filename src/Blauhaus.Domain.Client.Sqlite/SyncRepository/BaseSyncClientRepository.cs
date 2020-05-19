@@ -101,14 +101,14 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
                 {
                     query = query.Where(nameof(IClientEntity.ModifiedAtTicks), ">", syncCommand.NewerThan);
                 }
-                 
 
                 var sql = SqlCompiler.Compile(query).ToString();
-                var entities = connection.Query<TRootEntity>(sql);
+                var rootEntities = connection.Query<TRootEntity>(sql);
 
-                foreach (var entity in entities)
+                foreach (var rootEntity in rootEntities)
                 {
-                    models.Add(EntityConverter.ConstructModelFromRootEntity(entity, connection));
+                    var childEntities = EntityConverter.LoadChildEntities(rootEntity, connection);
+                    models.Add(EntityConverter.ConstructModel(rootEntity, childEntities));
                 }
                 
                 _analyticsService.TraceVerbose(this, "Models loaded", new Dictionary<string, object>
@@ -125,30 +125,26 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
         public async Task<IReadOnlyList<TModel>> SaveSyncedDtosAsync(IEnumerable<TDto> dtos)
         {
             var models = new List<TModel>();
-            var entities = new List<IClientEntity>();
+            var allEntities = new List<ISyncClientEntity>();
 
             var db = await DatabaseService.GetDatabaseConnectionAsync();
             await db.RunInTransactionAsync(connection =>
             {
                 foreach (var dto in dtos)
                 {
-                    var rootEntity = EntityConverter.ExtractRootEntityFromDto(dto);
-                    rootEntity.SyncState = SyncState.InSync;
-                    entities.Add(rootEntity);
+                    var entities = EntityConverter.ExtractEntitiesFromDto(dto);
 
-                    var childEntities = EntityConverter.ExtractChildEntitiesFromDto(dto);
-                    foreach (var childEntity in childEntities)
-                    {
-                        childEntity.SyncState = SyncState.InSync;
-                        entities.Add(childEntity);
-                    }
+                    var rootEntity = entities.Item1;
+                    var childEntities = entities.Item2;
 
-                    //todo this depends on having saved the child entities already. Perhaps just pass the child entities since we already have them. 
-                    models.Add(EntityConverter.ConstructModelFromRootEntity(rootEntity, connection));
+                    allEntities.Add(rootEntity);
+                    allEntities.AddRange(childEntities);
+                    models.Add(EntityConverter.ConstructModel(rootEntity, childEntities));
                 }
 
-                foreach (var entity in entities)
+                foreach (var entity in allEntities)
                 {
+                    entity.SyncState = SyncState.InSync;
                     connection.InsertOrReplace(entity);
                 }
             });

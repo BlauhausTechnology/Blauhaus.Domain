@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Blauhaus.Domain.Client.Sqlite.Repository;
 using Blauhaus.Domain.Common.Entities;
 using Blauhaus.TestHelpers.MockBuilders;
@@ -7,9 +8,9 @@ using SQLite;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.ClientRepositoryHelpers
 {
-    public class ClientEntityManagerMockBuilder<TModel, TDto, TRootEntity> : BaseClientEntityManagerMockBuilder<ClientEntityManagerMockBuilder<TModel, TDto, TRootEntity>, IClientEntityConverter<TModel, TDto, TRootEntity>, TModel, TDto, TRootEntity> 
+    public class ClientEntityConverterMockBuilder<TModel, TDto, TRootEntity> : BaseClientEntityManagerMockBuilder<ClientEntityConverterMockBuilder<TModel, TDto, TRootEntity>, IClientEntityConverter<TModel, TDto, TRootEntity>, TModel, TDto, TRootEntity> 
         where TModel : IClientEntity 
-        where TRootEntity : ISyncClientEntity
+        where TRootEntity : ISyncClientEntity, new()
     {
 
     }
@@ -20,29 +21,40 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.ClientRepositoryHelper
         where TMock : class, IClientEntityConverter<TModel, TDto, TRootEntity>
         where TBuilder : BaseClientEntityManagerMockBuilder<TBuilder, TMock, TModel, TDto, TRootEntity>
         where TModel : IClientEntity
-        where TRootEntity : ISyncClientEntity
+        where TRootEntity : ISyncClientEntity, new()
     {
 
-        public TBuilder Where_ConstructModelFromRootEntity_returns(TModel value)
+        public TBuilder Where_ConstructModel_returns(TModel value)
         {
-            Mock.Setup(x => x.ConstructModelFromRootEntity(It.IsAny<TRootEntity>(), It.IsAny<SQLiteConnection>()))
+            Mock.Setup(x => x.ConstructModel(It.IsAny<TRootEntity>(), It.IsAny<IEnumerable<ISyncClientEntity>>()))
                 .Returns(value);
-            return this as TBuilder;
+            return (TBuilder) this;
         }
         
-        public TBuilder Where_ExtractChildEntitiesFromDto_returns(IEnumerable<ISyncClientEntity> value)
+        public TBuilder Where_ExtractEntitiesFromDto_returns_root(TRootEntity value)
         {
-            Mock.Setup(x => x.ExtractChildEntitiesFromDto(It.IsAny<TDto>()))
-                .Returns(value);
-            return this as TBuilder;
+            Mock.Setup(x => x.ExtractEntitiesFromDto(It.IsAny<TDto>()))
+                .Returns(new Tuple<TRootEntity, List<ISyncClientEntity>>(value, new List<ISyncClientEntity>()));
+            return (TBuilder) this;
         }
-
-        
-        public TBuilder Where_ExtractRootEntityFromDto_returns(TRootEntity value)
+        public TBuilder Where_ExtractEntitiesFromDto_returns(TRootEntity value, List<ISyncClientEntity> childEntities)
         {
-            Mock.Setup(x => x.ExtractRootEntityFromDto(It.IsAny<TDto>()))
+            Mock.Setup(x => x.ExtractEntitiesFromDto(It.IsAny<TDto>()))
+                .Returns(new Tuple<TRootEntity, List<ISyncClientEntity>>(value, childEntities));
+            return (TBuilder) this;
+        }
+        public TBuilder Where_ExtractEntitiesFromDto_returns(Tuple<TRootEntity,List<ISyncClientEntity>> value)
+        {
+            Mock.Setup(x => x.ExtractEntitiesFromDto(It.IsAny<TDto>()))
                 .Returns(value);
-            return this as TBuilder;
+            return (TBuilder) this;
+        }
+          
+        public TBuilder Where_LoadChildEntities_returns(List<ISyncClientEntity> value)
+        {
+            Mock.Setup(x => x.LoadChildEntities(It.IsAny<TRootEntity>(), It.IsAny<SQLiteConnection>()))
+                .Returns(value);
+            return (TBuilder) this;
         }
 
 

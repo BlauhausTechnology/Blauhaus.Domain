@@ -27,15 +27,15 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests._Base
             Task.Run(async () => await SqliteDatabaseService.DropTablesAsync()).Wait();
             Connection = SqliteDatabaseService.GetDatabaseConnectionAsync().Result;
             AddService(SqliteDatabaseService);
-            AddService(x => MockClientEntityManager.Object);
+            AddService(x => MockClientEntityConverter.Object);
             AddService(x => MockSyncQueryGenerator.Object);
             AddService(x => MockAnalyticsService.Object);
         }
 
         protected DeviceInfoServiceMockBuilder MockDeviceInfoService => AddMock<DeviceInfoServiceMockBuilder, IDeviceInfoService>().Invoke();
 
-        protected ClientEntityManagerMockBuilder<ITestModel, ITestDto, TestRootEntity> MockClientEntityManager 
-            => AddMock<ClientEntityManagerMockBuilder<ITestModel, ITestDto, TestRootEntity>, IClientEntityConverter<ITestModel, ITestDto, TestRootEntity>>().Invoke();
+        protected ClientEntityConverterMockBuilder<ITestModel, ITestDto, TestRootEntity> MockClientEntityConverter 
+            => AddMock<ClientEntityConverterMockBuilder<ITestModel, ITestDto, TestRootEntity>, IClientEntityConverter<ITestModel, ITestDto, TestRootEntity>>().Invoke();
 
         protected SyncQueryGeneratorMockBuilder<ISyncQueryLoader<TestSyncCommand, TestRootEntity>, TestRootEntity, TestSyncCommand> MockSyncQueryGenerator
             => AddMock<SyncQueryGeneratorMockBuilder<ISyncQueryLoader<TestSyncCommand, TestRootEntity>,TestRootEntity,  TestSyncCommand>, ISyncQueryLoader<TestSyncCommand, TestRootEntity>>().Invoke();

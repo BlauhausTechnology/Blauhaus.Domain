@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Blauhaus.Domain.Client.Sqlite.SyncRepository;
+using Blauhaus.Domain.Common.Entities;
 using Blauhaus.Domain.Tests.ClientTests.SqliteTests._Base;
 using Blauhaus.Domain.Tests.ClientTests.SqliteTests._TestObjects;
 using Blauhaus.TestHelpers.MockBuilders;
@@ -42,8 +43,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
 
             _entitiesConstructed = new List<TestRootEntity>();
             MockSyncQueryGenerator.Where_GenerateQuery_returns(() => new Query(nameof(TestRootEntity)));
-            MockClientEntityManager.Mock.Setup(x => x.ConstructModelFromRootEntity(Capture.In(_entitiesConstructed), It.IsAny<SQLiteConnection>()))
-                .Returns((TestRootEntity root, SQLiteConnection conn)=> new MockBuilder<ITestModel>()
+            MockClientEntityConverter.Mock.Setup(x => x.ConstructModel(Capture.In(_entitiesConstructed), It.IsAny<IEnumerable<ISyncClientEntity>>()))
+                .Returns((TestRootEntity root, IEnumerable<ISyncClientEntity> childEntities)=> new MockBuilder<ITestModel>()
                     .With(x => x.Id, root.Id)
                     .With(x => x.ModifiedAtTicks, root.ModifiedAtTicks).Object);
         }
