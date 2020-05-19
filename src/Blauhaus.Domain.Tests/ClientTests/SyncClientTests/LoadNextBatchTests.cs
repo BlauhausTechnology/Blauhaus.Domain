@@ -21,8 +21,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             var publishedModels = new List<TestModel>();
             var localModels = TestModel.GenerateList(6).OrderByDescending(x => x.ModifiedAtTicks).ToList();
             var firstBatchOfLocalModels = localModels.Take(3).ToList(); 
-            MockSyncClientRepository.Where_LoadModelsAsync_returns(firstBatchOfLocalModels);
-            MockSyncClientRepository.Where_GetSyncStatusAsync_returns( 
+            MockBaseSyncClientRepository.Where_LoadModelsAsync_returns(firstBatchOfLocalModels);
+            MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns( 
                 new ClientSyncStatus
                 {
                     AllLocalEntities = 6,
@@ -35,15 +35,15 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             publishedModels.Clear();
 
             var secondBatchOfLocalModels = localModels.Skip(3).Take(3).ToList(); 
-            MockSyncClientRepository.Where_LoadModelsAsync_returns(secondBatchOfLocalModels);
-            MockSyncClientRepository.Mock.Invocations.Clear(); 
+            MockBaseSyncClientRepository.Where_LoadModelsAsync_returns(secondBatchOfLocalModels);
+            MockBaseSyncClientRepository.Mock.Invocations.Clear(); 
 
             //Act
             Sut.LoadNextBatch();
             await Task.Delay(20);
 
             //Assert
-            MockSyncClientRepository.Mock.Verify(x => x.LoadModelsAsync(It.Is<TestSyncCommand>(y => 
+            MockBaseSyncClientRepository.Mock.Verify(x => x.LoadModelsAsync(It.Is<TestSyncCommand>(y => 
                 y.FavouriteFood == "Lasagne" &&
                 y.BatchSize == 3 && 
                 y.NewerThan == null && 
@@ -89,8 +89,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             var publishedModels = new List<TestModel>();
             var models = TestModel.GenerateList(6).OrderByDescending(x => x.ModifiedAtTicks).ToList();
             var localModels = models.Take(3).ToList(); 
-            MockSyncClientRepository.Where_LoadModelsAsync_returns(localModels);
-            MockSyncClientRepository.Where_GetSyncStatusAsync_returns( 
+            MockBaseSyncClientRepository.Where_LoadModelsAsync_returns(localModels);
+            MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns( 
                 new ClientSyncStatus
                 {
                     AllLocalEntities = 3,

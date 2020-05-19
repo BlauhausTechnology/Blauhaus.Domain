@@ -28,8 +28,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests._Base
         protected ConnectivityServiceMockBuilder MockConnectivityService => AddMock<ConnectivityServiceMockBuilder, IConnectivityService>().Invoke();
         protected MockBuilder<ITimeService> MockTimeService => AddMock<ITimeService>().Invoke();
 
-        protected SyncClientRepositoryMockBuilder<TestModel, TestModelDto, TestSyncCommand> MockSyncClientRepository 
-            => AddMock<SyncClientRepositoryMockBuilder<TestModel, TestModelDto, TestSyncCommand>, ISyncClientRepository<TestModel, TestModelDto, TestSyncCommand>>().Invoke();
+        protected BaseSyncClientRepositoryMockBuilder<TestModel, TestModelDto, TestSyncCommand> MockBaseSyncClientRepository 
+            => AddMock<BaseSyncClientRepositoryMockBuilder<TestModel, TestModelDto, TestSyncCommand>, ISyncClientRepository<TestModel, TestModelDto, TestSyncCommand>>().Invoke();
 
         protected CommandHandlerMockBuilder<SyncResult<TestModel>, TestSyncCommand> MockSyncCommandHandler 
             => AddMock<CommandHandlerMockBuilder<SyncResult<TestModel>, TestSyncCommand>, ICommandHandler<SyncResult<TestModel>, TestSyncCommand>>().Invoke();
@@ -55,10 +55,10 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests._Base
                 .Callback(state => StateUpdates.Add(state));
             
             MockSyncCommandHandler.Where_HandleAsync_returns(new SyncResult<TestModel>{EntityBatch = new List<TestModel>()});
-            MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new ClientSyncStatus());
-            MockSyncClientRepository.Where_LoadModelsAsync_returns(new List<TestModel>());
+            MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns(new ClientSyncStatus());
+            MockBaseSyncClientRepository.Where_LoadModelsAsync_returns(new List<TestModel>());
 
-            AddService(MockSyncClientRepository.Object);
+            AddService(MockBaseSyncClientRepository.Object);
             AddService(MockSyncCommandHandler.Object);
             AddService(MockTimeService.Object);
             AddService(MockConnectivityService.Object);
