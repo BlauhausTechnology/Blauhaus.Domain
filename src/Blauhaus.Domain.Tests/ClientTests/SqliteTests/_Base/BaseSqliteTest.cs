@@ -37,8 +37,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests._Base
         protected ClientEntityConverterMockBuilder<ITestModel, ITestDto, TestRootEntity> MockClientEntityConverter 
             => AddMock<ClientEntityConverterMockBuilder<ITestModel, ITestDto, TestRootEntity>, IClientEntityConverter<ITestModel, ITestDto, TestRootEntity>>().Invoke();
 
-        protected SyncQueryGeneratorMockBuilder<ISyncQueryLoader<TestSyncCommand, TestRootEntity>, TestRootEntity, TestSyncCommand> MockSyncQueryGenerator
-            => AddMock<SyncQueryGeneratorMockBuilder<ISyncQueryLoader<TestSyncCommand, TestRootEntity>,TestRootEntity,  TestSyncCommand>, ISyncQueryLoader<TestSyncCommand, TestRootEntity>>().Invoke();
+        protected SyncQueryGeneratorMockBuilder<ISyncClientSqlQueryGenerator<TestSyncCommand, TestRootEntity>, TestRootEntity, TestSyncCommand> MockSyncQueryGenerator
+            => AddMock<SyncQueryGeneratorMockBuilder<ISyncClientSqlQueryGenerator<TestSyncCommand, TestRootEntity>,TestRootEntity,  TestSyncCommand>, ISyncClientSqlQueryGenerator<TestSyncCommand, TestRootEntity>>().Invoke();
 
         protected AnalyticsServiceMockBuilder MockAnalyticsService => AddMock<AnalyticsServiceMockBuilder, IAnalyticsService>().Invoke();
     }

@@ -4,12 +4,13 @@ using SqlKata;
 
 namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
 {
-    public class SyncQueryGenerator<TRootEntity> : ISyncQueryLoader<SyncCommand, TRootEntity>
+    public class SyncClientSqlQueryGenerator<TRootEntity> : BaseSyncClientSqlQueryGenerator<SyncCommand, TRootEntity>
         where TRootEntity : ISyncClientEntity
     {
-        public Query GenerateQuery(SyncCommand syncCommand)
+        
+        protected override Query ConfigureQuery(SyncCommand syncCommand, Query query)
         {
-            return new Query(typeof(TRootEntity).Name);
+            return query;
         }
     }
 }
