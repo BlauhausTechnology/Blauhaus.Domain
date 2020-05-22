@@ -32,9 +32,9 @@ namespace Blauhaus.Domain.Client.Sqlite.Repository
         }
 
 
-        public async Task<TModel> LoadByIdAsync(Guid id)
+        public async Task<TModel?> LoadByIdAsync(Guid id)
         {
-            TModel model = default;
+            TModel? model = default;
 
             var db = await DatabaseService.GetDatabaseConnectionAsync();
             await db.RunInTransactionAsync(connection =>
@@ -42,13 +42,11 @@ namespace Blauhaus.Domain.Client.Sqlite.Repository
                 var rootEntity = connection.Table<TRootEntity>()
                     .FirstOrDefault(x => x.Id == id);
 
-                var childEntities = EntityConverter.LoadChildEntities(rootEntity, connection);
-
                 if (rootEntity != null)
                 {
+                    var childEntities = EntityConverter.LoadChildEntities(rootEntity, connection);
                     model = EntityConverter.ConstructModel(rootEntity, childEntities);
                 }
-
             });
 
             return model;
@@ -56,7 +54,7 @@ namespace Blauhaus.Domain.Client.Sqlite.Repository
 
         public async Task<TModel> SaveDtoAsync(TDto dto)
         {
-            TModel model = default;
+            TModel? model = default;
 
             var db = await DatabaseService.GetDatabaseConnectionAsync();
 
