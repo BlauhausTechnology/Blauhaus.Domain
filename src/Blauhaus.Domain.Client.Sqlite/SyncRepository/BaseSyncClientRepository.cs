@@ -125,7 +125,6 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
         public async Task<IReadOnlyList<TModel>> SaveSyncedDtosAsync(IEnumerable<TDto> dtos)
         {
             var models = new List<TModel>();
-            var allEntities = new List<ISyncClientEntity>();
 
             var db = await DatabaseService.GetDatabaseConnectionAsync();
             await db.RunInTransactionAsync(connection =>
@@ -137,16 +136,18 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
                     var rootEntity = entities.Item1;
                     var childEntities = entities.Item2;
 
-                    allEntities.Add(rootEntity);
-                    allEntities.AddRange(childEntities);
-                    models.Add(EntityConverter.ConstructModel(rootEntity, childEntities));
-                }
+                    rootEntity.SyncState = SyncState.InSync;
+                    connection.InsertOrReplace(rootEntity);
 
-                foreach (var entity in allEntities)
-                {
-                    entity.SyncState = SyncState.InSync;
-                    connection.InsertOrReplace(entity);
-                }
+                    foreach (var childEntity in childEntities)
+                    {
+                        childEntity.SyncState = SyncState.InSync;
+                        connection.InsertOrReplace(childEntity);
+                    }
+
+                    models.Add(EntityConverter.ConstructModel(rootEntity, childEntities));
+                } 
+                 
             });
 
             return models;
