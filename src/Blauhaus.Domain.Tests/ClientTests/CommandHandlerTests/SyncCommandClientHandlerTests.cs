@@ -32,8 +32,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.CommandHandlerTests
         private MockBuilder<ICommandHandler<DtoSyncResult<TestModelDto>, TestSyncCommandDto>> MockDtoCommandHandler
             => AddMock<ICommandHandler<DtoSyncResult<TestModelDto>, TestSyncCommandDto>>().Invoke();
 
-        private SyncClientRepositoryMockBuilder<TestModel, TestModelDto, TestSyncCommand> MockSyncClientRepository 
-            => AddMock<SyncClientRepositoryMockBuilder<TestModel, TestModelDto, TestSyncCommand>, ISyncClientRepository<TestModel, TestModelDto, TestSyncCommand>>().Invoke();
+        private BaseSyncClientRepositoryMockBuilder<TestModel, TestModelDto, TestSyncCommand> MockBaseSyncClientRepository 
+            => AddMock<BaseSyncClientRepositoryMockBuilder<TestModel, TestModelDto, TestSyncCommand>, ISyncClientRepository<TestModel, TestModelDto, TestSyncCommand>>().Invoke();
 
 
         [SetUp]
@@ -55,11 +55,11 @@ namespace Blauhaus.Domain.Tests.ClientTests.CommandHandlerTests
             MockCommandConverter.Mock.Setup(x => x.Convert(_command)).Returns(_commandDto);
             MockDtoCommandHandler.Mock.Setup(x => x.HandleAsync(_commandDto, CancellationToken))
                 .ReturnsAsync(Result.Success(_dtoSyncResult));
-            MockSyncClientRepository.Where_SaveSyncedDtosAsync_returns(new List<TestModel> {_model});
+            MockBaseSyncClientRepository.Where_SaveSyncedDtosAsync_returns(new List<TestModel> {_model});
 
             AddService(MockCommandConverter.Object);
             AddService(MockDtoCommandHandler.Object);
-            AddService(MockSyncClientRepository.Object);
+            AddService(MockBaseSyncClientRepository.Object);
         }
 
         [Test]
@@ -104,7 +104,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.CommandHandlerTests
             var result = await Sut.HandleAsync(_command, CancellationToken);
 
             //Assert
-            MockSyncClientRepository.Mock.Verify(x => x.SaveSyncedDtosAsync(It.Is<IReadOnlyList<TestModelDto>>(y => 
+            MockBaseSyncClientRepository.Mock.Verify(x => x.SaveSyncedDtosAsync(It.Is<IReadOnlyList<TestModelDto>>(y => 
                 y[0] == _modelDto)));
             Assert.AreEqual(_model, result.Value.EntityBatch.First());
             Assert.AreEqual(1, result.Value.EntitiesToDownloadCount);

@@ -17,6 +17,26 @@ using Blauhaus.Domain.Common.Extensions;
 
 namespace Blauhaus.Domain.Client.Sync
 {
+
+    //todo 
+    // here is the problem. If you sync once and get the newest and oldest entities, and then change the sync comnmand parameters and sync again
+    // you will never get any new entities even if you deserve them, because you already have the newst and oldest possible entity on the device.
+    // the only way to solve this is to make the device lookup for modified times specific to a given combination of command parameters. That is, ignoring 
+    // modified times... so we can hash the command maybe and use it as a lookup? or maybe make the command filters immutable? 
+    // how to exclude the non-filter properties from the hash? How did user sync on Cheeteye solve this? I actually don't think it does....
+    // So if I sync users with TotalRewards > 10. and then Sync for TotalRewards > 11, the client side queries will load the data for the second query
+    // using entities from the first query, but when calculating OlderThan we must add a parameter to the query that is unique to the   TotalRewards > 11 part
+    // of the query so that we basically redownload all the  overlapping data. No other way to solve this. 
+    // how do we save this hash locally? Maybe we don't have to - we just ignore all the user-specific filters when getting the OlderThan value
+    // ... no but then we will ALWAYS redownload everything
+
+    //possibly filtering and syncing don't mix. we should use syncing for static classifications not filters...?
+    //maybe sync command can have two types of property: a category (or combination of categories), which is static and used for sync, and
+    //filters, which are ignored for the purpose of syncing (ie SyncState == OutOfSync)
+
+        //TODO SEARCH AND SYNC ARE TWO DIFFERENT THINGS. Sync command parameters must be categorical and mutually exclusive. Search results are ignored by sync
+        // ... however perhaps they could share some infrastructure?
+
     public class SyncClient<TModel, TDto, TSyncCommand> : ISyncClient<TModel, TSyncCommand> 
         where TModel : class, IClientEntity
         where TSyncCommand : SyncCommand 

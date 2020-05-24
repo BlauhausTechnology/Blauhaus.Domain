@@ -20,14 +20,14 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
         where TSyncCommand : SyncCommand
     {
         private readonly IAnalyticsService _analyticsService;
-        private readonly ISyncQueryLoader<TSyncCommand, TRootEntity> _syncQueryLoader;
+        private readonly ISyncClientSqlQueryGenerator<TSyncCommand, TRootEntity> _syncQueryLoader;
         protected Query CreateSqlQuery(TSyncCommand syncCommand) => _syncQueryLoader.GenerateQuery(syncCommand);
          
         public BaseSyncClientRepository(
             IAnalyticsService analyticsService,
             ISqliteDatabaseService sqliteDatabaseService, 
             IClientEntityConverter<TModel, TDto, TRootEntity> entityConverter,
-            ISyncQueryLoader<TSyncCommand, TRootEntity> syncQueryLoader) 
+            ISyncClientSqlQueryGenerator<TSyncCommand, TRootEntity> syncQueryLoader) 
                 : base(analyticsService, sqliteDatabaseService, entityConverter)
         {
             _analyticsService = analyticsService;
@@ -101,14 +101,14 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
                 {
                     query = query.Where(nameof(IClientEntity.ModifiedAtTicks), ">", syncCommand.NewerThan);
                 }
-                 
 
                 var sql = SqlCompiler.Compile(query).ToString();
-                var entities = connection.Query<TRootEntity>(sql);
+                var rootEntities = connection.Query<TRootEntity>(sql);
 
-                foreach (var entity in entities)
+                foreach (var rootEntity in rootEntities)
                 {
-                    models.Add(EntityConverter.ConstructModelFromRootEntity(entity, connection));
+                    var childEntities = EntityConverter.LoadChildEntities(rootEntity, connection);
+                    models.Add(EntityConverter.ConstructModel(rootEntity, childEntities));
                 }
                 
                 _analyticsService.TraceVerbose(this, "Models loaded", new Dictionary<string, object>
@@ -125,31 +125,29 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
         public async Task<IReadOnlyList<TModel>> SaveSyncedDtosAsync(IEnumerable<TDto> dtos)
         {
             var models = new List<TModel>();
-            var entities = new List<IClientEntity>();
 
             var db = await DatabaseService.GetDatabaseConnectionAsync();
             await db.RunInTransactionAsync(connection =>
             {
                 foreach (var dto in dtos)
                 {
-                    var rootEntity = EntityConverter.ExtractRootEntityFromDto(dto);
-                    rootEntity.SyncState = SyncState.InSync;
-                    entities.Add(rootEntity);
+                    var entities = EntityConverter.ExtractEntitiesFromDto(dto);
 
-                    var childEntities = EntityConverter.ExtractChildEntitiesFromDto(dto);
+                    var rootEntity = entities.Item1;
+                    var childEntities = entities.Item2;
+
+                    rootEntity.SyncState = SyncState.InSync;
+                    connection.InsertOrReplace(rootEntity);
+
                     foreach (var childEntity in childEntities)
                     {
                         childEntity.SyncState = SyncState.InSync;
-                        entities.Add(childEntity);
+                        connection.InsertOrReplace(childEntity);
                     }
 
-                    models.Add(EntityConverter.ConstructModelFromRootEntity(rootEntity, connection));
-                }
-
-                foreach (var entity in entities)
-                {
-                    connection.InsertOrReplace(entity);
-                }
+                    models.Add(EntityConverter.ConstructModel(rootEntity, childEntities));
+                } 
+                 
             });
 
             return models;

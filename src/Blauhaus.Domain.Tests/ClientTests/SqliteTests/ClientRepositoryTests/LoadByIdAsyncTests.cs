@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Blauhaus.Domain.Client.Sqlite.Repository;
+using Blauhaus.Domain.Common.Entities;
 using Blauhaus.Domain.Tests.ClientTests.SqliteTests._Base;
 using Blauhaus.Domain.Tests.ClientTests.SqliteTests._TestObjects;
 using Blauhaus.TestHelpers.MockBuilders;
@@ -38,20 +40,40 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
 
 
         [Test]
-        public async Task SHOULD_load_correct_entity()
+        public async Task SHOULD_construct_model_using_RootEntity_and_child_entities()
         {
+            //Arrange
+            MockClientEntityConverter.Where_LoadChildEntities_returns(new List<ISyncClientEntity>
+            {
+                new TestChildEntity {ChildName = "Bobby", ModifiedAtTicks = 13}
+            });
+
             //Act
             await Sut.LoadByIdAsync(_rootId2);
 
             //Assert
-            MockClientEntityManager.Mock.Verify(x => x.ConstructModelFromRootEntity(It.Is<TestRootEntity>(y => y.Id == _rootId2), It.IsAny<SQLiteConnection>()));
+            MockClientEntityConverter.Mock.Verify(x => x.ConstructModel(
+                It.Is<TestRootEntity>(y => y.Id == _rootId2), It.IsAny<List<ISyncClientEntity>>()));
+            MockClientEntityConverter.Mock.Verify(x => x.ConstructModel(
+                It.IsAny<TestRootEntity>(), It.Is<List<ISyncClientEntity>>(y => y.First().ModifiedAtTicks == 13)));
+        }
+
+        [Test]
+        public async Task IF_model_does_not_exist_SHOULD_return_null_without_loading_children()
+        { 
+            //Act
+            var result = await Sut.LoadByIdAsync(Guid.NewGuid());
+
+            //Assert
+            Assert.IsNull(result);
+            MockClientEntityConverter.Mock.Verify(x => x.LoadChildEntities(It.IsAny<TestRootEntity>(), It.IsAny<SQLiteConnection>()), Times.Never);
         }
 
         [Test]
         public async Task SHOULD_return_constructed_model()
         {
             //Arrange
-            MockClientEntityManager.Where_ConstructModelFromRootEntity_returns(new MockBuilder<ITestModel>()
+            MockClientEntityConverter.Where_ConstructModel_returns(new MockBuilder<ITestModel>()
                 .With(x => x.RootEntityName, "Bob").Object);
 
             //Act
