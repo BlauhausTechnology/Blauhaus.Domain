@@ -23,8 +23,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             var now = DateTime.UtcNow;
             var localModels = TestModel.GenerateOlderThan(now, 3); 
             var serverModels = TestModel.GenerateNewerThan(now, 3); 
-            MockSyncClientRepository.Where_LoadModelsAsync_returns(localModels);
-            MockSyncClientRepository.Where_GetSyncStatusAsync_returns( 
+            MockBaseSyncClientRepository.Where_LoadModelsAsync_returns(localModels);
+            MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns( 
                 new ClientSyncStatus
                 {
                     AllLocalEntities = 3,

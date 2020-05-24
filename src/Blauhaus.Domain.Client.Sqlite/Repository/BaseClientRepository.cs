@@ -32,21 +32,21 @@ namespace Blauhaus.Domain.Client.Sqlite.Repository
         }
 
 
-        public async Task<TModel> LoadByIdAsync(Guid id)
+        public async Task<TModel?> LoadByIdAsync(Guid id)
         {
-            TModel model = default;
+            TModel? model = default;
 
             var db = await DatabaseService.GetDatabaseConnectionAsync();
             await db.RunInTransactionAsync(connection =>
             {
-                var entity = connection.Table<TRootEntity>()
+                var rootEntity = connection.Table<TRootEntity>()
                     .FirstOrDefault(x => x.Id == id);
 
-                if (entity != null)
+                if (rootEntity != null)
                 {
-                    model = EntityConverter.ConstructModelFromRootEntity(entity, connection);
+                    var childEntities = EntityConverter.LoadChildEntities(rootEntity, connection);
+                    model = EntityConverter.ConstructModel(rootEntity, childEntities);
                 }
-
             });
 
             return model;
@@ -54,22 +54,24 @@ namespace Blauhaus.Domain.Client.Sqlite.Repository
 
         public async Task<TModel> SaveDtoAsync(TDto dto)
         {
-            TModel model = default;
+            TModel? model = default;
 
             var db = await DatabaseService.GetDatabaseConnectionAsync();
 
             await db.RunInTransactionAsync(connection =>
             {
-                var rootEntity = EntityConverter.ExtractRootEntityFromDto(dto);
-                connection.InsertOrReplace(rootEntity);
+                var entities = EntityConverter.ExtractEntitiesFromDto(dto);
 
-                foreach (var childEntity in EntityConverter.ExtractChildEntitiesFromDto(dto))
+                var rootEntity = entities.Item1;
+                var childEntities = entities.Item2;
+                
+                foreach (var childEntity in childEntities)
                 {
                     connection.InsertOrReplace(childEntity);
                 }
                 connection.InsertOrReplace(rootEntity);
-
-                model = EntityConverter.ConstructModelFromRootEntity(rootEntity, connection);
+                
+                model = EntityConverter.ConstructModel(rootEntity, childEntities);
             });
 
             return model;

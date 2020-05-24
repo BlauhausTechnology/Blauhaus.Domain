@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Blauhaus.Domain.Client.Sqlite.Entities;
 using Blauhaus.Domain.Common.Entities;
 using SQLite;
@@ -9,8 +10,8 @@ namespace Blauhaus.Domain.Client.Sqlite.Repository
         where TModel : IClientEntity
         where TRootEntity: ISyncClientEntity
     {
-        TRootEntity ExtractRootEntityFromDto(TDto dto);
-        IEnumerable<ISyncClientEntity> ExtractChildEntitiesFromDto(TDto dto);
-        TModel ConstructModelFromRootEntity(TRootEntity rootEntity, SQLiteConnection conn);
+        Tuple<TRootEntity, List<ISyncClientEntity>> ExtractEntitiesFromDto(TDto dto);
+        TModel ConstructModel(TRootEntity rootEntity, List<ISyncClientEntity> childEntities);
+        List<ISyncClientEntity> LoadChildEntities(TRootEntity rootEntity, SQLiteConnection conn);
     }
 }

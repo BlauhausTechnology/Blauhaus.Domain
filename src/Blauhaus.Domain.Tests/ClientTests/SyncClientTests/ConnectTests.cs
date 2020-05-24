@@ -40,13 +40,13 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                     SyncedLocalEntities = 2,
                     AllLocalEntities = 3
                 };
-                MockSyncClientRepository.Where_GetSyncStatusAsync_returns(clientSyncStatus);
+                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns(clientSyncStatus);
 
                 //Act
                 Sut.Connect(SyncCommand, ClientSyncRequirement, MockSyncStatusHandler.Object).Subscribe();
 
                 //Assert
-                MockSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync(SyncCommand));
+                MockBaseSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync(SyncCommand));
                 MockAnalyticsService.VerifyTraceProperty(nameof(ClientSyncStatus), clientSyncStatus);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.AllLocalEntities = 3);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 2);
@@ -60,7 +60,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             {
                 base.Setup();
 
-                MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new ClientSyncStatus
+                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns(new ClientSyncStatus
                 {
                     SyncedLocalEntities = 0,
                     AllLocalEntities = 0,
@@ -170,7 +170,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                         TotalActiveEntityCount = 9
                     }
                 });
-                MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
+                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
                 {
                     new ClientSyncStatus
                     {
@@ -223,7 +223,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 MockSyncStatusHandler.Mock.VerifySet(x => x.AllLocalEntities = 3);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.AllServerEntities = 9);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 3);
-                MockSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync(SyncCommand), Times.Exactly(2));
+                MockBaseSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync(SyncCommand), Times.Exactly(2));
             }
             
             [Test]
@@ -255,7 +255,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                         TotalActiveEntityCount = 9
                     }
                 });
-                MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
+                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
                 {
                     new ClientSyncStatus
                     {
@@ -336,7 +336,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                         TotalActiveEntityCount = 9
                     }
                 });
-                MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
+                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
                 {
                     new ClientSyncStatus
                     {
@@ -399,7 +399,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 3);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 6);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 9);
-                MockSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync(SyncCommand), Times.Exactly(4));
+                MockBaseSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync(SyncCommand), Times.Exactly(4));
             }
 
             [Test]
@@ -430,7 +430,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                         TotalActiveEntityCount = 9
                     }
                 });
-                MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
+                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
                 {
                     new ClientSyncStatus
                     {
@@ -513,7 +513,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                         TotalActiveEntityCount = 9
                     }
                 });
-                MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
+                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
                 {
                     new ClientSyncStatus
                     {
@@ -571,7 +571,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 MockSyncStatusHandler.Mock.VerifySet(x => x.AllServerEntities = 9);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 3);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 6);
-                MockSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync(SyncCommand), Times.Exactly(3));
+                MockBaseSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync(SyncCommand), Times.Exactly(3));
             }
 
             [Test]
@@ -602,7 +602,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                         TotalActiveEntityCount = 9
                     }
                 });
-                MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
+                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
                 {
                     new ClientSyncStatus
                     {
@@ -671,8 +671,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 var oldServerModels1 = oldServerModels.Skip(0).Take(3).ToList();
                 var oldServerModels2 = oldServerModels.Skip(3).Take(3).ToList();
 
-                MockSyncClientRepository.Where_LoadModelsAsync_returns(localModels);
-                MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
+                MockBaseSyncClientRepository.Where_LoadModelsAsync_returns(localModels);
+                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
                 {
                     //local entities
                     new ClientSyncStatus
@@ -750,7 +750,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 await Task.Delay(20);
 
                 //Assert
-                MockSyncClientRepository.Mock.Verify(x => x.LoadModelsAsync(SyncCommand));
+                MockBaseSyncClientRepository.Mock.Verify(x => x.LoadModelsAsync(SyncCommand));
                 Assert.AreEqual(localModels[0].Id, publishedModels[0].Id);
                 Assert.AreEqual(localModels[1].Id, publishedModels[1].Id);
                 Assert.AreEqual(localModels[2].Id, publishedModels[2].Id);
@@ -811,8 +811,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 //Arrange
                 var localModels = TestModel.GenerateList(15).OrderByDescending(x => x.ModifiedAtTicks).ToList(); 
 
-                MockSyncClientRepository.Where_LoadModelsAsync_returns(localModels);
-                MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new ClientSyncStatus
+                MockBaseSyncClientRepository.Where_LoadModelsAsync_returns(localModels);
+                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns(new ClientSyncStatus
                 {
                     AllLocalEntities = 15,
                     SyncedLocalEntities = 15,
@@ -848,8 +848,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 //Arrange
                 var localModels = TestModel.GenerateList(15).OrderByDescending(x => x.ModifiedAtTicks).ToList(); 
 
-                MockSyncClientRepository.Where_LoadModelsAsync_returns(localModels);
-                MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new ClientSyncStatus
+                MockBaseSyncClientRepository.Where_LoadModelsAsync_returns(localModels);
+                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns(new ClientSyncStatus
                 {
                     AllLocalEntities = 15,
                     SyncedLocalEntities = 15,
@@ -886,8 +886,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                  var oldServerModels = TestModel.GenerateOlderThan(now.AddDays(-12), 6);
                  var oldServerModels1 = oldServerModels.Skip(0).Take(3).ToList();
                  var oldServerModels2 = oldServerModels.Skip(3).Take(3).ToList();
-                MockSyncClientRepository.Where_LoadModelsAsync_returns(localModels);
-                MockSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
+                MockBaseSyncClientRepository.Where_LoadModelsAsync_returns(localModels);
+                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
                 {
                     //local entities
                     new ClientSyncStatus
@@ -965,7 +965,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 await Task.Delay(10);
 
                 //Assert
-                MockSyncClientRepository.Mock.Verify(x => x.LoadModelsAsync(SyncCommand));
+                MockBaseSyncClientRepository.Mock.Verify(x => x.LoadModelsAsync(SyncCommand));
                 Assert.AreEqual(localModels[0].Id, publishedModels[0].Id);
                 Assert.AreEqual(localModels[1].Id, publishedModels[1].Id);
                 Assert.AreEqual(localModels[2].Id, publishedModels[2].Id);
