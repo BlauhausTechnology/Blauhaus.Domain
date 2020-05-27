@@ -42,7 +42,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             Connection.InsertAllAsync(entities);
 
             _entitiesConstructed = new List<TestRootEntity>();
-            MockSyncQueryGenerator.Where_GenerateQuery_returns(() => new Query(nameof(TestRootEntity)));
+            MockSyncClientSqlQueryGenerator.Where_GenerateQuery_returns(() => new Query(nameof(TestRootEntity)));
             MockClientEntityConverter.Mock.Setup(x => x.ConstructModel(Capture.In(_entitiesConstructed), It.IsAny<List<ISyncClientEntity>>()))
                 .Returns((TestRootEntity root, IEnumerable<ISyncClientEntity> childEntities)=> new MockBuilder<ITestModel>()
                     .With(x => x.Id, root.Id)
@@ -122,7 +122,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
         public async Task WHEN_QueryGenerator_modifies_query_SHOULD_apply()
         {
             //Arrange
-            MockSyncQueryGenerator.Where_GenerateQuery_returns(() => new Query(nameof(TestRootEntity))
+            MockSyncClientSqlQueryGenerator.Where_GenerateQuery_returns(() => new Query(nameof(TestRootEntity))
                 .WhereContains(nameof(TestRootEntity.RootName), "ggy"));
             
             //Act
