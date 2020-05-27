@@ -8,7 +8,7 @@ using SQLite;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.ClientRepositoryHelpers
 {
-    public class ClientEntityConverterMockBuilder<TModel, TDto, TRootEntity> : BaseClientEntityManagerMockBuilder<ClientEntityConverterMockBuilder<TModel, TDto, TRootEntity>, IClientEntityConverter<TModel, TDto, TRootEntity>, TModel, TDto, TRootEntity> 
+    public class ClientEntityConverterMockBuilder<TModel, TDto, TRootEntity> : BaseClientEntityConverterMockBuilder<ClientEntityConverterMockBuilder<TModel, TDto, TRootEntity>, IClientEntityConverter<TModel, TDto, TRootEntity>, TModel, TDto, TRootEntity> 
         where TModel : IClientEntity 
         where TRootEntity : ISyncClientEntity, new()
     {
@@ -16,10 +16,10 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.ClientRepositoryHelper
     }
 
 
-    public abstract class BaseClientEntityManagerMockBuilder<TBuilder, TMock, TModel, TDto, TRootEntity> 
+    public abstract class BaseClientEntityConverterMockBuilder<TBuilder, TMock, TModel, TDto, TRootEntity> 
         : BaseMockBuilder<TBuilder, TMock>
         where TMock : class, IClientEntityConverter<TModel, TDto, TRootEntity>
-        where TBuilder : BaseClientEntityManagerMockBuilder<TBuilder, TMock, TModel, TDto, TRootEntity>
+        where TBuilder : BaseClientEntityConverterMockBuilder<TBuilder, TMock, TModel, TDto, TRootEntity>
         where TModel : IClientEntity
         where TRootEntity : ISyncClientEntity, new()
     {
