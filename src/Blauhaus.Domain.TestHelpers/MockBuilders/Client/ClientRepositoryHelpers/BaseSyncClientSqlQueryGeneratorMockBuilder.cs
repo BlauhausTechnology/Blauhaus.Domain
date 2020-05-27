@@ -9,8 +9,8 @@ using SqlKata;
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.ClientRepositoryHelpers
 {
 
-    public class SyncQueryGeneratorMockBuilder<TMock, TRootEntity, TSyncCommand> 
-        : BaseSyncQueryGeneratorMockBuilder<SyncQueryGeneratorMockBuilder<TMock, TRootEntity, TSyncCommand>, ISyncClientSqlQueryGenerator<TSyncCommand, TRootEntity>,TRootEntity,  TSyncCommand>
+    public class SyncClientSqlQueryGeneratorMockBuilder<TMock, TRootEntity, TSyncCommand> 
+        : BaseSyncClientSqlQueryGeneratorMockBuilder<SyncClientSqlQueryGeneratorMockBuilder<TMock, TRootEntity, TSyncCommand>, ISyncClientSqlQueryGenerator<TSyncCommand, TRootEntity>,TRootEntity,  TSyncCommand>
         where TRootEntity : ISyncClientEntity 
         where TSyncCommand : SyncCommand
     {
@@ -18,7 +18,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.ClientRepositoryHelper
     }
 
 
-    public abstract class BaseSyncQueryGeneratorMockBuilder<TBuilder, TMock, TRootEntity, TSyncCommand> : BaseMockBuilder<TBuilder, TMock>
+    public abstract class BaseSyncClientSqlQueryGeneratorMockBuilder<TBuilder, TMock, TRootEntity, TSyncCommand> : BaseMockBuilder<TBuilder, TMock>
         where TMock : class, ISyncClientSqlQueryGenerator<TSyncCommand, TRootEntity> 
         where TBuilder : BaseMockBuilder<TBuilder, TMock>
         where TRootEntity : ISyncClientEntity

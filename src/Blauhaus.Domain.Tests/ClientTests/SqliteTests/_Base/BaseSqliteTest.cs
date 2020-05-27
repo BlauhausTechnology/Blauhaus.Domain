@@ -28,7 +28,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests._Base
             Connection = SqliteDatabaseService.GetDatabaseConnectionAsync().Result;
             AddService(SqliteDatabaseService);
             AddService(x => MockClientEntityConverter.Object);
-            AddService(x => MockSyncQueryGenerator.Object);
+            AddService(x => MockSyncClientSqlQueryGenerator.Object);
             AddService(x => MockAnalyticsService.Object);
         }
 
@@ -37,8 +37,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests._Base
         protected ClientEntityConverterMockBuilder<ITestModel, ITestDto, TestRootEntity> MockClientEntityConverter 
             => AddMock<ClientEntityConverterMockBuilder<ITestModel, ITestDto, TestRootEntity>, IClientEntityConverter<ITestModel, ITestDto, TestRootEntity>>().Invoke();
 
-        protected SyncQueryGeneratorMockBuilder<ISyncClientSqlQueryGenerator<TestSyncCommand, TestRootEntity>, TestRootEntity, TestSyncCommand> MockSyncQueryGenerator
-            => AddMock<SyncQueryGeneratorMockBuilder<ISyncClientSqlQueryGenerator<TestSyncCommand, TestRootEntity>,TestRootEntity,  TestSyncCommand>, ISyncClientSqlQueryGenerator<TestSyncCommand, TestRootEntity>>().Invoke();
+        protected SyncClientSqlQueryGeneratorMockBuilder<ISyncClientSqlQueryGenerator<TestSyncCommand, TestRootEntity>, TestRootEntity, TestSyncCommand> MockSyncClientSqlQueryGenerator
+            => AddMock<SyncClientSqlQueryGeneratorMockBuilder<ISyncClientSqlQueryGenerator<TestSyncCommand, TestRootEntity>,TestRootEntity,  TestSyncCommand>, ISyncClientSqlQueryGenerator<TestSyncCommand, TestRootEntity>>().Invoke();
 
         protected AnalyticsServiceMockBuilder MockAnalyticsService => AddMock<AnalyticsServiceMockBuilder, IAnalyticsService>().Invoke();
     }

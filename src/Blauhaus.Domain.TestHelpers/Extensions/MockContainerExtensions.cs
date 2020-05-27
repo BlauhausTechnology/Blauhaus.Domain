@@ -1,9 +1,11 @@
 ﻿using System;
 using Blauhaus.Domain.Client.Repositories;
+using Blauhaus.Domain.Client.Sqlite.Repository;
 using Blauhaus.Domain.Client.Sync;
 using Blauhaus.Domain.Common.CommandHandlers;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
 using Blauhaus.Domain.Common.Entities;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Client.ClientRepositoryHelpers;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers;
@@ -14,6 +16,11 @@ namespace Blauhaus.Domain.TestHelpers.Extensions
 {
     public static class MockContainerExtensions
     {
+
+        
+        public static Func<ClientEntityConverterMockBuilder<TModel, TDto, TRootEntity>> AddMockClientEntityConverter<TModel, TDto, TRootEntity>(this MockContainer mocks) where TModel : class, IClientEntity where TRootEntity : ISyncClientEntity, new() 
+            => mocks.AddMock<ClientEntityConverterMockBuilder<TModel, TDto, TRootEntity>, IClientEntityConverter<TModel, TDto, TRootEntity>>();
+
         public static Func<ClientRepositoryMockBuilder<TModel, TDto>> AddMockClientRepository<TModel, TDto>(this MockContainer mocks) where TModel : class, IClientEntity
             => mocks.AddMock<ClientRepositoryMockBuilder<TModel, TDto>, IClientRepository<TModel, TDto>>();
 
