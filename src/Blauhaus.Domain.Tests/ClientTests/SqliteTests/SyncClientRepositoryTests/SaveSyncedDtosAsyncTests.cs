@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Blauhaus.Domain.Client.Sqlite.SyncRepository;
-using Blauhaus.Domain.Common.CommandHandlers.Sync;
 using Blauhaus.Domain.Common.Entities;
 using Blauhaus.Domain.Tests.ClientTests.SqliteTests._Base;
 using Blauhaus.Domain.Tests.ClientTests.SqliteTests._TestObjects;
 using Blauhaus.TestHelpers.MockBuilders;
 using Moq;
 using NUnit.Framework;
-using SQLite;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTests
 {
@@ -166,7 +164,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
         } 
         
         [Test]
-        public async Task SHOULD_return_model_constructed_by_helper()
+        public async Task SHOULD_reload_child_entities_and_return_model_constructed_by_converter()
         {
             //Arrange
             var bob = new TestRootEntity
@@ -174,7 +172,9 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
                 Id = Guid.NewGuid(),
                 RootName = "Fred"
             };
+            var alreadyExistingChildEntity = new TestChildEntity{Id = Guid.NewGuid()};
             MockClientEntityConverter.Where_ExtractEntitiesFromDto_returns_root(bob);
+            MockClientEntityConverter.Where_LoadChildEntities_returns(new List<ISyncClientEntity>{alreadyExistingChildEntity});
             var model = new MockBuilder<ITestModel>().Object;
             MockClientEntityConverter.Where_ConstructModel_returns(model);
 
@@ -183,7 +183,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             var result =  await Sut.SaveSyncedDtosAsync(new List<ITestDto>{dto});
 
             //Assert
-            MockClientEntityConverter.Mock.Verify(x => x.ConstructModel(bob, It.IsAny<List<ISyncClientEntity>>()));
+            MockClientEntityConverter.Mock.Verify(x => x.ConstructModel(bob, It.Is<List<ISyncClientEntity>>(y => 
+                y[0] == alreadyExistingChildEntity)));
             Assert.AreEqual(model, result[0]);
         } 
     }
