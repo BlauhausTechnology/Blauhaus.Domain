@@ -71,7 +71,10 @@ namespace Blauhaus.Domain.Client.Sqlite.Repository
                 }
                 connection.InsertOrReplace(rootEntity);
                 
-                model = EntityConverter.ConstructModel(rootEntity, childEntities);
+                //in case the download only includes updated child entities and the latest version is already stored locally
+                var reloadedChildEntities = EntityConverter.LoadChildEntities(rootEntity, connection);
+
+                model = EntityConverter.ConstructModel(rootEntity, reloadedChildEntities);
             });
 
             return model;
