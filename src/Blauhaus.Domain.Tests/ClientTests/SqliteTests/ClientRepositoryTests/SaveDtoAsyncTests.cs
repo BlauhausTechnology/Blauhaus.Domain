@@ -134,10 +134,9 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
             Assert.AreEqual("Hop", newChild.ChildName);
             Assert.AreEqual(1, await Connection.Table<TestChildEntity>().CountAsync());
         } 
-
         
         [Test]
-        public async Task SHOULD_return_model_constructed_by_helper()
+        public async Task SHOULD_reload_all_child_entities_and_return_model_constructed_by_entity_converter()
         {
             //Arrange
             var bob = new TestRootEntity
@@ -145,7 +144,9 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
                 Id = Guid.NewGuid(),
                 RootName = "Fred"
             };
+            var boblet = new TestChildEntity{Id = Guid.NewGuid()};
             MockClientEntityConverter.Where_ExtractEntitiesFromDto_returns(bob, new List<ISyncClientEntity>());
+            MockClientEntityConverter.Where_LoadChildEntities_returns(new List<ISyncClientEntity>{boblet});
             var model = new MockBuilder<ITestModel>().Object;
             MockClientEntityConverter.Where_ConstructModel_returns(model);
 
@@ -154,7 +155,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
             var result = await Sut.SaveDtoAsync(dto); 
 
             //Assert
-            MockClientEntityConverter.Mock.Verify(x => x.ConstructModel(bob, It.IsAny<List<ISyncClientEntity>>()));
+            MockClientEntityConverter.Mock.Verify(x => x.ConstructModel(bob, It.Is<List<ISyncClientEntity>>(y=> 
+                y[0] == boblet)));
             Assert.AreEqual(model, result);
         } 
     }
