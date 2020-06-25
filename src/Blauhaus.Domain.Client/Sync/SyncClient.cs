@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Common.Time.Service;
+using Blauhaus.Common.ValueObjects.Errors;
+using Blauhaus.Common.ValueObjects.Extensions;
 using Blauhaus.DeviceServices.Abstractions.Connectivity;
 using Blauhaus.Domain.Client.Repositories;
 using Blauhaus.Domain.Common.CommandHandlers;
@@ -247,7 +249,16 @@ namespace Blauhaus.Domain.Client.Sync
                 var serverDownloadResult = await _syncCommandHandler.HandleAsync(syncCommand, token);
                 if (serverDownloadResult.IsFailure)
                 {
-                    observer.OnError(HandleError($"Failed to load {typeof(TModel).Name} entities from server: " + serverDownloadResult.Error, syncStatusHandler));
+                    var errorMessage = $"Failed to load {typeof(TModel).Name} entities from server: " + serverDownloadResult.Error;
+                    
+                    _analyticsService.TraceError(this, errorMessage);
+                    syncStatusHandler.State = SyncClientState.Error;
+                    syncStatusHandler.StatusMessage = errorMessage;
+
+                    observer.OnError(serverDownloadResult.Error.IsError(out var error) 
+                        ? new ErrorException(error, errorMessage) 
+                        : new Exception(errorMessage));
+
                 }
 
                 PublishModelsIfRequired(serverDownloadResult.Value.EntityBatch, observer, syncStatusHandler);

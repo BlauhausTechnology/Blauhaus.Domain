@@ -36,7 +36,6 @@ namespace Blauhaus.Domain.Client.CommandHandlers.Sync
 
         public async Task<Result<SyncResult<TModel>>> HandleAsync(TSyncCommand command, CancellationToken token)
         {
-            var mess = $"{typeof(TSyncCommand).Name} handler for {typeof(TModel).Name} started";
             _analyticsService.TraceVerbose(this, $"{typeof(TSyncCommand).Name} handler for {typeof(TModel).Name} started", command.ToObjectDictionary("Command"));
 
             var commandDto = _converter.Convert(command);

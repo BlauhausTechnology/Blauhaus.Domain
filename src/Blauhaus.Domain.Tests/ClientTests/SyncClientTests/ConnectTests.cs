@@ -3,24 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Service;
-using Blauhaus.Common.Time.Service;
-using Blauhaus.DeviceServices.Abstractions.Connectivity;
-using Blauhaus.DeviceServices.TestHelpers.MockBuilders;
-using Blauhaus.Domain.Client.Repositories;
+using Blauhaus.Auth.Abstractions.Errors;
+using Blauhaus.Common.ValueObjects.Errors;
 using Blauhaus.Domain.Client.Sync;
-using Blauhaus.Domain.Common.CommandHandlers;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
-using Blauhaus.Domain.Common.Extensions;
-using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories;
-using Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers;
-using Blauhaus.Domain.Tests._Base;
 using Blauhaus.Domain.Tests.ClientTests.SyncClientTests._Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
-using Blauhaus.Domain.Tests.ServerTests.TestObjects;
-using Blauhaus.TestHelpers.MockBuilders;
 using Moq;
 using NUnit.Framework;
-using TestSyncCommand = Blauhaus.Domain.Tests.ClientTests.TestObjects.TestSyncCommand;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
 {
@@ -112,6 +102,29 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 Assert.AreEqual("Failed to load TestModel entities from server: oops", e.Message);
                 MockAnalyticsService.VerifyTrace("Failed to load TestModel entities from server: oops", LogSeverity.Error);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.StatusMessage = "Failed to load TestModel entities from server: oops");
+            }
+
+            [Test]
+            public async Task WHEN_Server_fails_with_Error_SHOULD_fail_and_trace()
+            { 
+                //Arrange
+                MockSyncCommandHandler.Where_HandleAsync_returns_fail(AuthErrors.NotAuthenticated);
+                Exception e = new Exception();
+
+                //Act
+                Sut.Connect(SyncCommand, ClientSyncRequirement, MockSyncStatusHandler.Object).Subscribe(next =>
+                    { }, ex =>
+                    {
+                        e = ex;
+                    });
+                await Task.Delay(20);
+
+                //Assert
+                Assert.AreEqual($"Failed to load TestModel entities from server: {AuthErrors.NotAuthenticated}", e.Message);
+                Assert.That(e, Is.InstanceOf<ErrorException>());
+                Assert.That(((ErrorException)e).Error, Is.EqualTo(AuthErrors.NotAuthenticated));
+                MockAnalyticsService.VerifyTrace("Failed to load TestModel entities from server: " + AuthErrors.NotAuthenticated, LogSeverity.Error);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.StatusMessage = "Failed to load TestModel entities from server: " + AuthErrors.NotAuthenticated);
             }
 
             [Test]
