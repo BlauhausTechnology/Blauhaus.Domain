@@ -40,6 +40,11 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
             }
 
             var dbQueryResult = await _queryLoader.HandleAsync(command, authenticatedUser, token);
+            if (dbQueryResult.IsFailure)
+            {
+                return Result.Failure<SyncResult<TEntity>>(dbQueryResult.Error);
+            }
+
             var dbQuery = dbQueryResult.Value;
             var traceMessage = string.Empty;
 

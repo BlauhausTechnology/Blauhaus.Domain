@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Service;
+using Blauhaus.Auth.Abstractions.User;
 using Blauhaus.Domain.Common.Entities;
 using Blauhaus.Domain.Common.Errors;
 using Blauhaus.Domain.Server.CommandHandlers;
@@ -58,7 +59,23 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 Assert.AreEqual(SyncErrors.InvalidSyncCommand.ToString(), queryResult.Error);
                 MockAnalyticsService.VerifyTrace(SyncErrors.InvalidSyncCommand.Code, LogSeverity.Error);
             }
+        }
 
+        public class QueryableFail : AuthenticatedSyncCommandHandlerTests
+        {
+            [Test]
+            public async Task WHEN_QueryLoader_fails_SHOULD_fail()
+            {
+                //Arrange
+                MockQueryLoader.Mock.Setup(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), It.IsAny<TestAuthenticatedUser>(), It.IsAny<CancellationToken>()))
+                    .ReturnsAsync(Result.Failure<IQueryable<TestServerEntity>>("oh no"));
+
+                //Act
+                var queryResult = await Sut.HandleAsync(_command, _user, CancellationToken);
+
+                //Assert
+                Assert.That(queryResult.Error, Is.EqualTo("oh no"));
+            }
         }
 
         public class LoadingOlderEntities : AuthenticatedSyncCommandHandlerTests
