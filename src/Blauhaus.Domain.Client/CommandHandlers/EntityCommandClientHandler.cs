@@ -31,6 +31,8 @@ namespace Blauhaus.Domain.Client.CommandHandlers
             _repository = repository;
         }
 
+        //todo handle offline case and return error?
+
         public async Task<Result<TModel>> HandleAsync(TCommand command, CancellationToken token)
         {
             _analyticsService.TraceVerbose(this, $"{typeof(TCommand).Name} Handler started", command.ToObjectDictionary("Command"));
