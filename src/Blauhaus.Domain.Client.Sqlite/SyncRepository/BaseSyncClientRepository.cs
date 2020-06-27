@@ -15,7 +15,7 @@ using SqlKata;
 namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
 {
     public class BaseSyncClientRepository<TModel, TDto, TSyncCommand, TRootEntity> : BaseClientRepository<TModel,TDto,TRootEntity>, ISyncClientRepository<TModel,TDto, TSyncCommand> 
-        where TRootEntity : BaseSyncClientEntity, new() 
+        where TRootEntity : ISyncClientEntity, new() 
         where TModel : class, IClientEntity 
         where TSyncCommand : SyncCommand
     {
