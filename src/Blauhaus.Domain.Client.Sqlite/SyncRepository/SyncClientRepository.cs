@@ -8,7 +8,7 @@ using Blauhaus.Domain.Common.Entities;
 namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
 {
     public class SyncClientRepository <TModel, TDto, TSyncCommand, TRootEntity> : BaseSyncClientRepository<TModel, TDto, TSyncCommand, TRootEntity>
-        where TRootEntity : BaseSyncClientEntity, new() 
+        where TRootEntity : ISyncClientEntity, new() 
         where TModel : class, IClientEntity 
         where TSyncCommand : SyncCommand
     {
