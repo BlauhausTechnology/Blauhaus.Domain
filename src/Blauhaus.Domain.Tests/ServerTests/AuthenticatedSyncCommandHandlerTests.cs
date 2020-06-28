@@ -362,6 +362,80 @@ namespace Blauhaus.Domain.Tests.ServerTests
             }
 
         }
+
+        public class LoadingSingleEntity : AuthenticatedSyncCommandHandlerTests
+        {
+            [Test]
+            public async Task IF_NewerThan_is_not_given_SHOULD_return_Entity_matching_Id()
+            {
+                //Arrange
+                _command.Id = _entities[4].Id;
+                _command.NewerThan = null;
+
+                //Act
+                var queryResult = await Sut.HandleAsync(_command, _user, CancelToken);
+                var result = queryResult.Value;
+
+                //Assert
+                Assert.AreEqual(12, result.TotalActiveEntityCount); 
+                Assert.AreEqual(1, result.EntitiesToDownloadCount); 
+                Assert.AreEqual(1, result.EntityBatch.Count); 
+                result.EntityBatch.VerifyEntities(new List<TestServerEntity>
+                {
+                    _entities[4]
+                }); 
+                MockAnalyticsService.VerifyTrace("SyncCommand for single entity processed");
+                MockAnalyticsService.VerifyTraceProperty("TotalActiveEntityCount", 12);
+                MockAnalyticsService.VerifyTraceProperty("EntitiesToDownloadCount", 1);
+                MockAnalyticsService.VerifyTraceProperty("EntityBatchCount", 1);
+            }
+
+            [Test]
+            public async Task IF_NewerThan_is_given_and_entity_has_not_been_modified_since_SHOULD_not_return_it()
+            {
+                //Arrange
+                _command.Id = _entities[4].Id;
+                _command.NewerThan = _entities[4].ModifiedAtTicks;
+
+                //Act
+                var queryResult = await Sut.HandleAsync(_command, _user, CancelToken);
+                var result = queryResult.Value;
+
+                //Assert
+                Assert.AreEqual(12, result.TotalActiveEntityCount); 
+                Assert.AreEqual(0, result.EntitiesToDownloadCount); 
+                Assert.AreEqual(0, result.EntityBatch.Count);  
+                MockAnalyticsService.VerifyTrace("SyncCommand for single entity processed");
+                MockAnalyticsService.VerifyTraceProperty("TotalActiveEntityCount", 12);
+                MockAnalyticsService.VerifyTraceProperty("EntitiesToDownloadCount", 0);
+                MockAnalyticsService.VerifyTraceProperty("EntityBatchCount", 0);
+            }
+
+            [Test]
+            public async Task IF_NewerThan_is_given_and_entity_has_been_modified_since_SHOULD_return_it()
+            {
+                //Arrange
+                _command.Id = _entities[4].Id;
+                _command.NewerThan = _entities[4].ModifiedAtTicks - 1;
+
+                //Act
+                var queryResult = await Sut.HandleAsync(_command, _user, CancelToken);
+                var result = queryResult.Value;
+
+                //Assert
+                Assert.AreEqual(12, result.TotalActiveEntityCount); 
+                Assert.AreEqual(1, result.EntitiesToDownloadCount); 
+                Assert.AreEqual(1, result.EntityBatch.Count); 
+                result.EntityBatch.VerifyEntities(new List<TestServerEntity>
+                {
+                    _entities[4]
+                }); 
+                MockAnalyticsService.VerifyTrace("SyncCommand for single entity processed");
+                MockAnalyticsService.VerifyTraceProperty("TotalActiveEntityCount", 12);
+                MockAnalyticsService.VerifyTraceProperty("EntitiesToDownloadCount", 1);
+                MockAnalyticsService.VerifyTraceProperty("EntityBatchCount", 1);
+            }
+        }
          
     }
 }

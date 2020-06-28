@@ -50,7 +50,19 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
 
             var totalActiveEntityCount = dbQuery.Count(x => x.EntityState == EntityState.Active);
 
-            if (command.IsFirstSyncForDevice())
+            if(command.IsForSingleEntity())
+            {
+                dbQuery = dbQuery.Where(x => x.Id == command.Id.Value);
+
+                if (command.IsForNewerEntities())
+                {
+                    dbQuery = dbQuery.Where(x => x.ModifiedAt > command.NewerThan.ToUtcDateTime());
+                }
+
+                traceMessage = "SyncCommand for single entity processed";
+            }
+
+            else if (command.IsFirstSyncForDevice())
             {
                 dbQuery = dbQuery.Where(x => x.EntityState == EntityState.Active)
                     .OrderByDescending(x => x.ModifiedAt);
