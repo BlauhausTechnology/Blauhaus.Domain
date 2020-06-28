@@ -337,14 +337,7 @@ namespace Blauhaus.Domain.Client.Sync
             statusHandler.State = state;
             _analyticsService.TraceVerbose(this, $"{state}: {message}", properties ?? statusHandler.ToObjectDictionary("SyncStatus"));
         }
-
-        private Exception HandleError(string error, ISyncStatusHandler syncStatusHandler)
-        {
-            _analyticsService.TraceError(this, error);
-            syncStatusHandler.State = SyncClientState.Error;
-            syncStatusHandler.StatusMessage = error;
-            return new Exception(error);
-        }
+         
 
     }
 }

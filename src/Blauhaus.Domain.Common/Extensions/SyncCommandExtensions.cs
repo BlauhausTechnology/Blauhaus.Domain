@@ -20,10 +20,10 @@ namespace Blauhaus.Domain.Common.Extensions
         {
             return syncCommand.OlderThan != null;
         }
-         
-        public static bool IsFilteredByParentEntity(this SyncCommand syncCommand)
+        public static bool IsForSingleEntity(this SyncCommand syncCommand)
         {
-            return syncCommand.ParentIdFilter != null && syncCommand.ParentIdFilter != Guid.Empty;
+            return syncCommand.Id != null && syncCommand.Id != default(Guid);
         }
+      
     }
 }
