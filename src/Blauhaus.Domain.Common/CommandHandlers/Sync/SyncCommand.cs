@@ -21,11 +21,6 @@ namespace Blauhaus.Domain.Common.CommandHandlers.Sync
         /// </summary>
         public int BatchSize { get; set; } = 100;
         
-        /// <summary>
-        /// Optional. Can be used to filter entities by their parent. Must be applied in SyncQueryLoaders on the client and the server.
-        /// Maybe we can introduce an IEntityWithParent in future and handle this automatically. For now has to be done manually. 
-        /// </summary>
-        public Guid? ParentIdFilter { get; set; }
 
     }
 }
