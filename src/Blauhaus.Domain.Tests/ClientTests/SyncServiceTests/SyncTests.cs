@@ -6,15 +6,15 @@ using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Domain.Client.Sync.Service;
 using Blauhaus.Domain.TestHelpers.Extensions;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients;
-using Blauhaus.Domain.Tests._Base;
-using Blauhaus.Domain.Tests.ClientTests.SyncServiceTests.Sut;
+using Blauhaus.Domain.Tests._Base; 
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
+using Blauhaus.TestHelpers.MockBuilders;
 using Moq;
 using NUnit.Framework;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SyncServiceTests
 {
-    public class SyncTests : BaseDomainTest<TestSyncService>
+    public class SyncTests : BaseDomainTest<SyncService<TestSyncCommand>>
     {
         private TaskCompletionSource<List<SyncUpdate>> _tcs;
         private List<SyncUpdate> _syncUpdates;
@@ -23,6 +23,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncServiceTests
         protected SyncClientMockBuilder<TestModel, TestSyncCommand> MockSyncClient => Mocks.AddMockSyncClient<TestModel, TestSyncCommand>().Invoke();
         protected SyncClientMockBuilder<TestModelToo, TestSyncCommand> MockSyncClientToo => Mocks.AddMockSyncClient<TestModelToo, TestSyncCommand>().Invoke();
         protected SyncStatusHandlerFactoryMockBuilder MockSyncStatusHandlerFactory => AddMock<SyncStatusHandlerFactoryMockBuilder, ISyncStatusHandlerFactory>().Invoke();
+        protected MockBuilder<ISyncClientFactory<TestSyncCommand>> MockSyncClientFactory => AddMock<ISyncClientFactory<TestSyncCommand>>().Invoke();
 
         public override void Setup()
         {
@@ -31,9 +32,15 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncServiceTests
             AddService(x => MockSyncClient.Object);
             AddService(x => MockSyncClientToo.Object);
             AddService(x => MockSyncStatusHandlerFactory.Object);
+            AddService(x => MockSyncClientFactory.Object);
 
             MockSyncClient.Where_Connect_returns(new List<TestModel>());
             MockSyncClientToo.Where_Connect_returns(new List<TestModelToo>());
+            MockSyncClientFactory.With(x => x.SyncConnections, new List<Func<TestSyncCommand, ClientSyncRequirement, ISyncStatusHandler, IObservable<object>>>
+            {
+                (command, req, handler) => MockSyncClient.Object.Connect(command, req, handler),
+                (command, req, handler) => MockSyncClientToo.Object.Connect(command, req, handler),
+            });
 
             _syncHandler = new SyncStatusHandlerMockBuilder();
             _syncHandlerToo = new SyncStatusHandlerMockBuilder();

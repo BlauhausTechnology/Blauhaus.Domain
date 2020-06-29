@@ -10,17 +10,20 @@ using Blauhaus.Domain.Common.CommandHandlers.Sync;
 
 namespace Blauhaus.Domain.Client.Sync.Service
 {
-    public abstract class BaseSyncService<TSyncCommand> : ISyncService 
+    public class SyncService<TSyncCommand> : ISyncService 
         where TSyncCommand : SyncCommand, new()
     {
         private readonly IAnalyticsService _analyticsService;
+        private readonly ISyncClientFactory<TSyncCommand> _syncClientFactory;
         private readonly ISyncStatusHandlerFactory _syncStatusHandlerFactory;
 
-        protected BaseSyncService(
+        public SyncService(
             IAnalyticsService analyticsService,
+            ISyncClientFactory<TSyncCommand> syncClientFactory,
             ISyncStatusHandlerFactory syncStatusHandlerFactory)
         {
             _analyticsService = analyticsService;
+            _syncClientFactory = syncClientFactory;
             _syncStatusHandlerFactory = syncStatusHandlerFactory;
         }
 
@@ -29,7 +32,7 @@ namespace Blauhaus.Domain.Client.Sync.Service
             return Observable.Create<SyncUpdate>(observer =>
             {
                 var disposables = new CompositeDisposable();
-                var syncClients = GetSyncConnections();
+                var syncClients = _syncClientFactory.SyncConnections;
                 var syncUpdate = new SyncUpdateState(syncClients.Count);
 
                 observer.OnNext(syncUpdate.Publish());
@@ -68,6 +71,5 @@ namespace Blauhaus.Domain.Client.Sync.Service
 
         }
 
-        protected abstract IList<Func<TSyncCommand, ClientSyncRequirement, ISyncStatusHandler, IObservable<object>>> GetSyncConnections();
     }
 }

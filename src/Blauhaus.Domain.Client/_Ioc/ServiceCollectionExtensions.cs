@@ -1,7 +1,5 @@
 ﻿using Blauhaus.Domain.Client.CommandHandlers;
-using Blauhaus.Domain.Client.CommandHandlers.Sync;
-using Blauhaus.Domain.Client.Repositories;
-using Blauhaus.Domain.Client.Sync;
+using Blauhaus.Domain.Client.Sync.Service;
 using Blauhaus.Domain.Common.CommandHandlers;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
 using Blauhaus.Domain.Common.Entities;
@@ -33,6 +31,16 @@ namespace Blauhaus.Domain.Client._Ioc
             services.AddTransient<IVoidCommandHandler<TCommand>, VoidCommandClientHandler<TCommandDto, TCommand>>();
             services.AddTransient<ICommandConverter<TCommandDto, TCommand>, TCommandConverter>();
             services.AddTransient<IVoidCommandHandler<TCommandDto>, TDtoCommandHandler>();
+            return services;
+        }
+         
+        
+        public static IServiceCollection AddSyncService<TSyncCommand, TSyncClientFactory>(this IServiceCollection services) 
+            where TSyncCommand : SyncCommand, new()
+            where TSyncClientFactory : class, ISyncClientFactory<TSyncCommand>
+        {
+            services.AddTransient<ISyncService, SyncService<TSyncCommand>>();
+            services.AddTransient<ISyncClientFactory<TSyncCommand>, TSyncClientFactory>();
             return services;
         }
          

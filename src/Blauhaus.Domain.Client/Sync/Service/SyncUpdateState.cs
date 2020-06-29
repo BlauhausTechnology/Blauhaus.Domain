@@ -7,10 +7,10 @@ namespace Blauhaus.Domain.Client.Sync.Service
     public class SyncUpdateState
     {
 
-        private Dictionary<int, bool> _entityTypesSynced = new Dictionary<int, bool>();
+        private readonly Dictionary<int, bool> _entityTypesSynced = new Dictionary<int, bool>();
 
-        private Dictionary<int, long> _entitiesToSync = new Dictionary<int, long>();
-        private Dictionary<int, long> _entitiesSynced = new Dictionary<int, long>();
+        private readonly Dictionary<int, long> _entitiesToSync = new Dictionary<int, long>();
+        private readonly Dictionary<int, long> _entitiesSynced = new Dictionary<int, long>();
 
         public SyncUpdateState(int syncClientsCount)
         {
