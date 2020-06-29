@@ -64,7 +64,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncServiceTests
         }
 
         [Test]
-        public async Task SHOULD_publish_first_update_with_StartTime_and_EntityType_count()
+        public async Task SHOULD_publish_first_update_with_EntityType_count()
         {
             //Arrange
             
@@ -142,6 +142,28 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncServiceTests
             Assert.That(isCompleteUpdates[0], Is.False);
             Assert.That(isCompleteUpdates[1], Is.False);
             Assert.That(isCompleteUpdates[2], Is.True); 
+        }
+
+        [Test]
+        public async Task WHEN_SyncClient_returns_error_SHOULD_OnError()
+        {
+            //Arrange
+            MockSyncClient.Where_Connect_returns_exception(new Exception("oops"));
+            Exception? exception = null;
+            
+            //Act
+            Sut.Sync().Subscribe(next =>
+            {
+            }, (e) =>
+            {
+                exception = e;
+                _tcs.SetResult(_syncUpdates);
+            });
+            await _tcs.Task;
+
+            //Assert
+            Assert.That(exception != null);
+            Assert.That(exception.Message, Is.EqualTo("oops"));
         }
 
         [Test]

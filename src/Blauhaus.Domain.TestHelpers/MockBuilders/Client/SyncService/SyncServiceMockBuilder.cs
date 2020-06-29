@@ -9,6 +9,12 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncService
 {
     public class SyncServiceMockBuilder : BaseMockBuilder<SyncServiceMockBuilder, ISyncService>
     {
+
+        public SyncServiceMockBuilder()
+        {
+            Where_Sync_returns(new List<SyncUpdate>());
+        }
+
         public SyncServiceMockBuilder Where_Sync_returns(IEnumerable<SyncUpdate> values)
         {
             Mock.Setup(x => x.Sync()).Returns(Observable.Create<SyncUpdate>(observer =>
