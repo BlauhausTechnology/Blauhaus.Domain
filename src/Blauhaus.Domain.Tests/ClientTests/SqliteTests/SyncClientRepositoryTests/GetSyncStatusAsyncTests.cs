@@ -12,29 +12,29 @@ using SqlKata;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTests
 {
-    public class GetSyncStatusAsyncTests :  BaseSqliteTest<SyncClientRepository<ITestModel, ITestDto, TestSyncCommand, TestRootEntity>>
+    public class GetSyncStatusAsyncTests :  BaseSqliteTest<SyncClientRepository<ISqliteTestModel, ISqliteTestDto, SqliteTestSyncCommand, SqliteTestRootEntity>>
     {
         private readonly Guid _ziggyId = Guid.NewGuid();
-        private TestSyncCommand _syncCommand;
+        private SqliteTestSyncCommand _syncCommand;
 
         public override void Setup()
         {
             base.Setup();
-            _syncCommand = new TestSyncCommand();
-            MockSyncClientSqlQueryGenerator.Where_GenerateQuery_returns(() => new Query(nameof(TestRootEntity)));
+            _syncCommand = new SqliteTestSyncCommand();
+            MockSyncClientSqlQueryGenerator.Where_GenerateQuery_returns(() => new Query(nameof(SqliteTestRootEntity)));
         }
 
         [Test]
         public async Task WHEN_DB_contains_entities_SHOULD_return_correct_data()
         {
             //Arrange
-            var entities = new List<TestRootEntity>
+            var entities = new List<SqliteTestRootEntity>
             {
-                new TestRootEntity{ModifiedAtTicks = 2000, RootName = "log"},
-                new TestRootEntity{ModifiedAtTicks = 1000, RootName = "nog"},
-                new TestRootEntity{ModifiedAtTicks = 3000, RootName = "Jiggy"},
-                new TestRootEntity{ModifiedAtTicks = 5000, RootName = "Ziggy", Id = _ziggyId},
-                new TestRootEntity{ModifiedAtTicks = 4000, RootName = ""},
+                new SqliteTestRootEntity{ModifiedAtTicks = 2000, RootName = "log"},
+                new SqliteTestRootEntity{ModifiedAtTicks = 1000, RootName = "nog"},
+                new SqliteTestRootEntity{ModifiedAtTicks = 3000, RootName = "Jiggy"},
+                new SqliteTestRootEntity{ModifiedAtTicks = 5000, RootName = "Ziggy", Id = _ziggyId},
+                new SqliteTestRootEntity{ModifiedAtTicks = 4000, RootName = ""},
             };
             await Connection.InsertAllAsync(entities); 
 
@@ -51,13 +51,13 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
         public async Task SHOULD_ignore_ModifiedAts_for_non_synced_entities()
         {
             //Arrange
-            var entities = new List<TestRootEntity>
+            var entities = new List<SqliteTestRootEntity>
             {
-                new TestRootEntity{ModifiedAtTicks = 2000},
-                new TestRootEntity{ModifiedAtTicks = 1000, SyncState = SyncState.OutOfSync},
-                new TestRootEntity{ModifiedAtTicks = 3000},
-                new TestRootEntity{ModifiedAtTicks = 5000, SyncState = SyncState.OutOfSync},
-                new TestRootEntity{ModifiedAtTicks = 4000},
+                new SqliteTestRootEntity{ModifiedAtTicks = 2000},
+                new SqliteTestRootEntity{ModifiedAtTicks = 1000, SyncState = SyncState.OutOfSync},
+                new SqliteTestRootEntity{ModifiedAtTicks = 3000},
+                new SqliteTestRootEntity{ModifiedAtTicks = 5000, SyncState = SyncState.OutOfSync},
+                new SqliteTestRootEntity{ModifiedAtTicks = 4000},
             };
             await Connection.InsertAllAsync(entities); 
 
@@ -87,17 +87,17 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
         public async Task WHEN_QueryGenerator_modifies_query_SHOULD_apply()
         {
             //Arrange
-            var entities = new List<TestRootEntity>
+            var entities = new List<SqliteTestRootEntity>
             {
-                new TestRootEntity{ModifiedAtTicks = 2000, RootName = "log"},
-                new TestRootEntity{ModifiedAtTicks = 1000, RootName = "nog"},
-                new TestRootEntity{ModifiedAtTicks = 3000, RootName = "Jiggy"},
-                new TestRootEntity{ModifiedAtTicks = 5000, RootName = "Ziggy", Id = _ziggyId},
-                new TestRootEntity{ModifiedAtTicks = 4000, RootName = ""},
+                new SqliteTestRootEntity{ModifiedAtTicks = 2000, RootName = "log"},
+                new SqliteTestRootEntity{ModifiedAtTicks = 1000, RootName = "nog"},
+                new SqliteTestRootEntity{ModifiedAtTicks = 3000, RootName = "Jiggy"},
+                new SqliteTestRootEntity{ModifiedAtTicks = 5000, RootName = "Ziggy", Id = _ziggyId},
+                new SqliteTestRootEntity{ModifiedAtTicks = 4000, RootName = ""},
             };
             await Connection.InsertAllAsync(entities); 
-            MockSyncClientSqlQueryGenerator.Where_GenerateQuery_returns(() => new Query(nameof(TestRootEntity))
-                .WhereContains(nameof(TestRootEntity.RootName), "ggy"));
+            MockSyncClientSqlQueryGenerator.Where_GenerateQuery_returns(() => new Query(nameof(SqliteTestRootEntity))
+                .WhereContains(nameof(SqliteTestRootEntity.RootName), "ggy"));
 
             //Act
             var result = await Sut.GetSyncStatusAsync(_syncCommand);

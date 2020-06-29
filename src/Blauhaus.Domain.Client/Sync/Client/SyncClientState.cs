@@ -1,4 +1,4 @@
-﻿namespace Blauhaus.Domain.Client.Sync
+﻿namespace Blauhaus.Domain.Client.Sync.Client
 {
     public enum SyncClientState
     {

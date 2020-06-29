@@ -16,8 +16,9 @@ using Blauhaus.Domain.Common.CommandHandlers;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
 using Blauhaus.Domain.Common.Entities;
 using Blauhaus.Domain.Common.Extensions;
+using CSharpFunctionalExtensions;
 
-namespace Blauhaus.Domain.Client.Sync
+namespace Blauhaus.Domain.Client.Sync.Client
 {
 
     //todo 
@@ -266,6 +267,7 @@ namespace Blauhaus.Domain.Client.Sync
                 var syncResult = serverDownloadResult.Value;
                 var updatedClientStatus = await _syncClientRepository.GetSyncStatusAsync(syncCommand);
 
+                syncStatusHandler.TotalEntitiesToDownload = syncResult.EntitiesToDownloadCount;
                 syncStatusHandler.AllServerEntities = syncResult.TotalActiveEntityCount;
                 syncStatusHandler.NewlyDownloadedEntities = syncStatusHandler.NewlyDownloadedEntities == null ? syncResult.EntityBatch.Count : syncStatusHandler.NewlyDownloadedEntities + syncResult.EntityBatch.Count;
                 syncStatusHandler.AllLocalEntities = updatedClientStatus.AllLocalEntities;

@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Blauhaus.Analytics.TestHelpers" Version="0.8.3" />
+    <PackageReference Include="Blauhaus.TestHelpers" Version="1.0.15" />
   </ItemGroup>
 
   <ItemGroup>

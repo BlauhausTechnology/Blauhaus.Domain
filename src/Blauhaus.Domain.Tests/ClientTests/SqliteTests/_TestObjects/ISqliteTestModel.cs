@@ -2,7 +2,7 @@
 
 namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests._TestObjects
 {
-    public interface ITestModel : IClientEntity
+    public interface ISqliteTestModel : IClientEntity
     {
         string RootEntityName { get; }
     }

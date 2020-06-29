@@ -6,6 +6,7 @@ using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Auth.Abstractions.Errors;
 using Blauhaus.Common.ValueObjects.Errors;
 using Blauhaus.Domain.Client.Sync;
+using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
 using Blauhaus.Domain.Tests.ClientTests.SyncClientTests._Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
@@ -235,6 +236,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 MockSyncStatusHandler.Mock.VerifySet(x => x.NewlyDownloadedEntities = 3);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.AllLocalEntities = 3);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.AllServerEntities = 9);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.TotalEntitiesToDownload = 9);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 3);
                 MockBaseSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync(SyncCommand), Times.Exactly(2));
             }
@@ -409,6 +411,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 MockSyncStatusHandler.Mock.VerifySet(x => x.AllLocalEntities = 6);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.AllLocalEntities = 9);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.AllServerEntities = 9);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.TotalEntitiesToDownload = 9);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 3);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 6);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 9);

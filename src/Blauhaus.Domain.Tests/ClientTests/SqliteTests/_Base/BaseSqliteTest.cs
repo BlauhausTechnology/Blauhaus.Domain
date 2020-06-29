@@ -34,11 +34,11 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests._Base
 
         protected DeviceInfoServiceMockBuilder MockDeviceInfoService => AddMock<DeviceInfoServiceMockBuilder, IDeviceInfoService>().Invoke();
 
-        protected ClientEntityConverterMockBuilder<ITestModel, ITestDto, TestRootEntity> MockClientEntityConverter 
-            => AddMock<ClientEntityConverterMockBuilder<ITestModel, ITestDto, TestRootEntity>, IClientEntityConverter<ITestModel, ITestDto, TestRootEntity>>().Invoke();
+        protected ClientEntityConverterMockBuilder<ISqliteTestModel, ISqliteTestDto, SqliteTestRootEntity> MockClientEntityConverter 
+            => AddMock<ClientEntityConverterMockBuilder<ISqliteTestModel, ISqliteTestDto, SqliteTestRootEntity>, IClientEntityConverter<ISqliteTestModel, ISqliteTestDto, SqliteTestRootEntity>>().Invoke();
 
-        protected SyncClientSqlQueryGeneratorMockBuilder<ISyncClientSqlQueryGenerator<TestSyncCommand, TestRootEntity>, TestRootEntity, TestSyncCommand> MockSyncClientSqlQueryGenerator
-            => AddMock<SyncClientSqlQueryGeneratorMockBuilder<ISyncClientSqlQueryGenerator<TestSyncCommand, TestRootEntity>,TestRootEntity,  TestSyncCommand>, ISyncClientSqlQueryGenerator<TestSyncCommand, TestRootEntity>>().Invoke();
+        protected SyncClientSqlQueryGeneratorMockBuilder<ISyncClientSqlQueryGenerator<SqliteTestSyncCommand, SqliteTestRootEntity>, SqliteTestRootEntity, SqliteTestSyncCommand> MockSyncClientSqlQueryGenerator
+            => AddMock<SyncClientSqlQueryGeneratorMockBuilder<ISyncClientSqlQueryGenerator<SqliteTestSyncCommand, SqliteTestRootEntity>,SqliteTestRootEntity,  SqliteTestSyncCommand>, ISyncClientSqlQueryGenerator<SqliteTestSyncCommand, SqliteTestRootEntity>>().Invoke();
 
         protected AnalyticsServiceMockBuilder MockAnalyticsService => AddMock<AnalyticsServiceMockBuilder, IAnalyticsService>().Invoke();
     }

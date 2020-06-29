@@ -1,6 +1,8 @@
-﻿namespace Blauhaus.Domain.Client.Sync
+﻿using System.ComponentModel;
+
+namespace Blauhaus.Domain.Client.Sync.Client
 {
-    public interface ISyncStatusHandler
+    public interface ISyncStatusHandler : INotifyPropertyChanged
     {
         public long? AllLocalEntities { get; set; }
 
@@ -11,6 +13,7 @@
         public long? NewlyDownloadedEntities{ get; set; }
 
         public long? PublishedEntities{ get; set; }
+        public long? TotalEntitiesToDownload{ get; set; }
         
         public bool IsConnected{ get; set; }
 

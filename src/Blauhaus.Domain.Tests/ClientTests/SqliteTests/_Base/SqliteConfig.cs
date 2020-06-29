@@ -12,9 +12,9 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests._Base
             DatabaseName = "SqliteTestDb";
             TableTypes = new List<Type>
             {
-                typeof(TestRootEntity),
-                typeof(TestChildEntity),
-                typeof(TestGrandChildEntity),
+                typeof(SqliteTestRootEntity),
+                typeof(SqliteTestChildEntity),
+                typeof(SqliteTestGrandChildEntity),
             };
         }
 

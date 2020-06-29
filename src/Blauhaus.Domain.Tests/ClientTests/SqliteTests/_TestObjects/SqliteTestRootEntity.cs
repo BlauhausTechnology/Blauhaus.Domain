@@ -4,10 +4,10 @@ using Blauhaus.Domain.Common.Entities;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests._TestObjects
 {
-    public class TestRootEntity : BaseSyncClientEntity
+    public class SqliteTestRootEntity : BaseSyncClientEntity
     {
 
-        public TestRootEntity()
+        public SqliteTestRootEntity()
         {
             Id = Guid.NewGuid();
             SyncState = SyncState.InSync;

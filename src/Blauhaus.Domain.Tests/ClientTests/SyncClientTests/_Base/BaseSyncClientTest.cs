@@ -4,9 +4,11 @@ using Blauhaus.DeviceServices.Abstractions.Connectivity;
 using Blauhaus.DeviceServices.TestHelpers.MockBuilders;
 using Blauhaus.Domain.Client.Repositories;
 using Blauhaus.Domain.Client.Sync;
+using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Domain.Common.CommandHandlers;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers;
 using Blauhaus.Domain.Tests._Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
@@ -20,11 +22,12 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests._Base
         
         protected TestSyncCommand SyncCommand; 
         protected ClientSyncRequirement ClientSyncRequirement;
-        protected List<string> StatusMessages;
-        protected List<SyncClientState> StateUpdates;
+        
+        protected List<string> StatusMessages => MockSyncStatusHandler.StatusMessages;
+        protected List<SyncClientState> StateUpdates => MockSyncStatusHandler.StateUpdates;
 
 
-        protected MockBuilder<ISyncStatusHandler> MockSyncStatusHandler => AddMock<ISyncStatusHandler>().Invoke();
+        protected SyncStatusHandlerMockBuilder MockSyncStatusHandler => AddMock<SyncStatusHandlerMockBuilder, ISyncStatusHandler>().Invoke();
         protected ConnectivityServiceMockBuilder MockConnectivityService => AddMock<ConnectivityServiceMockBuilder, IConnectivityService>().Invoke();
         protected MockBuilder<ITimeService> MockTimeService => AddMock<ITimeService>().Invoke();
 
@@ -44,15 +47,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests._Base
                 FavouriteFood = "Lasagne"
             }; 
             ClientSyncRequirement = ClientSyncRequirement.Batch;
-            
-            MockSyncStatusHandler.Mock.SetupAllProperties();
-            StatusMessages = new List<string>();
-            MockSyncStatusHandler.Mock.SetupSet(x => x.StatusMessage)
-                .Callback(message => StatusMessages.Add(message));
-
-            StateUpdates = new List<SyncClientState>();
-            MockSyncStatusHandler.Mock.SetupSet(x => x.State)
-                .Callback(state => StateUpdates.Add(state));
+             
             
             MockSyncCommandHandler.Where_HandleAsync_returns(new SyncResult<TestModel>{EntityBatch = new List<TestModel>()});
             MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns(new ClientSyncStatus());
