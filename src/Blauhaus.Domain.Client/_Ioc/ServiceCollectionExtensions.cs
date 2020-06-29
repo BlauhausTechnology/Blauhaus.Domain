@@ -41,6 +41,7 @@ namespace Blauhaus.Domain.Client._Ioc
         {
             services.AddTransient<ISyncService, SyncService<TSyncCommand>>();
             services.AddTransient<ISyncClientFactory<TSyncCommand>, TSyncClientFactory>();
+            services.AddTransient<ISyncStatusHandlerFactory, SyncstatusHandlerFactory>();
             return services;
         }
          
