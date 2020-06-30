@@ -2,7 +2,7 @@
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
 using Blauhaus.Domain.Common.Entities;
 
-namespace Blauhaus.Domain.Client.Sync
+namespace Blauhaus.Domain.Client.Sync.Client
 {
     public interface ISyncClient<TModel, TSyncCommand> 
         where TModel : IClientEntity

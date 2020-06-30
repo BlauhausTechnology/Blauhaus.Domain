@@ -14,9 +14,9 @@ using SqlKata;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTests
 {
-    public class LoadModelsAsyncTests : BaseSqliteTest<SyncClientRepository<ITestModel, ITestDto, TestSyncCommand, TestRootEntity>>
+    public class LoadModelsAsyncTests : BaseSqliteTest<SyncClientRepository<ISqliteTestModel, ISqliteTestDto, SqliteTestSyncCommand, SqliteTestRootEntity>>
     {
-        private List<TestRootEntity> _entitiesConstructed;
+        private List<SqliteTestRootEntity> _entitiesConstructed;
         private Guid _ziggyId;
         private Guid _twiggyId;
 
@@ -27,24 +27,24 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             _ziggyId = Guid.NewGuid();
             _twiggyId = Guid.NewGuid();
              
-            var entities = new List<TestRootEntity>
+            var entities = new List<SqliteTestRootEntity>
             {
-                new TestRootEntity{ ModifiedAtTicks = 2000, RootName = "Bob" },
-                new TestRootEntity{ ModifiedAtTicks = 1000, RootName = "Fred" },
-                new TestRootEntity{ ModifiedAtTicks = 3000, RootName = "John" },
-                new TestRootEntity{ ModifiedAtTicks = 6000, RootName = "Cedric" },
-                new TestRootEntity{ ModifiedAtTicks = 8000, RootName = "Ramona" },
-                new TestRootEntity{ ModifiedAtTicks = 9000, RootName = "Ziggy", Id = _ziggyId },
-                new TestRootEntity{ ModifiedAtTicks = 5000, RootName = "Twiggy", Id = _twiggyId },
-                new TestRootEntity{ ModifiedAtTicks = 4000, RootName = "Morris" },
+                new SqliteTestRootEntity{ ModifiedAtTicks = 2000, RootName = "Bob" },
+                new SqliteTestRootEntity{ ModifiedAtTicks = 1000, RootName = "Fred" },
+                new SqliteTestRootEntity{ ModifiedAtTicks = 3000, RootName = "John" },
+                new SqliteTestRootEntity{ ModifiedAtTicks = 6000, RootName = "Cedric" },
+                new SqliteTestRootEntity{ ModifiedAtTicks = 8000, RootName = "Ramona" },
+                new SqliteTestRootEntity{ ModifiedAtTicks = 9000, RootName = "Ziggy", Id = _ziggyId },
+                new SqliteTestRootEntity{ ModifiedAtTicks = 5000, RootName = "Twiggy", Id = _twiggyId },
+                new SqliteTestRootEntity{ ModifiedAtTicks = 4000, RootName = "Morris" },
             };
 
             Connection.InsertAllAsync(entities);
 
-            _entitiesConstructed = new List<TestRootEntity>();
-            MockSyncClientSqlQueryGenerator.Where_GenerateQuery_returns(() => new Query(nameof(TestRootEntity)));
+            _entitiesConstructed = new List<SqliteTestRootEntity>();
+            MockSyncClientSqlQueryGenerator.Where_GenerateQuery_returns(() => new Query(nameof(SqliteTestRootEntity)));
             MockClientEntityConverter.Mock.Setup(x => x.ConstructModel(Capture.In(_entitiesConstructed), It.IsAny<List<ISyncClientEntity>>()))
-                .Returns((TestRootEntity root, IEnumerable<ISyncClientEntity> childEntities)=> new MockBuilder<ITestModel>()
+                .Returns((SqliteTestRootEntity root, IEnumerable<ISyncClientEntity> childEntities)=> new MockBuilder<ISqliteTestModel>()
                     .With(x => x.Id, root.Id)
                     .With(x => x.ModifiedAtTicks, root.ModifiedAtTicks).Object);
         }
@@ -53,7 +53,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
         public async Task WHEN_OlderThan_and_batch_size_are_given_SHOULD_return_correct_quantity_in_correct_order()
         {
             //Act
-            var result = await Sut.LoadModelsAsync(new TestSyncCommand
+            var result = await Sut.LoadModelsAsync(new SqliteTestSyncCommand
             {
                 OlderThan = 6000,
                 BatchSize = 3
@@ -70,7 +70,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             Assert.AreEqual(3000, _entitiesConstructed[2].ModifiedAtTicks);
             MockAnalyticsService.VerifyTrace("Models loaded");
             MockAnalyticsService.VerifyTraceProperty("Count", 3);
-            MockAnalyticsService.VerifyTraceProperty("SQL query", "SELECT * FROM \"TestRootEntity\" WHERE \"ModifiedAtTicks\" < 6000 ORDER BY \"ModifiedAtTicks\" DESC LIMIT 3");
+            MockAnalyticsService.VerifyTraceProperty("SQL query", "SELECT * FROM \"SqliteTestRootEntity\" WHERE \"ModifiedAtTicks\" < 6000 ORDER BY \"ModifiedAtTicks\" DESC LIMIT 3");
         } 
 
         
@@ -78,7 +78,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
         public async Task WHEN_NewerThan_and_batch_size_are_given_SHOULD_return_correct_quantity_with_oldest_first()
         {
             //Act
-            var result = await Sut.LoadModelsAsync(new TestSyncCommand
+            var result = await Sut.LoadModelsAsync(new SqliteTestSyncCommand
             {
                 OlderThan = null,
                 NewerThan = 6000,
@@ -94,7 +94,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             Assert.AreEqual(8000, _entitiesConstructed [1].ModifiedAtTicks);
             MockAnalyticsService.VerifyTrace("Models loaded");
             MockAnalyticsService.VerifyTraceProperty("Count", 2);
-            MockAnalyticsService.VerifyTraceProperty("SQL query", "SELECT * FROM \"TestRootEntity\" WHERE \"ModifiedAtTicks\" > 6000 ORDER BY \"ModifiedAtTicks\" DESC LIMIT 3");
+            MockAnalyticsService.VerifyTraceProperty("SQL query", "SELECT * FROM \"SqliteTestRootEntity\" WHERE \"ModifiedAtTicks\" > 6000 ORDER BY \"ModifiedAtTicks\" DESC LIMIT 3");
 
         } 
 
@@ -102,7 +102,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
         public async Task WHEN_OlderThan_and_NewerThan_are_not_given_SHOULD_return_correct_quantity_in_correct_order()
         {
             //Act
-            var result = await Sut.LoadModelsAsync(new TestSyncCommand
+            var result = await Sut.LoadModelsAsync(new SqliteTestSyncCommand
             {
                 BatchSize = 3
             });
@@ -122,11 +122,11 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
         public async Task WHEN_QueryGenerator_modifies_query_SHOULD_apply()
         {
             //Arrange
-            MockSyncClientSqlQueryGenerator.Where_GenerateQuery_returns(() => new Query(nameof(TestRootEntity))
-                .WhereContains(nameof(TestRootEntity.RootName), "ggy"));
+            MockSyncClientSqlQueryGenerator.Where_GenerateQuery_returns(() => new Query(nameof(SqliteTestRootEntity))
+                .WhereContains(nameof(SqliteTestRootEntity.RootName), "ggy"));
             
             //Act
-            var result = await Sut.LoadModelsAsync(new TestSyncCommand { BatchSize = 3 });
+            var result = await Sut.LoadModelsAsync(new SqliteTestSyncCommand { BatchSize = 3 });
 
             //Assert
             Assert.AreEqual(2, result.Count);

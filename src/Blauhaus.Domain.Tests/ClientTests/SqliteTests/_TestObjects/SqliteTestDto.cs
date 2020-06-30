@@ -3,9 +3,9 @@ using Blauhaus.Domain.Common.Entities;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests._TestObjects
 {
-    public class TestModel : ITestModel
+    public class SqliteTestDto : ISqliteTestDto
     {
-        public TestModel(Guid id, EntityState entityState, long modifiedAtTicks, string rootEntityName)
+        public SqliteTestDto(Guid id, EntityState entityState, long modifiedAtTicks, string rootEntityName)
         {
             Id = id;
             EntityState = entityState;
@@ -17,6 +17,5 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests._TestObjects
         public Guid Id { get; }
         public EntityState EntityState { get; }
         public long ModifiedAtTicks { get; }
-        public SyncState SyncState { get; }
     }
 }
