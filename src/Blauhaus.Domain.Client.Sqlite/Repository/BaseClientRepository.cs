@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.ClientDatabase.Sqlite.Service;
@@ -34,22 +37,28 @@ namespace Blauhaus.Domain.Client.Sqlite.Repository
 
         public async Task<TModel?> LoadByIdAsync(Guid id)
         {
-            TModel? model = default;
+            var models = await LoadAsync(x => x.Id == id);
+            return models.FirstOrDefault(); 
+        }
 
+        protected async Task<IReadOnlyList<TModel>> LoadAsync(Expression<Func<TRootEntity, bool>> predicate)
+        {
             var db = await DatabaseService.GetDatabaseConnectionAsync();
+            var models = new List<TModel>();
+
             await db.RunInTransactionAsync(connection =>
             {
-                var rootEntity = connection.Table<TRootEntity>()
-                    .FirstOrDefault(x => x.Id == id);
+                var rootEntities = connection.Table<TRootEntity>()
+                    .Where(predicate);
 
-                if (rootEntity != null)
+                foreach (var rootEntity in rootEntities)
                 {
                     var childEntities = EntityConverter.LoadChildEntities(rootEntity, connection);
-                    model = EntityConverter.ConstructModel(rootEntity, childEntities);
+                    models.Add(EntityConverter.ConstructModel(rootEntity, childEntities));
                 }
             });
 
-            return model;
+            return models;
         }
 
         public async Task<TModel> SaveDtoAsync(TDto dto)
