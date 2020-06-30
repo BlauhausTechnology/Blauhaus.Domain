@@ -62,6 +62,11 @@ namespace Blauhaus.Domain.Client.Sync.Collection
             }
         }
 
+        public void Refresh()
+        {
+            _syncClient.LoadNewFromServer();
+        }
+
         private void OnNext(TModel nextModel)
         {
             try
