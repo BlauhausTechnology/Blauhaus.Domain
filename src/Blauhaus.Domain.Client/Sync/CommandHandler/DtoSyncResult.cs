@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Blauhaus.Domain.Client.CommandHandlers.Sync
+namespace Blauhaus.Domain.Client.Sync.CommandHandler
 {
     public class DtoSyncResult<TModelDto>
     {
