@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Common.Time.Service;
-using Blauhaus.Common.ValueObjects.Errors;
-using Blauhaus.Common.ValueObjects.Extensions;
 using Blauhaus.DeviceServices.Abstractions.Connectivity;
 using Blauhaus.Domain.Client.Repositories;
 using Blauhaus.Domain.Common.CommandHandlers;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
 using Blauhaus.Domain.Common.Entities;
 using Blauhaus.Domain.Common.Extensions;
+using Blauhaus.Errors;
+using Blauhaus.Errors.Extensions;
 using CSharpFunctionalExtensions;
 
 namespace Blauhaus.Domain.Client.Sync.Client

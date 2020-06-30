@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using Blauhaus.Domain.Client.Sync;
 using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
 using Blauhaus.Domain.Common.Entities;

@@ -1,6 +1,4 @@
-﻿using System;
-using Blauhaus.Domain.Common.Entities;
-using Blauhaus.TestHelpers.MockBuilders;
+﻿using Blauhaus.Domain.Common.Entities;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.Entities
 {

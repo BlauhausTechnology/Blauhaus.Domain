@@ -62,7 +62,7 @@ namespace Blauhaus.Domain.Client.Sync.Service
                             .Subscribe());
 
                     disposables.Add(syncClient.Invoke(new TSyncCommand(), ClientSyncRequirement.All, syncStatusHandler)
-                        .Subscribe()); 
+                        .Subscribe(next => {}, observer.OnError)); 
                 }
 
                 return disposables;
