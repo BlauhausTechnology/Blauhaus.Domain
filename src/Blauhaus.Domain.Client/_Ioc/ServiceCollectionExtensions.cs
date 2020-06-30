@@ -1,4 +1,5 @@
 ﻿using Blauhaus.Domain.Client.CommandHandlers;
+using Blauhaus.Domain.Client.Sync.Collection;
 using Blauhaus.Domain.Client.Sync.Service;
 using Blauhaus.Domain.Common.CommandHandlers;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
@@ -46,6 +47,16 @@ namespace Blauhaus.Domain.Client._Ioc
         }
          
         
+        public static IServiceCollection AddSyncCollection<TModel, TViewElement, TSyncCommand, TUpdater>(this IServiceCollection services) 
+            where TModel : class, IClientEntity 
+            where TViewElement : ListItem, new() 
+            where TSyncCommand : SyncCommand, new()
+            where TUpdater : class, IListItemUpdater<TModel, TViewElement>
+        {
+            services.AddTransient<SyncCollection<TModel, TViewElement, TSyncCommand>>();
+            services.AddTransient<IListItemUpdater<TModel, TViewElement>, TUpdater>();
+            return services;
+        }
          
     }
 }

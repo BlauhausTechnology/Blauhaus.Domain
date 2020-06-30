@@ -14,7 +14,7 @@ using NUnit.Framework;
 namespace Blauhaus.Domain.Tests.ClientTests.SyncCollectionTests
 {
     [TestFixture]
-    public class AppearingCommandTests : BaseDomainTest<SyncCollection<TestModel, TestListItem, TestSyncCommand>>
+    public class InitializeTests : BaseDomainTest<SyncCollection<TestModel, TestListItem, TestSyncCommand>>
     {
         protected SyncClientMockBuilder<TestModel, TestSyncCommand> MockSyncClient => Mocks.AddMockSyncClient<TestModel, TestSyncCommand>().Invoke();
 
