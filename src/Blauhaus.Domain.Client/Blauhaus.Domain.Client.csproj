@@ -7,10 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blauhaus.Analytics.Abstractions" Version="0.8.3" />
-    <PackageReference Include="Blauhaus.Common.Time" Version="1.4.1" />
-    <PackageReference Include="Blauhaus.Common.Utils" Version="1.4.1" />
-    <PackageReference Include="Blauhaus.Common.ValueObjects" Version="1.4.1" />
+    <PackageReference Include="Blauhaus.Common.Time" Version="1.5.1" />
+    <PackageReference Include="Blauhaus.Common.Utils" Version="1.5.1" />
     <PackageReference Include="Blauhaus.DeviceServices.Abstractions" Version="0.6.1" />
     <PackageReference Include="Blauhaus.Ioc.Abstractions" Version="0.7.1" />
     <PackageReference Include="CSharpFunctionalExtensions" Version="2.8.2" />
