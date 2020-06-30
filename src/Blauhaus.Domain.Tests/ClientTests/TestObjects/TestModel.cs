@@ -28,12 +28,14 @@ namespace Blauhaus.Domain.Tests.ClientTests.TestObjects
 
         public string Name { get; }
 
-        public static List<TestModel> GenerateList(int numberToGenerate)
+        public static List<TestModel> GenerateList(int numberToGenerate, DateTime start = default)
         {
             var models = new List<TestModel>();
+            if (start == default) start = DateTime.UtcNow;
+
             for (var i = 0; i < numberToGenerate; i++)
             {
-                models.Add(new TestModel(Guid.NewGuid(), EntityState.Active, DateTime.UtcNow.AddDays(-i).Ticks, i.ToString()));
+                models.Add(new TestModel(Guid.NewGuid(), EntityState.Active, start.AddDays(-i).Ticks, i.ToString()));
             }
             return models;
         }

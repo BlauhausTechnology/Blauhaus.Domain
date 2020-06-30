@@ -3,13 +3,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
+using Blauhaus.Domain.Client.CommandHandlers;
 using Blauhaus.Domain.Client.Repositories;
 using Blauhaus.Domain.Common.CommandHandlers;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
 using Blauhaus.Domain.Common.Entities;
 using CSharpFunctionalExtensions;
 
-namespace Blauhaus.Domain.Client.CommandHandlers.Sync
+namespace Blauhaus.Domain.Client.Sync.CommandHandler
 {
     public class SyncCommandClientHandler<TModel, TModelDto, TSyncCommandDto, TSyncCommand> : ICommandHandler<SyncResult<TModel>, TSyncCommand> 
         where TModel : class, IClientEntity

@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Blauhaus.Common.Time" Version="1.5.1" />
     <PackageReference Include="Blauhaus.Common.Utils" Version="1.5.1" />
-    <PackageReference Include="Blauhaus.DeviceServices.Abstractions" Version="0.6.1" />
+    <PackageReference Include="Blauhaus.DeviceServices.Abstractions" Version="0.6.2" />
     <PackageReference Include="Blauhaus.Ioc.Abstractions" Version="0.7.1" />
     <PackageReference Include="CSharpFunctionalExtensions" Version="2.8.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.5" />
@@ -18,6 +18,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Blauhaus.Domain.Common\Blauhaus.Domain.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Sync\Collection\" />
   </ItemGroup>
 
 </Project>
