@@ -15,5 +15,19 @@ namespace Blauhaus.Domain.Common.Extensions
                 ? (DateTime?) null 
                 : DateTime.SpecifyKind(new DateTime(ticks.Value), DateTimeKind.Utc);
         }
+
+        public static DateTimeOffset ToDateTimeOffset(this long ticks)
+        {
+            return new DateTimeOffset(DateTime.SpecifyKind(new DateTime(ticks), DateTimeKind.Utc));
+        }
+
+        public static DateTimeOffset? ToDateTimeOffset(this long? ticks)
+        {
+            return ticks == null 
+                ? (DateTimeOffset?) null 
+                :  new DateTimeOffset(DateTime.SpecifyKind(new DateTime(ticks.Value), DateTimeKind.Utc));
+
+        }
+
     }
 }
