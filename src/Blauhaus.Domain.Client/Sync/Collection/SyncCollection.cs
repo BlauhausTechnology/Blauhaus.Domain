@@ -16,7 +16,7 @@ namespace Blauhaus.Domain.Client.Sync.Collection
 {
     public class SyncCollection<TModel, TListItem, TSyncCommand> : BaseBindableObject, ISyncCollection<TModel, TListItem, TSyncCommand>
         where TModel : class, IClientEntity
-        where TListItem : IListItem<TModel>, new()
+        where TListItem : IListItem<TModel>
         where TSyncCommand : SyncCommand, new()
     {
         private readonly IErrorHandler _errorHandler;

@@ -7,7 +7,7 @@ using Blauhaus.Domain.Common.Entities;
 namespace Blauhaus.Domain.Client.Sync.Collection
 {
     public interface ISyncCollection<TModel, TListItem, TSyncCommand> : INotifyPropertyChanged
-        where TListItem : IListItem<TModel>, new()
+        where TListItem : IListItem<TModel>
         where TSyncCommand : SyncCommand, new()
         where TModel : IClientEntity
     {
