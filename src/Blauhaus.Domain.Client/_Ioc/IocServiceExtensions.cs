@@ -47,7 +47,7 @@ namespace Blauhaus.Domain.Client._Ioc
         
         public static IIocService AddSyncCollection<TModel, TListItem, TSyncCommand>(this IIocService iocService) 
             where TModel : class, IClientEntity 
-            where TListItem : class, IListItem<TModel>, new() 
+            where TListItem : class, IListItem<TModel>
             where TSyncCommand : SyncCommand, new()
         {
             iocService.RegisterType<SyncCollection<TModel, TListItem, TSyncCommand>>(); 
