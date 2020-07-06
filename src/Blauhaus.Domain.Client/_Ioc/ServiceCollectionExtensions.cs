@@ -1,9 +1,11 @@
-﻿using Blauhaus.Domain.Client.CommandHandlers;
+﻿using System;
+using Blauhaus.Domain.Client.CommandHandlers;
 using Blauhaus.Domain.Client.Sync.Collection;
 using Blauhaus.Domain.Client.Sync.Service;
 using Blauhaus.Domain.Common.CommandHandlers;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
 using Blauhaus.Domain.Common.Entities;
+using Blauhaus.Ioc.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Blauhaus.Domain.Client._Ioc
@@ -17,6 +19,7 @@ namespace Blauhaus.Domain.Client._Ioc
             where TCommand : notnull
             where TCommandDto : notnull
         {
+
             services.AddTransient<ICommandHandler<TModel, TCommand>, EntityCommandClientHandler<TModel, TModelDto, TCommandDto, TCommand>>();
             services.AddTransient<ICommandConverter<TCommandDto, TCommand>, TCommandConverter>();
             services.AddTransient<ICommandHandler<TModelDto, TCommandDto>, TDtoCommandHandler>();
@@ -47,14 +50,13 @@ namespace Blauhaus.Domain.Client._Ioc
         }
          
         
-        public static IServiceCollection AddSyncCollection<TModel, TViewElement, TSyncCommand, TUpdater>(this IServiceCollection services) 
+        public static IServiceCollection AddSyncCollection<TModel, TListItem, TSyncCommand>(this IServiceCollection services) 
             where TModel : class, IClientEntity 
-            where TViewElement : ListItem, new() 
+            where TListItem : class, IListItem<TModel>, new() 
             where TSyncCommand : SyncCommand, new()
-            where TUpdater : class, IListItemUpdater<TModel, TViewElement>
         {
-            services.AddTransient<SyncCollection<TModel, TViewElement, TSyncCommand>>();
-            services.AddTransient<IListItemUpdater<TModel, TViewElement>, TUpdater>();
+            services.AddTransient<SyncCollection<TModel, TListItem, TSyncCommand>>(); 
+            services.AddTransient<IListItem<TModel>, TListItem>(); 
             return services;
         }
          

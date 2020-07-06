@@ -25,7 +25,6 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncCollectionTests
 
             MockSyncClient.Where_Connect_returns(new List<TestModel>());
 
-            Services.AddSingleton<IListItemUpdater<TestModel, TestListItem>, TestViewElementUpdater>();
             AddService(MockSyncClient.Object);
         }
          

@@ -4,9 +4,11 @@ using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Domain.Client.Sync.Collection;
 using Blauhaus.Domain.Common.Entities;
 using Blauhaus.Domain.TestHelpers.Extensions;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Client.ListItems;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients;
 using Blauhaus.Domain.Tests._Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
+using Blauhaus.TestHelpers.MockBuilders;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
@@ -28,8 +30,12 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncCollectionTests
             
             MockSyncClient.Where_Connect_returns(new List<TestModel>());
 
-            Services.AddSingleton<IListItemUpdater<TestModel, TestListItem>, TestViewElementUpdater>();
             AddService(MockSyncClient.Object);
+
+            MockServiceLocator.Where_Resolve_returns_sequence(new List<TestListItem>
+            {
+                new TestListItem(),new TestListItem(),new TestListItem()
+            });
         }
          
 
@@ -37,6 +43,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncCollectionTests
         public void SHOULD_connect_using_configured_properties()
         {
             //Act
+            Services.AddTransient<IListItem<TestModel>, TestListItem>();
             Sut.SyncCommand.FavouriteColour = "Red";
             Sut.SyncRequirement = ClientSyncRequirement.Minimum(100);
             Sut.Initialize();
@@ -80,12 +87,13 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncCollectionTests
         }
         
         [Test]
-        public void IF_elementUpdater_thorws_exception_SHOULD_handle()
+        public void IF_elementUpdater_throws_exception_SHOULD_handle()
         {
             //Arrange
             var newModels = TestModel.GenerateList(3, _start);
             MockSyncClient.Where_Connect_returns(newModels);
-            Services.AddSingleton<IListItemUpdater<TestModel, TestListItem>, ExceptionViewElementUpdater>();
+            MockServiceLocator.Where_Resolve_returns(new ListItemMockBuilder<TestListItem, TestModel>()
+                .Where_Update_throws(new Exception("This is an exceptionally bad thing that just happened")).Object);
 
             //Act
             Sut.Initialize();
@@ -100,6 +108,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncCollectionTests
             //Arrange
             var newModels = TestModel.GenerateList(3, _start);
             MockSyncClient.Where_Connect_returns(newModels);
+
 
             //Act
             Sut.Initialize();

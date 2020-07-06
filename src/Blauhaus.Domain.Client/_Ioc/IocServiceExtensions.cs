@@ -45,14 +45,12 @@ namespace Blauhaus.Domain.Client._Ioc
         }
 
         
-        public static IIocService AddSyncCollection<TModel, TViewElement, TSyncCommand, TUpdater>(this IIocService iocService) 
+        public static IIocService AddSyncCollection<TModel, TListItem, TSyncCommand>(this IIocService iocService) 
             where TModel : class, IClientEntity 
-            where TViewElement : ListItem, new() 
+            where TListItem : IListItem<TModel>, new() 
             where TSyncCommand : SyncCommand, new()
-            where TUpdater : class, IListItemUpdater<TModel, TViewElement>
         {
-            iocService.RegisterType<SyncCollection<TModel, TViewElement, TSyncCommand>>();
-            iocService.RegisterImplementation<IListItemUpdater<TModel, TViewElement>, TUpdater>();
+            iocService.RegisterType<SyncCollection<TModel, TListItem, TSyncCommand>>(); 
             return iocService;
         }
     }
