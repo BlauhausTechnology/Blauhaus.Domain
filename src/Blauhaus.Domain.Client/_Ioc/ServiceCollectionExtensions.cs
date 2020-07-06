@@ -56,7 +56,7 @@ namespace Blauhaus.Domain.Client._Ioc
             where TSyncCommand : SyncCommand, new()
         {
             services.AddTransient<SyncCollection<TModel, TListItem, TSyncCommand>>(); 
-            services.AddTransient<IListItem<TModel>, TListItem>(); 
+            services.AddTransient<TListItem>(); 
             return services;
         }
          
