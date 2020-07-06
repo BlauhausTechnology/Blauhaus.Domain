@@ -50,7 +50,7 @@ namespace Blauhaus.Domain.Client._Ioc
             where TListItem : class, IListItem<TModel>
             where TSyncCommand : SyncCommand, new()
         {
-            iocService.RegisterType<ISyncCollection<TModel, TListItem, TSyncCommand>>(); 
+            iocService.RegisterImplementation<ISyncCollection<TModel, TListItem, TSyncCommand>, SyncCollection<TModel, TListItem, TSyncCommand>>(); 
             iocService.RegisterType<TListItem>(); 
             return iocService;
         }
