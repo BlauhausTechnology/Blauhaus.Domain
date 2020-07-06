@@ -2,8 +2,14 @@
 
 namespace Blauhaus.Domain.Tests.ClientTests.TestObjects
 {
-    public class TestListItem : ListItem
+    public class TestListItem : ListItem<TestModel>
     { 
-        public string Name { get; set; }
+        public string Name { get; set; }        
+        
+        protected override void Update(TestModel model)
+        {
+
+            Name = model.Name;
+        }
     }
 }

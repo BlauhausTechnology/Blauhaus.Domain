@@ -9,19 +9,21 @@ using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
 using Blauhaus.Domain.Common.Entities;
 using Blauhaus.Errors.Handler;
+using Blauhaus.Ioc.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Blauhaus.Domain.Client.Sync.Collection
 {
-    public class SyncCollection<TModel, TListItem, TSyncCommand> : BaseBindableObject, ISyncCollection<TListItem, TSyncCommand>
+    public class SyncCollection<TModel, TListItem, TSyncCommand> : BaseBindableObject, ISyncCollection<TModel, TListItem, TSyncCommand>
         where TModel : class, IClientEntity
-        where TListItem : ListItem, new()
+        where TListItem : IListItem<TModel>
         where TSyncCommand : SyncCommand, new()
     {
         private readonly IErrorHandler _errorHandler;
         private readonly IAnalyticsService _analyticsService;
         private readonly IConnectivityService _connectivityService;
         private readonly ISyncClient<TModel, TSyncCommand> _syncClient;
-        private readonly IListItemUpdater<TModel, TListItem> _listItemUpdater;
+        private readonly IServiceLocator _serviceLocator;
         private IDisposable? _syncClientConnection;
 
         public SyncCollection(
@@ -29,13 +31,14 @@ namespace Blauhaus.Domain.Client.Sync.Collection
             IAnalyticsService analyticsService,
             IConnectivityService connectivityService,
             ISyncClient<TModel, TSyncCommand> syncClient,
-            IListItemUpdater<TModel, TListItem> listItemUpdater)
+            IServiceLocator serviceLocator)
         {
             _errorHandler = errorHandler;
             _analyticsService = analyticsService;
             _connectivityService = connectivityService;
             _syncClient = syncClient;
-            _listItemUpdater = listItemUpdater;
+            _serviceLocator = serviceLocator;
+
 
             SyncCommand = new TSyncCommand();
             SyncStatusHandler = new SyncStatusHandler();
@@ -89,8 +92,7 @@ namespace Blauhaus.Domain.Client.Sync.Collection
 
         private void UpdateExistingElement(TListItem existingElement, TModel model)
         {
-            existingElement = _listItemUpdater.Update(model, existingElement);
-            existingElement.ModifiedAtTicks = model.ModifiedAtTicks;
+            existingElement.UpdateFromModel(model);
                 
             var currentIndex = ListItems.IndexOf(existingElement);
             var newIndex = 0;
@@ -111,11 +113,8 @@ namespace Blauhaus.Domain.Client.Sync.Collection
         //todo add IsVisible property and remove / do not add if false;
         private void AddNewElement(TModel model)
         {
-            var newListItem = _listItemUpdater.Update(model, new TListItem
-            {
-                Id = model.Id,
-                ModifiedAtTicks = model.ModifiedAtTicks
-            });
+            var newListItem = _serviceLocator.Resolve<TListItem>();
+            newListItem.UpdateFromModel(model);
 
             var isAdded = false;
             var numberOfItems = ListItems.Count;
