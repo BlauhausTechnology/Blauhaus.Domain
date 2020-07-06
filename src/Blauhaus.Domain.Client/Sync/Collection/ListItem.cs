@@ -1,9 +1,10 @@
 ﻿using System;
+using Blauhaus.Common.Utils.NotifyPropertyChanged;
 using Blauhaus.Domain.Common.Entities;
 
 namespace Blauhaus.Domain.Client.Sync.Collection
 {
-    public class ListItem : IClientEntity
+    public class ListItem : BaseBindableObject, IClientEntity
     { 
 
         public Guid Id { get; set; }

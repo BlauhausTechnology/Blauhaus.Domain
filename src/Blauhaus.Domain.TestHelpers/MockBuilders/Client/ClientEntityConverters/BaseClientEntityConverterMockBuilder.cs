@@ -6,7 +6,7 @@ using Blauhaus.TestHelpers.MockBuilders;
 using Moq;
 using SQLite;
 
-namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.ClientRepositoryHelpers
+namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.ClientEntityConverters
 {
     public class ClientEntityConverterMockBuilder<TModel, TDto, TRootEntity> : BaseClientEntityConverterMockBuilder<ClientEntityConverterMockBuilder<TModel, TDto, TRootEntity>, IClientEntityConverter<TModel, TDto, TRootEntity>, TModel, TDto, TRootEntity> 
         where TModel : IClientEntity 

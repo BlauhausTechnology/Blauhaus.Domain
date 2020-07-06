@@ -3,6 +3,7 @@
     public enum EntityState
     {
         Active,
+        Archived,
         Deleted
     }
 }

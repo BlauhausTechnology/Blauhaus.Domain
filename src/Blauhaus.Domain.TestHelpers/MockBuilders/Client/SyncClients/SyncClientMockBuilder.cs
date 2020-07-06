@@ -21,8 +21,10 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients
         where TMock : class, ISyncClient<TModel, TSyncCommand> 
         where TModel : IClientEntity 
         where TSyncCommand : SyncCommand
-        where TBuilder : BaseMockBuilder<TBuilder, TMock>
+        where TBuilder : BaseSyncClientMockBuilder<TBuilder, TMock, TModel, TSyncCommand>
     {
+
+
         public TBuilder Where_Connect_returns(IEnumerable<TModel> models)
         {
             Mock.Setup(x => x.Connect(It.IsAny<TSyncCommand>(), It.IsAny<ClientSyncRequirement>(), It.IsAny<ISyncStatusHandler>()))
@@ -35,7 +37,15 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients
                     return Disposable.Empty;
                 }));
 
-            return this as TBuilder;
+            return (TBuilder) this;
+        }
+
+        public TBuilder Where_Connect_returns(IDisposable disposable)
+        {
+            Mock.Setup(x => x.Connect(It.IsAny<TSyncCommand>(), It.IsAny<ClientSyncRequirement>(), It.IsAny<ISyncStatusHandler>()))
+                .Returns(Observable.Create<TModel>(observer => disposable));
+
+            return (TBuilder) this;
         }
 
         public TBuilder Where_Connect_returns(TModel model)
@@ -47,7 +57,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients
                     return Disposable.Empty;
                 }));
 
-            return this as TBuilder;
+            return (TBuilder) this;
         }
         
         public TBuilder Where_Connect_returns_exception(Exception exception)
@@ -59,7 +69,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients
                     return Disposable.Empty;
                 }));
 
-            return this as TBuilder;
+            return (TBuilder) this;
         }
     }
 }

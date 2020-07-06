@@ -6,7 +6,7 @@ using Blauhaus.TestHelpers.MockBuilders;
 using Moq;
 using SqlKata;
 
-namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.ClientRepositoryHelpers
+namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.ClientEntityConverters
 {
 
     public class SyncClientSqlQueryGeneratorMockBuilder<TMock, TRootEntity, TSyncCommand> 
