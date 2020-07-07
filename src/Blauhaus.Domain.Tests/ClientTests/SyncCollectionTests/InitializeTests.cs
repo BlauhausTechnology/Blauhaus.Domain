@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Domain.Client.Sync.Collection;
 using Blauhaus.Domain.Common.Entities;
@@ -8,7 +9,6 @@ using Blauhaus.Domain.TestHelpers.MockBuilders.Client.ListItems;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients;
 using Blauhaus.Domain.Tests._Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
-using Blauhaus.TestHelpers.MockBuilders;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace Blauhaus.Domain.Tests.ClientTests.SyncCollectionTests
 {
     [TestFixture]
-    public class InitializeTests : BaseDomainTest<SyncCollection<TestModel, TestListItem, TestSyncCommand>>
+    public class InitializeTests : BaseDomainTest<SyncCollection<TestModel, ITestListItem, TestSyncCommand>>
     {
         protected SyncClientMockBuilder<TestModel, TestSyncCommand> MockSyncClient => Mocks.AddMockSyncClient<TestModel, TestSyncCommand>().Invoke();
 
@@ -32,9 +32,9 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncCollectionTests
 
             AddService(MockSyncClient.Object);
 
-            MockServiceLocator.Where_Resolve_returns_sequence(new List<TestListItem>
+            MockServiceLocator.Where_Resolve_returns_sequence(new List<ITestListItem>
             {
-                new TestListItem(),new TestListItem(),new TestListItem()
+                new TestBaseListItem(),new TestBaseListItem(),new TestBaseListItem()
             });
         }
          
@@ -43,7 +43,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncCollectionTests
         public void SHOULD_connect_using_configured_properties()
         {
             //Act
-            Services.AddTransient<IListItem<TestModel>, TestListItem>();
+            Services.AddTransient<IListItem<TestModel>, TestBaseListItem>();
             Sut.SyncCommand.FavouriteColour = "Red";
             Sut.SyncRequirement = ClientSyncRequirement.Minimum(100);
             Sut.Initialize();
@@ -92,7 +92,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncCollectionTests
             //Arrange
             var newModels = TestModel.GenerateList(3, _start);
             MockSyncClient.Where_Connect_returns(newModels);
-            MockServiceLocator.Where_Resolve_returns(new ListItemMockBuilder<TestListItem, TestModel>()
+            MockServiceLocator.Where_Resolve_returns(new ListItemMockBuilder<ITestListItem, TestModel>()
                 .Where_Update_throws(new Exception("This is an exceptionally bad thing that just happened")).Object);
 
             //Act
@@ -103,12 +103,11 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncCollectionTests
         }
 
         [Test]
-        public void SHOULD_publish_new_models()
+        public void SHOULD_publish_new_models_as_listitems()
         {
             //Arrange
             var newModels = TestModel.GenerateList(3, _start);
             MockSyncClient.Where_Connect_returns(newModels);
-
 
             //Act
             Sut.Initialize();
@@ -123,6 +122,22 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncCollectionTests
             Assert.AreEqual(newModels[2].Name, Sut.ListItems[2].Name);
         }
         
+        [Test]
+        public void IF_ListItem_Update_method_returns_false_SHOULDnot_add()
+        {
+            //Arrange
+            MockSyncClient.Where_Connect_returns(TestModel.GenerateList(1, _start));
+            MockServiceLocator.Where_Resolve_returns(new ListItemMockBuilder<ITestListItem, TestModel>()
+                .Where_Update_returns(false).Object);
+
+            //Act
+            Sut.Initialize();
+
+            //Assert
+            Assert.AreEqual(0, Sut.ListItems.Count);
+        }
+
+
         [Test]
         public void SHOULD_publish_models_most_recent_first()
         {
@@ -163,7 +178,25 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncCollectionTests
             Assert.AreEqual(2000, Sut.ListItems[1].ModifiedAtTicks);
             Assert.AreEqual("B", Sut.ListItems[1].Name);
             Assert.AreEqual(update2.Id, Sut.ListItems[1].Id);
+        }
 
+        [Test]
+        public async Task WHEN_updating_listitem_returns_false_SHOULD_remove()
+        {
+            //Arrange
+            var update1 = new TestModel(Guid.NewGuid(), EntityState.Active, 1000, "A");
+            var update2 = new TestModel(update1.Id, EntityState.Active, 2000, "B"); 
+            MockSyncClient.Where_Connect_returns(new List<TestModel>{update1, update2 });
+            MockServiceLocator.Where_Resolve_returns<ITestListItem>(new ListItemMockBuilder<ITestListItem, TestModel>()
+                .With(x => x.Id, update1.Id)
+                .Where_Update_returns_sequence(true, false).Object);
+
+            //Act
+            Sut.Initialize();
+            await Task.Delay(100);
+
+            //Assert
+            Assert.AreEqual(0, Sut.ListItems.Count); 
         }
 
 

@@ -10,7 +10,7 @@ using NUnit.Framework;
 namespace Blauhaus.Domain.Tests.ClientTests.SyncCollectionTests
 {
     [TestFixture]
-    public class ReloadFromClientTests : BaseDomainTest<SyncCollection<TestModel, TestListItem, TestSyncCommand>>
+    public class ReloadFromClientTests : BaseDomainTest<SyncCollection<TestModel, TestBaseListItem, TestSyncCommand>>
     {
         protected SyncClientMockBuilder<TestModel, TestSyncCommand> MockSyncClient => Mocks.AddMockSyncClient<TestModel, TestSyncCommand>().Invoke();
 
