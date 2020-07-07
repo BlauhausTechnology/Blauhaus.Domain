@@ -83,9 +83,9 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             Assert.AreEqual("Loaded 3 local models", StatusMessages[3]);
             Assert.AreEqual("0 newer TestModel entities downloaded (0 in total). 0 of 0 still to download", StatusMessages[4]);
             Assert.AreEqual("0 older TestModel entities downloaded (0 in total). 0 of 0 still to download", StatusMessages[5]);
-            Assert.AreEqual("Refresh invoked. Loading up to 3 new from server", StatusMessages[6]);
+            Assert.AreEqual("ReloadFromServer invoked. Loading up to 3 new from server", StatusMessages[6]);
             Assert.AreEqual("3 newer TestModel entities downloaded (3 in total). 0 of 0 still to download", StatusMessages[7]);
-            Assert.AreEqual("Refresh completed", StatusMessages[8]);
+            Assert.AreEqual("ReloadFromServer completed", StatusMessages[8]);
         }
 
 

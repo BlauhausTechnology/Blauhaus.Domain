@@ -14,7 +14,7 @@ using NUnit.Framework;
 namespace Blauhaus.Domain.Tests.ClientTests.SyncCollectionTests
 {
     [TestFixture]
-    public class RefreshTests : BaseDomainTest<SyncCollection<TestModel, TestListItem, TestSyncCommand>>
+    public class ReloadFromServerTests : BaseDomainTest<SyncCollection<TestModel, TestBaseListItem, TestSyncCommand>>
     {
         protected SyncClientMockBuilder<TestModel, TestSyncCommand> MockSyncClient => Mocks.AddMockSyncClient<TestModel, TestSyncCommand>().Invoke();
 
@@ -38,7 +38,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncCollectionTests
             Sut.Initialize();
 
             //Act
-            Sut.Refresh();
+            Sut.ReloadFromServer();
 
             //Assert
             MockSyncClient.Mock.Verify(x => x.LoadNewFromServer());

@@ -232,11 +232,11 @@ namespace Blauhaus.Domain.Client.Sync.Client
         private async Task LoadNewFromServerAsync(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler, IObserver<TModel> observer, CancellationToken token)
         {
             ClientSyncStatus syncStatus = await _syncClientRepository.GetSyncStatusAsync(syncCommand);
-            TraceStatus(SyncClientState.DownloadingNew, $"Refresh invoked. Loading up to {syncCommand.BatchSize} new from server", syncStatusHandler);
+            TraceStatus(SyncClientState.DownloadingNew, $"ReloadFromServer invoked. Loading up to {syncCommand.BatchSize} new from server", syncStatusHandler);
             syncCommand.OlderThan = null;
             syncCommand.NewerThan = syncStatus.NewestModifiedAt;
             await DownloadModelsAsync(syncCommand, syncRequirement, syncStatusHandler, observer, true, token);
-            TraceStatus(SyncClientState.Completed, $"Refresh completed", syncStatusHandler);
+            TraceStatus(SyncClientState.Completed, $"ReloadFromServer completed", syncStatusHandler);
         }
        
         private async Task DownloadModelsAsync(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler, IObserver<TModel> observer, bool isLoadingNewerEntities, CancellationToken token)

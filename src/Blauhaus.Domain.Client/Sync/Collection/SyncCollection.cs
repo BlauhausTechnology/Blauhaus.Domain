@@ -65,9 +65,14 @@ namespace Blauhaus.Domain.Client.Sync.Collection
             }
         }
 
-        public void Refresh()
+        public void ReloadFromServer()
         {
             _syncClient.LoadNewFromServer();
+        }
+
+        public void ReloadFromClient()
+        {
+            _syncClient.LoadNewFromClient();
         }
 
         private void OnNext(TModel nextModel)
@@ -92,29 +97,39 @@ namespace Blauhaus.Domain.Client.Sync.Collection
 
         private void UpdateExistingElement(TListItem existingElement, TModel model)
         {
-            existingElement.UpdateFromModel(model);
-                
-            var currentIndex = ListItems.IndexOf(existingElement);
-            var newIndex = 0;
-            var numberOfItems = ListItems.Count;
-                
-            for (var i = 0; i < numberOfItems; i++)
+            var isStillValid = existingElement.UpdateFromModel(model);
+            if (!isStillValid)
             {
-                if (existingElement.ModifiedAtTicks > ListItems[i].ModifiedAtTicks)
-                {
-                    newIndex = i;
-                    break;
-                }
+                _analyticsService.Trace(this, "Removing list item");
+                ListItems.RemoveAt(ListItems.IndexOf(existingElement));
             }
-
-            ListItems.Move(currentIndex, newIndex);
+            else
+            {
+                var currentIndex = ListItems.IndexOf(existingElement);
+                var newIndex = 0;
+                var numberOfItems = ListItems.Count;
+                
+                for (var i = 0; i < numberOfItems; i++)
+                {
+                    if (existingElement.ModifiedAtTicks > ListItems[i].ModifiedAtTicks)
+                    {
+                        newIndex = i;
+                        break;
+                    }
+                }
+                ListItems.Move(currentIndex, newIndex);
+            }
         }
 
-        //todo add IsVisible property and remove / do not add if false;
         private void AddNewElement(TModel model)
         {
             var newListItem = _serviceLocator.Resolve<TListItem>();
-            newListItem.UpdateFromModel(model);
+
+            var isValid = newListItem.UpdateFromModel(model);
+            if (!isValid)
+            {
+                return;
+            }
 
             var isAdded = false;
             var numberOfItems = ListItems.Count;
@@ -129,6 +144,7 @@ namespace Blauhaus.Domain.Client.Sync.Collection
             }
             if (!isAdded)
             {
+                _analyticsService.Trace(this, "Adding list item");
                 ListItems.Add(newListItem);
             }
         }
