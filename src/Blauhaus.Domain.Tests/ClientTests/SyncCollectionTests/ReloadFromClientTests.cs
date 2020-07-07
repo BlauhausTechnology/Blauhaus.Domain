@@ -26,7 +26,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncCollectionTests
          
 
         [Test]
-        public void SHOULD_ReloadFromServer()
+        public void SHOULD_ReloadFromClient()
         {
             //Arrange
             Sut.SyncCommand.FavouriteColour = "Red";
@@ -34,7 +34,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncCollectionTests
             Sut.Initialize();
 
             //Act
-            Sut.ReloadFromServer();
+            Sut.ReloadFromClient();
 
             //Assert
             MockSyncClient.Mock.Verify(x => x.LoadNewFromClient());
