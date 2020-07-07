@@ -100,7 +100,8 @@ namespace Blauhaus.Domain.Client.Sync.Collection
             var isStillValid = existingElement.UpdateFromModel(model);
             if (!isStillValid)
             {
-                ListItems.Remove(existingElement);
+                _analyticsService.Trace(this, "Removing list item");
+                ListItems.RemoveAt(ListItems.IndexOf(existingElement));
             }
             else
             {
@@ -143,6 +144,7 @@ namespace Blauhaus.Domain.Client.Sync.Collection
             }
             if (!isAdded)
             {
+                _analyticsService.Trace(this, "Adding list item");
                 ListItems.Add(newListItem);
             }
         }
