@@ -142,7 +142,8 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
 
                     foreach (var childEntity in childEntities)
                     {
-                        childEntity.SyncState = SyncState.InSync;
+                        //child entities can themselves be primary sync entities so the entity converter can decide whether they should be in sync or not - default not
+                        //childEntity.SyncState = SyncState.InSync;
                         connection.InsertOrReplace(childEntity);
                     }
 

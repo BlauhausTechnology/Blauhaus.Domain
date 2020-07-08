@@ -67,7 +67,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
         } 
         
         [Test]
-        public async Task IF_child_entity_already_exists_SHOULD_update_and_set_sync_state_to_InSynce()
+        public async Task IF_child_entity_already_exists_SHOULD_update_without_setting_sync_state_to_InSync()
         {
             //Arrange
             var bob = new SqliteTestRootEntity
@@ -100,7 +100,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             MockClientEntityConverter.Mock.Verify(x => x.ExtractEntitiesFromDto(dto));
             var newChild = await Connection.Table<SqliteTestChildEntity>().FirstAsync(x => x.Id == child.Id);
             Assert.AreEqual("Hop", newChild.ChildName);
-            Assert.AreEqual(SyncState.InSync, newChild.SyncState);
+            Assert.AreEqual(SyncState.OutOfSync, newChild.SyncState);
         } 
         
         [Test]
@@ -159,7 +159,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             MockClientEntityConverter.Mock.Verify(x => x.ExtractEntitiesFromDto(dto));
             var newChild = await Connection.Table<SqliteTestChildEntity>().FirstAsync(x => x.Id == child.Id);
             Assert.AreEqual("Hop", newChild.ChildName);
-            Assert.AreEqual(SyncState.InSync, newChild.SyncState);
+            Assert.AreEqual(SyncState.OutOfSync, newChild.SyncState);
             Assert.AreEqual(1, await Connection.Table<SqliteTestChildEntity>().CountAsync());
         } 
         
