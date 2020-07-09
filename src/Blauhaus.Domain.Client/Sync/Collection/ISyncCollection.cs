@@ -6,18 +6,25 @@ using Blauhaus.Domain.Common.Entities;
 
 namespace Blauhaus.Domain.Client.Sync.Collection
 {
-    public interface ISyncCollection<TModel, TListItem, TSyncCommand> : INotifyPropertyChanged
-        where TListItem : IListItem<TModel>
-        where TSyncCommand : SyncCommand, new()
-        where TModel : IClientEntity
+
+    public interface ISyncCollection : INotifyPropertyChanged
     {
+        
         public ClientSyncRequirement SyncRequirement { get; set; }
-        public ObservableCollection<TListItem> ListItems { get; }
-        public TSyncCommand SyncCommand { get; }
         public ISyncStatusHandler SyncStatusHandler { get; }
 
         void Initialize();
         void ReloadFromServer();
         void ReloadFromClient();
+    }
+
+    public interface ISyncCollection<TModel, TListItem, TSyncCommand> : ISyncCollection
+        where TListItem : IListItem<TModel>
+        where TSyncCommand : SyncCommand, new()
+        where TModel : IClientEntity
+    {
+        public ObservableCollection<TListItem> ListItems { get; }
+        public TSyncCommand SyncCommand { get; }
+
     }
 }

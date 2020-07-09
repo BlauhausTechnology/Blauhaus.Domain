@@ -42,6 +42,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 EntityBatch = serverModels
             });
             MockSyncCommandHandler.Mock.Invocations.Clear(); 
+            MockSyncStatusHandler.With(x => x.State, SyncClientState.Starting);
 
             //Act
             Sut.LoadNewFromServer();
@@ -88,6 +89,40 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             Assert.AreEqual("ReloadFromServer completed", StatusMessages[8]);
         }
 
+         [Test]
+        public async Task IF_SyncStatus_is_busy_SHOULD_not_reload()
+        {
+            //Arrange
+            var publishedModels = new List<TestModel>();
+            var now = DateTime.UtcNow;
+            var localModels = TestModel.GenerateOlderThan(now, 3); 
+            var serverModels = TestModel.GenerateNewerThan(now, 3); 
+            MockBaseSyncClientRepository.Where_LoadModelsAsync_returns(localModels);
+            MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns( 
+                new ClientSyncStatus
+                {
+                    AllLocalEntities = 3,
+                    SyncedLocalEntities = 3,
+                    NewestModifiedAt = localModels.First().ModifiedAtTicks,
+                    OldestModifiedAt = localModels.Last().ModifiedAtTicks
+                });
+            Sut.Connect(SyncCommand, ClientSyncRequirement.All, MockSyncStatusHandler.Object)
+                .Subscribe(next => publishedModels.Add(next));
+            publishedModels.Clear();
 
+            MockSyncCommandHandler.Where_HandleAsync_returns(new SyncResult<TestModel>
+            {
+                EntityBatch = serverModels
+            });
+            MockSyncCommandHandler.Mock.Invocations.Clear(); 
+
+            //Act
+            MockSyncStatusHandler.With(x => x.State, SyncClientState.DownloadingNew);
+            Sut.LoadNewFromServer();
+            await Task.Delay(20);
+
+            //Assert
+            MockSyncCommandHandler.Mock.Verify(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
     }
 }
