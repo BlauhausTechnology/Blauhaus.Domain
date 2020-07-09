@@ -20,16 +20,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 
         [Test]
         public async Task SHOULD_load_and_publish_any_newer_models_from_server()
-        {
-
-            var e1 = DomainErrors.Duplicate();
-            var e2 = DomainErrors.Duplicate("TestModel", "Name");
-            var e3 = DomainErrors.Duplicate<TestModel>(x => x.Name);
-
-            var eq = e1 == e2;
-            var eq3 = e2 == e3;
-            var eq2 = e1.ToString().IsError(DomainErrors.Duplicate());
-
+        { 
             //Arrange
             var publishedModels = new List<TestModel>();
             var now = DateTime.UtcNow;
