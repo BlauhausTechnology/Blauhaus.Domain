@@ -9,7 +9,7 @@ namespace Blauhaus.Domain.Common.Errors
     {
         public static Error NotFound() => Error.Create("Entity not found");
         public static Error NotFound(string name) => Error.Create($"{name} not found");
-        public static Error NotFound<T>() => Error.Create($"{typeof(T)} not found");
+        public static Error NotFound<T>() => Error.Create($"{typeof(T).Name} not found");
 
         
         public static Error Duplicate() 
