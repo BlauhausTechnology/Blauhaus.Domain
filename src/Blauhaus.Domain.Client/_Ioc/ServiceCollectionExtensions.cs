@@ -1,6 +1,7 @@
 ﻿using System;
 using Blauhaus.Domain.Client.CommandHandlers;
 using Blauhaus.Domain.Client.Sync.Collection;
+using Blauhaus.Domain.Client.Sync.Model;
 using Blauhaus.Domain.Client.Sync.Service;
 using Blauhaus.Domain.Common.CommandHandlers;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
@@ -58,6 +59,14 @@ namespace Blauhaus.Domain.Client._Ioc
             services.AddTransient<ISyncCollection<TModel, TListItem, TSyncCommand>, SyncCollection<TModel, TListItem, TSyncCommand>>(); 
             services.AddTransient<SyncCollection<TModel, TListItem, TSyncCommand>>(); 
             services.AddTransient<TListItem>(); 
+            return services;
+        }
+         
+        public static IServiceCollection AddSyncModel<TModel, TSyncCommand>(this IServiceCollection services) 
+            where TModel : class, IClientEntity 
+            where TSyncCommand : SyncCommand, new()
+        {
+            services.AddTransient<ISyncModel<TModel>, SyncModel<TModel, TSyncCommand>>(); 
             return services;
         }
          
