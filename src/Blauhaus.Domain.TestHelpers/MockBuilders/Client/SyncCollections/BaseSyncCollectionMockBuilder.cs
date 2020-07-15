@@ -1,6 +1,8 @@
-﻿using Blauhaus.Domain.Client.Sync.Collection;
+﻿using Blauhaus.Domain.Client.Sync.Client;
+using Blauhaus.Domain.Client.Sync.Collection;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
 using Blauhaus.Domain.Common.Entities;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients;
 using Blauhaus.TestHelpers.MockBuilders;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncCollections
@@ -12,6 +14,11 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncCollections
         where TListItem : IListItem<TModel>
         where TModel : IClientEntity
     {
-
+        public BaseSyncCollectionMockBuilder()
+        {
+            With(x => x.SyncCommand, new TSyncCommand());
+            With(x => x.SyncRequirement, ClientSyncRequirement.All);
+            With(x => x.SyncStatusHandler, new SyncStatusHandlerMockBuilder().Object);
+        }
     }
 }

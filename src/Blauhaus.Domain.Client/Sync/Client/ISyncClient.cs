@@ -8,6 +8,7 @@ namespace Blauhaus.Domain.Client.Sync.Client
         where TModel : IClientEntity
         where TSyncCommand : SyncCommand
     {
+        
         IObservable<TModel> Connect(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler);
 
         void LoadNextBatch();
