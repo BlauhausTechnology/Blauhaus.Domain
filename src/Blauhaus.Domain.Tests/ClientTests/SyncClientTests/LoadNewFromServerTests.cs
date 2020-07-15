@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 using Blauhaus.Domain.Client.Sync;
 using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
+using Blauhaus.Domain.Common.Errors;
 using Blauhaus.Domain.Tests.ClientTests.SyncClientTests._Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
+using Blauhaus.Errors.Extensions;
 using Moq;
 using NUnit.Framework;
 
@@ -18,7 +20,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 
         [Test]
         public async Task SHOULD_load_and_publish_any_newer_models_from_server()
-        {
+        { 
             //Arrange
             var publishedModels = new List<TestModel>();
             var now = DateTime.UtcNow;
