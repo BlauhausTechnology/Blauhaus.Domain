@@ -9,6 +9,7 @@ using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Common.Time.Service;
 using Blauhaus.DeviceServices.Abstractions.Connectivity;
+using Blauhaus.Domain.Client.Extensions;
 using Blauhaus.Domain.Client.Repositories;
 using Blauhaus.Domain.Common.CommandHandlers;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
@@ -231,6 +232,12 @@ namespace Blauhaus.Domain.Client.Sync.Client
 
         private async Task LoadNewFromServerAsync(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler, IObserver<TModel> observer, CancellationToken token)
         {
+            if (syncStatusHandler.IsExecuting())
+            {
+                TraceStatus(SyncClientState.DownloadingNew, $"ReloadFromServer invoked. Loading up to {syncCommand.BatchSize} new from server", syncStatusHandler);
+                return;
+            }
+
             ClientSyncStatus syncStatus = await _syncClientRepository.GetSyncStatusAsync(syncCommand);
             TraceStatus(SyncClientState.DownloadingNew, $"ReloadFromServer invoked. Loading up to {syncCommand.BatchSize} new from server", syncStatusHandler);
             syncCommand.OlderThan = null;
