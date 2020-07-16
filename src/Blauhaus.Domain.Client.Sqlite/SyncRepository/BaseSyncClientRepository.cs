@@ -94,13 +94,20 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
                     .OrderByDesc(nameof(IClientEntity.ModifiedAtTicks))
                     .Take(syncCommand.BatchSize);
 
-                if (syncCommand.OlderThan > 0)
+                if (syncCommand.Id != null)
                 {
-                    query = query.Where(nameof(IClientEntity.ModifiedAtTicks), "<", syncCommand.OlderThan);
+                    query = query.Where(nameof(IClientEntity.Id), "=", syncCommand.Id);
                 }
-                else if (syncCommand.NewerThan > 0)
+                else
                 {
-                    query = query.Where(nameof(IClientEntity.ModifiedAtTicks), ">", syncCommand.NewerThan);
+                    if (syncCommand.OlderThan > 0)
+                    {
+                        query = query.Where(nameof(IClientEntity.ModifiedAtTicks), "<", syncCommand.OlderThan);
+                    }
+                    else if (syncCommand.NewerThan > 0)
+                    {
+                        query = query.Where(nameof(IClientEntity.ModifiedAtTicks), ">", syncCommand.NewerThan);
+                    }
                 }
 
                 var sql = SqlCompiler.Compile(query).ToString();

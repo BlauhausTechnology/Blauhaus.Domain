@@ -2,6 +2,8 @@
 using Blauhaus.Analytics.TestHelpers;
 using Blauhaus.DeviceServices.Abstractions.Connectivity;
 using Blauhaus.DeviceServices.TestHelpers.MockBuilders;
+using Blauhaus.Domain.Client.Sync.Client;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Common;
 using Blauhaus.Errors.Handler;
 using Blauhaus.Ioc.Abstractions;
@@ -22,12 +24,14 @@ namespace Blauhaus.Domain.Tests._Base
             AddService(x => MockErrorHandler.Object);
             AddService(x => MockConnectivityService.Object);
             AddService(x => MockServiceLocator.Object);
+            AddService(x => MockSyncStatusHandler.Object);
         }
 
         protected AnalyticsServiceMockBuilder MockAnalyticsService => AddMock<AnalyticsServiceMockBuilder, IAnalyticsService>().Invoke();
         protected ConnectivityServiceMockBuilder MockConnectivityService => AddMock<ConnectivityServiceMockBuilder, IConnectivityService>().Invoke();
         protected MockBuilder<IErrorHandler> MockErrorHandler => AddMock<IErrorHandler>().Invoke();
         protected ServiceLocatorMockBuilder MockServiceLocator => AddMock<ServiceLocatorMockBuilder, IServiceLocator>().Invoke();
+        protected SyncStatusHandlerMockBuilder MockSyncStatusHandler => AddMock<SyncStatusHandlerMockBuilder, ISyncStatusHandler>().Invoke();
 
 
     }
