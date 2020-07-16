@@ -1,4 +1,5 @@
 ﻿using Blauhaus.Domain.Client.CommandHandlers;
+using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Domain.Client.Sync.Collection;
 using Blauhaus.Domain.Client.Sync.Service;
 using Blauhaus.Domain.Common.CommandHandlers;
@@ -17,6 +18,7 @@ namespace Blauhaus.Domain.Client._Ioc
             where TCommandConverter : class, ICommandConverter<TCommandDto, TCommand>
             where TDtoCommandHandler : class, ICommandHandler<TModelDto, TCommandDto>
         {
+            
             iocService.RegisterImplementation<ICommandHandler<TModel, TCommand>, EntityCommandClientHandler<TModel, TModelDto, TCommandDto, TCommand>>();
             iocService.RegisterImplementation<ICommandConverter<TCommandDto, TCommand>, TCommandConverter>();
             iocService.RegisterImplementation<ICommandHandler<TModelDto, TCommandDto>, TDtoCommandHandler>();
@@ -38,6 +40,7 @@ namespace Blauhaus.Domain.Client._Ioc
             where TSyncCommand : SyncCommand, new()
             where TSyncClientFactory : class, ISyncClientFactory<TSyncCommand>
         {
+            iocService.RegisterImplementation<ISyncStatusHandler, SyncStatusHandler>();
             iocService.RegisterImplementation<ISyncService, SyncService<TSyncCommand>>();
             iocService.RegisterImplementation<ISyncClientFactory<TSyncCommand>, TSyncClientFactory>();
             iocService.RegisterImplementation<ISyncStatusHandlerFactory, SyncstatusHandlerFactory>();

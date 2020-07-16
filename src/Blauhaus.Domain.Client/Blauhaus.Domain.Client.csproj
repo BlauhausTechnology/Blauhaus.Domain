@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blauhaus.Common.Results" Version="1.5.2" />
     <PackageReference Include="Blauhaus.Common.Time" Version="1.5.3" />
     <PackageReference Include="Blauhaus.Common.Utils" Version="1.5.3" />
     <PackageReference Include="Blauhaus.DeviceServices.Abstractions" Version="0.6.2" />

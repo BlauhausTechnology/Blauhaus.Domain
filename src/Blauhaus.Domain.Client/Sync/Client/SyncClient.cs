@@ -199,13 +199,13 @@ namespace Blauhaus.Domain.Client.Sync.Client
 
         private async Task LoadNewFromClientAsync(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler, IObserver<TModel> observer, CancellationToken token)
         {
-            TraceStatus(SyncClientState.LoadingLocal, $"Load new from client invoked. Loading any updated models from local store", syncStatusHandler);
+            TraceStatus(SyncClientState.LoadingLocal, $"Connect new from client invoked. Loading any updated models from local store", syncStatusHandler);
             ClientSyncStatus syncStatus = await _syncClientRepository.GetSyncStatusAsync(syncCommand);
             syncCommand.OlderThan = null;
             syncCommand.NewerThan = syncStatus.NewestModifiedAt;
             var localModels = await _syncClientRepository.LoadModelsAsync(syncCommand);
             PublishModelsIfRequired(localModels, observer, syncStatusHandler);
-            TraceStatus(SyncClientState.Completed, $"Load new from client completed. {localModels.Count} loaded", syncStatusHandler);
+            TraceStatus(SyncClientState.Completed, $"Connect new from client completed. {localModels.Count} loaded", syncStatusHandler);
         }
 
         public void Cancel()
