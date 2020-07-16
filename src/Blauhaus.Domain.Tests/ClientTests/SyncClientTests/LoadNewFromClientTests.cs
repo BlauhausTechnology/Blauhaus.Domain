@@ -80,8 +80,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             Assert.AreEqual("Loaded 3 local models", StatusMessages[3]);
             Assert.AreEqual("0 newer TestModel entities downloaded (0 in total). 0 of 0 still to download", StatusMessages[4]);
             Assert.AreEqual("0 older TestModel entities downloaded (0 in total). 0 of 0 still to download", StatusMessages[5]);
-            Assert.AreEqual("Load new from client invoked. Loading any updated models from local store", StatusMessages[6]);
-            Assert.AreEqual("Load new from client completed. 3 loaded", StatusMessages[7]); 
+            Assert.AreEqual("Connect new from client invoked. Loading any updated models from local store", StatusMessages[6]);
+            Assert.AreEqual("Connect new from client completed. 3 loaded", StatusMessages[7]); 
         }
 
 

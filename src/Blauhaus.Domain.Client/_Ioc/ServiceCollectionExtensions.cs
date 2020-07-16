@@ -1,5 +1,6 @@
 ﻿using System;
 using Blauhaus.Domain.Client.CommandHandlers;
+using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Domain.Client.Sync.Collection;
 using Blauhaus.Domain.Client.Sync.Model;
 using Blauhaus.Domain.Client.Sync.Service;
@@ -8,6 +9,7 @@ using Blauhaus.Domain.Common.CommandHandlers.Sync;
 using Blauhaus.Domain.Common.Entities;
 using Blauhaus.Ioc.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Blauhaus.Domain.Client._Ioc
 {
@@ -44,6 +46,7 @@ namespace Blauhaus.Domain.Client._Ioc
             where TSyncCommand : SyncCommand, new()
             where TSyncClientFactory : class, ISyncClientFactory<TSyncCommand>
         {
+            services.TryAddTransient<ISyncStatusHandler, SyncStatusHandler>();
             services.AddTransient<ISyncService, SyncService<TSyncCommand>>();
             services.AddTransient<ISyncClientFactory<TSyncCommand>, TSyncClientFactory>();
             services.AddTransient<ISyncStatusHandlerFactory, SyncstatusHandlerFactory>();
@@ -56,6 +59,7 @@ namespace Blauhaus.Domain.Client._Ioc
             where TListItem : class, IListItem<TModel>, new() 
             where TSyncCommand : SyncCommand, new()
         {
+            services.TryAddTransient<ISyncStatusHandler, SyncStatusHandler>();
             services.AddTransient<ISyncCollection<TModel, TListItem, TSyncCommand>, SyncCollection<TModel, TListItem, TSyncCommand>>(); 
             services.AddTransient<SyncCollection<TModel, TListItem, TSyncCommand>>(); 
             services.AddTransient<TListItem>(); 
@@ -66,6 +70,7 @@ namespace Blauhaus.Domain.Client._Ioc
             where TModel : class, IClientEntity 
             where TSyncCommand : SyncCommand, new()
         {
+            services.TryAddTransient<ISyncStatusHandler, SyncStatusHandler>();
             services.AddTransient<ISyncModel<TModel>, SyncModel<TModel, TSyncCommand>>(); 
             return services;
         }

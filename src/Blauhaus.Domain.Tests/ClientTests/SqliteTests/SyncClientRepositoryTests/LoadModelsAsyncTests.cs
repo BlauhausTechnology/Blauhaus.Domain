@@ -119,6 +119,33 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
         } 
 
         [Test]
+        public async Task WHEN_Id_is_given_and_entity_exists_SHOULD_return_it()
+        {
+            //Act
+            var result = await Sut.LoadModelsAsync(new SqliteTestSyncCommand
+            {
+                Id = _ziggyId
+            });
+
+            //Arrance
+            Assert.That(result.Count, Is.EqualTo(1));
+            Assert.That(result[0].Id, Is.EqualTo(_ziggyId));
+        } 
+
+        [Test]
+        public async Task WHEN_Id_is_given_and_entity_does_not_exist_SHOULD_return_empty()
+        {
+            //Act
+            var result = await Sut.LoadModelsAsync(new SqliteTestSyncCommand
+            {
+                Id = Guid.NewGuid()
+            });
+
+            //Arrance
+            Assert.That(result.Count, Is.EqualTo(0));
+        } 
+
+        [Test]
         public async Task WHEN_QueryGenerator_modifies_query_SHOULD_apply()
         {
             //Arrange
