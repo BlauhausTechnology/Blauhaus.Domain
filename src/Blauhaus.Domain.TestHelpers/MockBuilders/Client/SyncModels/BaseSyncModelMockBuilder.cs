@@ -16,7 +16,11 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncModels
         where TModel : IClientEntity 
         where TBuilder : BaseSyncModelMockBuilder<TBuilder, TSyncModel, TModel>
     {
-        
+        protected BaseSyncModelMockBuilder()
+        {
+            Where_Connect_returns(new List<TModel>());
+        }
+
         public TBuilder Where_Connect_returns(IEnumerable<TModel> models)
         {
             Mock.Setup(x => x.Connect(It.IsAny<Guid>()))
