@@ -48,7 +48,7 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
             var dbQuery = dbQueryResult.Value;
             var traceMessage = string.Empty;
 
-            var totalActiveEntityCount = dbQuery.Count(x => x.EntityState == EntityState.Active);
+            var totalActiveEntityCount = dbQuery.Count(x => x.EntityState != EntityState.Deleted);
 
             if(command.IsForSingleEntity())
             {
@@ -64,7 +64,7 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
 
             else if (command.IsFirstSyncForDevice())
             {
-                dbQuery = dbQuery.Where(x => x.EntityState == EntityState.Active)
+                dbQuery = dbQuery.Where(x => x.EntityState != EntityState.Deleted)
                     .OrderByDescending(x => x.ModifiedAt);
                 traceMessage = "SyncCommand for new device processed";
             }
@@ -73,7 +73,7 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
             {
                 //we are returning entities that don't exist on device so we can ignore deleted entities
                 dbQuery = dbQuery.Where(x => 
-                    x.EntityState == EntityState.Active && 
+                    x.EntityState != EntityState.Deleted && 
                     x.ModifiedAt < command.OlderThan.ToUtcDateTime())
                     .OrderByDescending(x => x.ModifiedAt);
                 traceMessage = "SyncCommand for older entities processed";
