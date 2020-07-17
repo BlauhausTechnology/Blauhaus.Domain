@@ -58,9 +58,8 @@ namespace Blauhaus.Domain.Client._Ioc
             return iocService;
         }
          
-        public static IIocService AddSyncModel<TModel, TListItem, TSyncCommand>(this IIocService iocService) 
+        public static IIocService AddSyncModel<TModel, TSyncCommand>(this IIocService iocService) 
             where TModel : class, IClientEntity 
-            where TListItem : class, IListItem<TModel>
             where TSyncCommand : SyncCommand, new()
         {
             iocService.RegisterImplementation<ISyncStatusHandler, SyncStatusHandler>();
