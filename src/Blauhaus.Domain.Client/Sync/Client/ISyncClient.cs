@@ -14,6 +14,7 @@ namespace Blauhaus.Domain.Client.Sync.Client
         void LoadNextBatch();
         void LoadNewFromServer();
         void LoadNewFromClient();
+        void ReloadFromClient();
         void Cancel();
     }
 }

@@ -108,15 +108,17 @@ namespace Blauhaus.Domain.Tests.ServerTests
             }
 
             [Test]
-            public async Task SHOULD_exclude_inactive_entities()
+            public async Task SHOULD_exclude_deleted_entities()
             {
                 //Arrange
                 _command.OlderThan = DateTime.UtcNow.Ticks;
                 MockQueryLoader.Mock.Setup(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), _user, CancelToken))
                     .ReturnsAsync(Result.Success(new List<TestServerEntity>
                     {
-                        new TestServerEntity(Guid.NewGuid(), EntityState.Deleted, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
                         new TestServerEntity(Guid.NewGuid(), EntityState.Active, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
+                        new TestServerEntity(Guid.NewGuid(), EntityState.Draft, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
+                        new TestServerEntity(Guid.NewGuid(), EntityState.Archived, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
+                        new TestServerEntity(Guid.NewGuid(), EntityState.Deleted, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
                     }.AsQueryable()));
 
                 //Act
@@ -124,9 +126,9 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 var result = queryResult.Value;
 
                 //Assert
-                Assert.AreEqual(1, result.EntityBatch.Count);
-                Assert.AreEqual(1, result.TotalActiveEntityCount); 
-                Assert.AreEqual(1, result.EntitiesToDownloadCount);
+                Assert.AreEqual(3, result.EntityBatch.Count);
+                Assert.AreEqual(3, result.TotalActiveEntityCount); 
+                Assert.AreEqual(3, result.EntitiesToDownloadCount);
                 Assert.IsNull(result.EntityBatch.FirstOrDefault(x => x.EntityState == EntityState.Deleted));
             }
 
@@ -286,14 +288,16 @@ namespace Blauhaus.Domain.Tests.ServerTests
             }
 
             [Test]
-            public async Task SHOULD_exclude_inactive_entities()
+            public async Task SHOULD_exclude_deleted_entities()
             {
                 //Arrange
                 MockQueryLoader.Mock.Setup(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), _user, CancelToken))
                     .ReturnsAsync(Result.Success(new List<TestServerEntity>
                     {
-                        new TestServerEntity(Guid.NewGuid(), EntityState.Deleted, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
                         new TestServerEntity(Guid.NewGuid(), EntityState.Active, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
+                        new TestServerEntity(Guid.NewGuid(), EntityState.Draft, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
+                        new TestServerEntity(Guid.NewGuid(), EntityState.Archived, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
+                        new TestServerEntity(Guid.NewGuid(), EntityState.Deleted, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
                     }.AsQueryable()));
 
                 //Act
@@ -301,9 +305,9 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 var result = queryResult.Value;
 
                 //Assert
-                Assert.AreEqual(1, result.EntityBatch.Count);
-                Assert.AreEqual(1, result.TotalActiveEntityCount); 
-                Assert.AreEqual(1, result.EntitiesToDownloadCount);
+                Assert.AreEqual(3, result.EntityBatch.Count);
+                Assert.AreEqual(3, result.TotalActiveEntityCount); 
+                Assert.AreEqual(3, result.EntitiesToDownloadCount);
                 Assert.IsNull(result.EntityBatch.FirstOrDefault(x => x.EntityState == EntityState.Deleted));
             }
                           

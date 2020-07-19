@@ -1,6 +1,7 @@
 ﻿using Blauhaus.Domain.Client.CommandHandlers;
 using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Domain.Client.Sync.Collection;
+using Blauhaus.Domain.Client.Sync.Model;
 using Blauhaus.Domain.Client.Sync.Service;
 using Blauhaus.Domain.Common.CommandHandlers;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
@@ -47,7 +48,6 @@ namespace Blauhaus.Domain.Client._Ioc
             return iocService;
         }
 
-        
         public static IIocService AddSyncCollection<TModel, TListItem, TSyncCommand>(this IIocService iocService) 
             where TModel : class, IClientEntity 
             where TListItem : class, IListItem<TModel>
@@ -57,5 +57,16 @@ namespace Blauhaus.Domain.Client._Ioc
             iocService.RegisterType<TListItem>(); 
             return iocService;
         }
+         
+        public static IIocService AddSyncModel<TModel, TSyncCommand>(this IIocService iocService) 
+            where TModel : class, IClientEntity 
+            where TSyncCommand : SyncCommand, new()
+        {
+            iocService.RegisterImplementation<ISyncStatusHandler, SyncStatusHandler>();
+            iocService.RegisterImplementation<ISyncModel<TModel>, SyncModel<TModel, TSyncCommand>>(); 
+            return iocService;
+        }
+
+         
     }
 }
