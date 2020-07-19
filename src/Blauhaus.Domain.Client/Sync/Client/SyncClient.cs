@@ -53,6 +53,7 @@ namespace Blauhaus.Domain.Client.Sync.Client
         private event EventHandler LoadNextBatchEvent;
         private event EventHandler LoadNewFromServerEvent;
         private event EventHandler LoadNewFromClientEvent;
+        private event EventHandler ReloadFromClientEvent;
         private event EventHandler CancelEvent;
 
         private long OldestModelPublished => _publishedModels.Count == 0 ? 0 : _publishedModels.Values.Min();
@@ -105,6 +106,9 @@ namespace Blauhaus.Domain.Client.Sync.Client
                 
                 async void HandleLoadNewFromClient(object s, EventArgs e)
                     => await LoadNewFromClientAsync(syncCommand, syncRequirement, syncStatusHandler, observer, _token);
+                
+                async void HandleReloadFromClient(object s, EventArgs e)
+                    => await ReloadFromClientAsync(syncCommand, syncRequirement, syncStatusHandler, observer, _token);
 
                 async void HandleLoadNewFromServer(object s, EventArgs e)
                     => await LoadNewFromServerAsync(syncCommand, syncRequirement, syncStatusHandler, observer, _token);
@@ -115,6 +119,7 @@ namespace Blauhaus.Domain.Client.Sync.Client
                 var loadNextBatchSubscription = Observable.FromEventPattern(x => LoadNextBatchEvent += HandleLoadNextBatch, x => LoadNextBatchEvent -= HandleLoadNextBatch).Subscribe();
                 var loadNewFromServerSubscription = Observable.FromEventPattern(x => LoadNewFromServerEvent += HandleLoadNewFromServer, x => LoadNewFromServerEvent -= HandleLoadNewFromServer).Subscribe();
                 var loadNewFromClientSubscription = Observable.FromEventPattern(x => LoadNewFromClientEvent += HandleLoadNewFromClient, x => LoadNewFromClientEvent -= HandleLoadNewFromClient).Subscribe();
+                var reloadFromClientSubscription = Observable.FromEventPattern(x => ReloadFromClientEvent += HandleReloadFromClient, x => ReloadFromClientEvent -= HandleReloadFromClient).Subscribe();
                 var cancelSubscription = Observable.FromEventPattern(x => CancelEvent += HandleCancel, x => CancelEvent -= HandleCancel).Subscribe();
 
                 if (syncStatus.SyncedLocalEntities == 0)
@@ -152,7 +157,7 @@ namespace Blauhaus.Domain.Client.Sync.Client
                     syncStatusHandler.State = SyncClientState.Completed;
                 }
 
-                return new CompositeDisposable(loadNextBatchSubscription, loadNewFromServerSubscription, loadNewFromClientSubscription, cancelSubscription);
+                return new CompositeDisposable(loadNextBatchSubscription, loadNewFromServerSubscription, loadNewFromClientSubscription, reloadFromClientSubscription, cancelSubscription);
             });
         }
 
@@ -190,6 +195,23 @@ namespace Blauhaus.Domain.Client.Sync.Client
 
                 TraceStatus(SyncClientState.Completed, $"LoadMore completed.", syncStatusHandler);
             } 
+        }
+        
+        public void ReloadFromClient()
+        {
+            ReloadFromClientEvent?.Invoke(this, EventArgs.Empty);
+        }
+
+        private async Task ReloadFromClientAsync(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler, IObserver<TModel> observer, CancellationToken token)
+        {
+            TraceStatus(SyncClientState.LoadingLocal, $"Reload from client invoked. Loading all models from local store", syncStatusHandler);
+            ClientSyncStatus syncStatus = await _syncClientRepository.GetSyncStatusAsync(syncCommand);
+            syncCommand.OlderThan = null;
+            syncCommand.NewerThan = null;
+            var localModels = await _syncClientRepository.LoadModelsAsync(syncCommand);
+            _publishedModels.Clear();
+            PublishModelsIfRequired(localModels, observer, syncStatusHandler);
+            TraceStatus(SyncClientState.Completed, $"Reload from client completed. {localModels.Count} loaded", syncStatusHandler);
         }
 
         public void LoadNewFromClient()
