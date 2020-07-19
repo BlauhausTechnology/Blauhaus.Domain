@@ -74,12 +74,7 @@ namespace Blauhaus.Domain.Client.Sync.Collection
         {
             _syncClient.LoadNewFromClient();
         }
-
-        public void ReloadFromClient()
-        {
-            _syncClient.ReloadFromClient();
-        }
-
+         
         private void OnNext(TModel nextModel)
         {
             try
