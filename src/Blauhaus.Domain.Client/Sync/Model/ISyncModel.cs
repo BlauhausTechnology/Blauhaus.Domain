@@ -8,5 +8,6 @@ namespace Blauhaus.Domain.Client.Sync.Model
     {
         IObservable<TModel> Connect(Guid id);
         void LoadNewFromServer();
+        void LoadNewFromClient();
     }
 }
