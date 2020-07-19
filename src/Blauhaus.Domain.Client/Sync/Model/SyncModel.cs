@@ -80,5 +80,10 @@ namespace Blauhaus.Domain.Client.Sync.Model
         {
             _syncClient.LoadNewFromClient();
         }
+
+        public void ReloadFromClient()
+        {
+            _syncClient.ReloadFromClient();
+        }
     }
 }

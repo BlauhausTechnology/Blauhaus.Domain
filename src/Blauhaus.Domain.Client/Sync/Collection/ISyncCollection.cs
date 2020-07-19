@@ -14,7 +14,8 @@ namespace Blauhaus.Domain.Client.Sync.Collection
         public ISyncStatusHandler SyncStatusHandler { get; }
 
         void Initialize();
-        void ReloadFromServer();
+        void LoadNewFromServer();
+        void LoadNewFromClient();
         void ReloadFromClient();
     }
 

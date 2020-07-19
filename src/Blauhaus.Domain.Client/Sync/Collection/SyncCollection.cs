@@ -65,14 +65,19 @@ namespace Blauhaus.Domain.Client.Sync.Collection
             }
         }
 
-        public void ReloadFromServer()
+        public void LoadNewFromServer()
         {
             _syncClient.LoadNewFromServer();
         }
 
-        public void ReloadFromClient()
+        public void LoadNewFromClient()
         {
             _syncClient.LoadNewFromClient();
+        }
+
+        public void ReloadFromClient()
+        {
+            _syncClient.ReloadFromClient();
         }
 
         private void OnNext(TModel nextModel)
