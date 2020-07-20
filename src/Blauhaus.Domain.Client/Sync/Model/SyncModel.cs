@@ -31,6 +31,8 @@ namespace Blauhaus.Domain.Client.Sync.Model
             _analyticsService = analyticsService;
         }
 
+        //todo add errorHandler? SyncCollection does but SyncModel returns a notfound error and needs the caller to handle it
+        //todo perhaps this could call OnComplete if nothing is found? 
         public IObservable<TModel> Connect(Guid id)
         {
            
