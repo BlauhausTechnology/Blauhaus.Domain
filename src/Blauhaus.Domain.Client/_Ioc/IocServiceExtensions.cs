@@ -18,9 +18,11 @@ namespace Blauhaus.Domain.Client._Ioc
             where TModel : class, IClientEntity 
             where TCommandConverter : class, ICommandConverter<TCommandDto, TCommand>
             where TDtoCommandHandler : class, ICommandHandler<TModelDto, TCommandDto>
+            where TCommandDto : notnull
+            where TCommand : notnull
         {
             
-            iocService.RegisterImplementation<ICommandHandler<TModel, TCommand>, EntityCommandClientHandler<TModel, TModelDto, TCommandDto, TCommand>>();
+            iocService.RegisterImplementation<ICommandHandler<TModel, TCommand>, EntityCommandClientHandler<TModel, TModelDto, TCommandDto, TCommand>>(IocLifetime.Singleton);
             iocService.RegisterImplementation<ICommandConverter<TCommandDto, TCommand>, TCommandConverter>();
             iocService.RegisterImplementation<ICommandHandler<TModelDto, TCommandDto>, TDtoCommandHandler>();
             return iocService;
@@ -29,8 +31,10 @@ namespace Blauhaus.Domain.Client._Ioc
         public static IIocService AddVoidClientCommandHandler<TCommandDto, TCommand, TCommandConverter, TDtoCommandHandler>(this IIocService iocService) 
             where TCommandConverter : class, ICommandConverter<TCommandDto, TCommand>
             where TDtoCommandHandler : class, IVoidCommandHandler<TCommandDto>
+            where TCommandDto : notnull
+            where TCommand : notnull
         {
-            iocService.RegisterImplementation<IVoidCommandHandler<TCommand>, VoidCommandClientHandler<TCommandDto, TCommand>>();
+            iocService.RegisterImplementation<IVoidCommandHandler<TCommand>, VoidCommandClientHandler<TCommandDto, TCommand>>(IocLifetime.Singleton);
             iocService.RegisterImplementation<ICommandConverter<TCommandDto, TCommand>, TCommandConverter>();
             iocService.RegisterImplementation<IVoidCommandHandler<TCommandDto>, TDtoCommandHandler>();
             return iocService;
