@@ -23,7 +23,7 @@ namespace Blauhaus.Domain.Client._Ioc
             where TCommandDto : notnull
         {
 
-            services.AddTransient<ICommandHandler<TModel, TCommand>, EntityCommandClientHandler<TModel, TModelDto, TCommandDto, TCommand>>();
+            services.AddScoped<ICommandHandler<TModel, TCommand>, EntityCommandClientHandler<TModel, TModelDto, TCommandDto, TCommand>>();
             services.AddTransient<ICommandConverter<TCommandDto, TCommand>, TCommandConverter>();
             services.AddTransient<ICommandHandler<TModelDto, TCommandDto>, TDtoCommandHandler>();
             return services;
@@ -35,7 +35,7 @@ namespace Blauhaus.Domain.Client._Ioc
             where TCommand : notnull
             where TCommandDto : notnull
         {
-            services.AddTransient<IVoidCommandHandler<TCommand>, VoidCommandClientHandler<TCommandDto, TCommand>>();
+            services.AddScoped<IVoidCommandHandler<TCommand>, VoidCommandClientHandler<TCommandDto, TCommand>>();
             services.AddTransient<ICommandConverter<TCommandDto, TCommand>, TCommandConverter>();
             services.AddTransient<IVoidCommandHandler<TCommandDto>, TDtoCommandHandler>();
             return services;
