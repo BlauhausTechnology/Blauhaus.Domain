@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using Blauhaus.Common.Utils.Extensions;
+using Blauhaus.Domain.Common.Entities;
 using Blauhaus.Errors;
 
 namespace Blauhaus.Domain.Common.Errors
@@ -26,6 +27,9 @@ namespace Blauhaus.Domain.Common.Errors
         
         public static Error Duplicate<T>(Expression<Func<T, object>> expression, object value) 
             => Error.Create($"{typeof(T).Name} already exists with {expression.ToPropertyName()} == {value}");
+
+        public static Error InvalidState() => Error.Create("Entity state is invalid for this operation");
+        public static Error InvalidState(EntityState state) => Error.Create($"{state} is an invalid state for this operation");
 
 
         public static Error InvalidDateFormat = Error.Create("Dates and times must be in UTC format");
