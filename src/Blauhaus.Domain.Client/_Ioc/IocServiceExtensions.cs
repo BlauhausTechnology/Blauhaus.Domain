@@ -48,7 +48,7 @@ namespace Blauhaus.Domain.Client._Ioc
             iocService.RegisterImplementation<ISyncStatusHandler, SyncStatusHandler>();
             iocService.RegisterImplementation<ISyncService, SyncService<TSyncCommand>>();
             iocService.RegisterImplementation<ISyncClientFactory<TSyncCommand>, TSyncClientFactory>();
-            iocService.RegisterImplementation<ISyncStatusHandlerFactory, SyncstatusHandlerFactory>();
+            iocService.RegisterImplementation<ISyncStatusHandler, SyncStatusHandler>();
             return iocService;
         }
 
