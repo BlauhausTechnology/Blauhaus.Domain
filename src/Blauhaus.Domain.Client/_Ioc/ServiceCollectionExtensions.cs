@@ -49,7 +49,7 @@ namespace Blauhaus.Domain.Client._Ioc
             services.TryAddTransient<ISyncStatusHandler, SyncStatusHandler>();
             services.AddTransient<ISyncService, SyncService<TSyncCommand>>();
             services.AddTransient<ISyncClientFactory<TSyncCommand>, TSyncClientFactory>();
-            services.AddTransient<ISyncStatusHandlerFactory, SyncstatusHandlerFactory>();
+            services.AddTransient<ISyncStatusHandler, SyncStatusHandler>();
             return services;
         }
          
