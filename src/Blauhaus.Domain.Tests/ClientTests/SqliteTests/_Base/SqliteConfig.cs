@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Blauhaus.ClientDatabase.Sqlite.Config;
+using Blauhaus.DeviceServices.Abstractions.DeviceInfo;
 using Blauhaus.Domain.Tests.ClientTests.SqliteTests._TestObjects;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests._Base
 {
     public class SqliteConfig : ISqliteConfig
     {
-        public SqliteConfig()
+        public SqliteConfig(IDeviceInfoService deviceInfoService)
         {
-            DatabaseName = "SqliteTestDb";
+            DatabasePath = Path.Combine(deviceInfoService.AppDataFolder, "SqliteTestDb.sqlite");
+
             TableTypes = new List<Type>
             {
                 typeof(SqliteTestRootEntity),
@@ -18,7 +21,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests._Base
             };
         }
 
-        public string DatabaseName { get; }
         public IList<Type> TableTypes { get; }
+        public string DatabasePath { get; }
     }
 }

@@ -23,7 +23,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests._Base
         public virtual void Setup()
         {
             Cleanup();            
-            SqliteDatabaseService = new SqliteInMemoryDatabase(new SqliteConfig());
+            SqliteDatabaseService = new SqliteInMemoryDatabase(new SqliteConfig(MockDeviceInfoService.Object));
             Task.Run(async () => await SqliteDatabaseService.DropTablesAsync()).Wait();
             Connection = SqliteDatabaseService.GetDatabaseConnectionAsync().Result;
             AddService(SqliteDatabaseService);
