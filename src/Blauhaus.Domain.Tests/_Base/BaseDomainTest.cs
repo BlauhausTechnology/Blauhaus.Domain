@@ -7,6 +7,7 @@ using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Common;
 using Blauhaus.Errors.Handler;
 using Blauhaus.Ioc.Abstractions;
+using Blauhaus.Ioc.TestHelpers;
 using Blauhaus.TestHelpers.BaseTests;
 using Blauhaus.TestHelpers.MockBuilders;
 using NUnit.Framework;

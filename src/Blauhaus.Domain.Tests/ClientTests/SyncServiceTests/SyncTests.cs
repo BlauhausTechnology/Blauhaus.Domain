@@ -6,8 +6,10 @@ using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Domain.Client.Sync.Service;
 using Blauhaus.Domain.TestHelpers.Extensions;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Common;
 using Blauhaus.Domain.Tests._Base; 
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
+using Blauhaus.Ioc.Abstractions;
 using Blauhaus.TestHelpers.MockBuilders;
 using Moq;
 using NUnit.Framework;
@@ -20,9 +22,9 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncServiceTests
         private List<SyncUpdate> _syncUpdates;
         private SyncStatusHandlerMockBuilder _syncHandler;
         private SyncStatusHandlerMockBuilder _syncHandlerToo;
+        
         protected SyncClientMockBuilder<TestModel, TestSyncCommand> MockSyncClient => Mocks.AddMockSyncClient<TestModel, TestSyncCommand>().Invoke();
         protected SyncClientMockBuilder<TestModelToo, TestSyncCommand> MockSyncClientToo => Mocks.AddMockSyncClient<TestModelToo, TestSyncCommand>().Invoke();
-        protected SyncStatusHandlerFactoryMockBuilder MockSyncStatusHandlerFactory => AddMock<SyncStatusHandlerFactoryMockBuilder, ISyncStatusHandlerFactory>().Invoke();
         protected MockBuilder<ISyncClientFactory<TestSyncCommand>> MockSyncClientFactory => AddMock<ISyncClientFactory<TestSyncCommand>>().Invoke();
 
         public override void Setup()
@@ -31,7 +33,6 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncServiceTests
 
             AddService(x => MockSyncClient.Object);
             AddService(x => MockSyncClientToo.Object);
-            AddService(x => MockSyncStatusHandlerFactory.Object);
             AddService(x => MockSyncClientFactory.Object);
 
             MockSyncClient.Where_Connect_returns(new List<TestModel>());
@@ -47,7 +48,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncServiceTests
             _tcs = new TaskCompletionSource<List<SyncUpdate>>();
             _syncUpdates = new List<SyncUpdate>();
 
-            MockSyncStatusHandlerFactory.Where_Get_returns(new List<ISyncStatusHandler>{ _syncHandler.Object, _syncHandlerToo.Object});
+            MockServiceLocator.Where_Resolve_returns_sequence(new List<ISyncStatusHandler>{ _syncHandler.Object, _syncHandlerToo.Object});
         }
 
         [Test]

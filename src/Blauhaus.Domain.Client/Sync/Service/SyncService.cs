@@ -7,6 +7,7 @@ using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Domain.Common.CommandHandlers.Sync;
+using Blauhaus.Ioc.Abstractions;
 
 namespace Blauhaus.Domain.Client.Sync.Service
 {
@@ -14,17 +15,18 @@ namespace Blauhaus.Domain.Client.Sync.Service
         where TSyncCommand : SyncCommand, new()
     {
         private readonly IAnalyticsService _analyticsService;
+        private readonly IServiceLocator _serviceLocator;
         private readonly ISyncClientFactory<TSyncCommand> _syncClientFactory;
-        private readonly ISyncStatusHandlerFactory _syncStatusHandlerFactory;
 
         public SyncService(
             IAnalyticsService analyticsService,
-            ISyncClientFactory<TSyncCommand> syncClientFactory,
-            ISyncStatusHandlerFactory syncStatusHandlerFactory)
+            IServiceLocator serviceLocator, 
+            ISyncClientFactory<TSyncCommand> syncClientFactory)     //todo maybe try and use ServiceLocator to resolve clients
         {
             _analyticsService = analyticsService;
+            _serviceLocator = serviceLocator;
             _syncClientFactory = syncClientFactory;
-            _syncStatusHandlerFactory = syncStatusHandlerFactory;
+             
         }
 
         public IObservable<SyncUpdate> Sync() 
@@ -42,7 +44,7 @@ namespace Blauhaus.Domain.Client.Sync.Service
                 {
                     var id = i;
                     var syncClient = syncClients[i];
-                    var syncStatusHandler = _syncStatusHandlerFactory.Get();
+                    var syncStatusHandler = _serviceLocator.Resolve<ISyncStatusHandler>();
 
                     void HandleStatusChanged(object s, PropertyChangedEventArgs e)
                     {
