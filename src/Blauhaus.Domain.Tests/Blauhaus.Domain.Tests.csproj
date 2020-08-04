@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Blauhaus.Analytics.TestHelpers" Version="0.9.2" />
-    <PackageReference Include="Blauhaus.DeviceServices.TestHelpers" Version="0.7.6" />
+    <PackageReference Include="Blauhaus.DeviceServices.TestHelpers" Version="0.7.7" />
     <PackageReference Include="Blauhaus.Ioc.TestHelpers" Version="0.9.2" />
     <PackageReference Include="Blauhaus.TestHelpers" Version="1.0.23" />
     <PackageReference Include="nunit" Version="3.12.0" />
