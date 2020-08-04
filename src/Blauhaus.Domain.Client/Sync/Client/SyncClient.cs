@@ -286,7 +286,7 @@ namespace Blauhaus.Domain.Client.Sync.Client
                     syncStatusHandler.StatusMessage = errorMessage;
 
                     observer.OnError(serverDownloadResult.Error.IsError(out var error) 
-                        ? new ErrorException(error, errorMessage) 
+                        ? new ErrorException(error) 
                         : new Exception(errorMessage));
 
                 }
