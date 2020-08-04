@@ -121,7 +121,6 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 await Task.Delay(20);
 
                 //Assert
-                Assert.AreEqual($"Failed to load TestModel entities from server: {AuthErrors.NotAuthenticated}", e.Message);
                 Assert.That(e, Is.InstanceOf<ErrorException>());
                 Assert.That(((ErrorException)e).Error, Is.EqualTo(AuthErrors.NotAuthenticated));
                 MockAnalyticsService.VerifyTrace("Failed to load TestModel entities from server: " + AuthErrors.NotAuthenticated, LogSeverity.Error);
