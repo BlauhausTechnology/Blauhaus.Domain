@@ -101,10 +101,8 @@ namespace Blauhaus.Domain.Tests.ServerTests
                     _entities[7], 
                     _entities[8]
                 }); 
-                MockAnalyticsService.VerifyTrace("SyncCommand for older entities processed");
-                MockAnalyticsService.VerifyTraceProperty("TotalActiveEntityCount", 12);
-                MockAnalyticsService.VerifyTraceProperty("EntitiesToDownloadCount", 6);
-                MockAnalyticsService.VerifyTraceProperty("EntityBatchCount", 3);
+                MockAnalyticsService.VerifyTrace("SyncCommand for older TestServerEntity entities processed. 3 returned. 3 still to send out of 12 in total");
+ 
             }
 
             [Test]
@@ -194,10 +192,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
                     _entities[3], 
                     _entities[2]
                 }); 
-                MockAnalyticsService.VerifyTrace("SyncCommand for newer entities processed");
-                MockAnalyticsService.VerifyTraceProperty("TotalActiveEntityCount", 12);
-                MockAnalyticsService.VerifyTraceProperty("EntitiesToDownloadCount", 5);
-                MockAnalyticsService.VerifyTraceProperty("EntityBatchCount", 3);
+                MockAnalyticsService.VerifyTrace("SyncCommand for newer TestServerEntity entities processed. 3 returned. 2 still to send out of 12 in total");
             }
             
             [Test]
@@ -281,10 +276,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
                     _entities[1], 
                     _entities[2]
                 }); 
-                MockAnalyticsService.VerifyTrace("SyncCommand for new device processed");
-                MockAnalyticsService.VerifyTraceProperty("TotalActiveEntityCount", 12);
-                MockAnalyticsService.VerifyTraceProperty("EntitiesToDownloadCount", 12);
-                MockAnalyticsService.VerifyTraceProperty("EntityBatchCount", 3);
+                MockAnalyticsService.VerifyTrace("SyncCommand for all TestServerEntity entities processed. 3 returned. 9 still to send out of 12 in total");
             }
 
             [Test]
@@ -388,10 +380,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 {
                     _entities[4]
                 }); 
-                MockAnalyticsService.VerifyTrace("SyncCommand for single entity processed");
-                MockAnalyticsService.VerifyTraceProperty("TotalActiveEntityCount", 12);
-                MockAnalyticsService.VerifyTraceProperty("EntitiesToDownloadCount", 1);
-                MockAnalyticsService.VerifyTraceProperty("EntityBatchCount", 1);
+                MockAnalyticsService.VerifyTrace("SyncCommand for single TestServerEntity entity processed. 1 returned. 0 still to send out of 12 in total");
             }
 
             [Test]
@@ -409,10 +398,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 Assert.AreEqual(12, result.TotalActiveEntityCount); 
                 Assert.AreEqual(0, result.EntitiesToDownloadCount); 
                 Assert.AreEqual(0, result.EntityBatch.Count);  
-                MockAnalyticsService.VerifyTrace("SyncCommand for single entity processed");
-                MockAnalyticsService.VerifyTraceProperty("TotalActiveEntityCount", 12);
-                MockAnalyticsService.VerifyTraceProperty("EntitiesToDownloadCount", 0);
-                MockAnalyticsService.VerifyTraceProperty("EntityBatchCount", 0);
+                MockAnalyticsService.VerifyTrace("SyncCommand for single TestServerEntity entity processed. 0 returned. 0 still to send out of 12 in total"); 
             }
 
             [Test]
@@ -434,10 +420,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 {
                     _entities[4]
                 }); 
-                MockAnalyticsService.VerifyTrace("SyncCommand for single entity processed");
-                MockAnalyticsService.VerifyTraceProperty("TotalActiveEntityCount", 12);
-                MockAnalyticsService.VerifyTraceProperty("EntitiesToDownloadCount", 1);
-                MockAnalyticsService.VerifyTraceProperty("EntityBatchCount", 1);
+                MockAnalyticsService.VerifyTrace("SyncCommand for single TestServerEntity entity processed. 1 returned. 0 still to send out of 12 in total");
             }
         }
          

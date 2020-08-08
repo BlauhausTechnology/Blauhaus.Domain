@@ -38,7 +38,6 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
 
                 //Assert
                 MockBaseSyncClientRepository.Mock.Verify(x => x.GetSyncStatusAsync(SyncCommand));
-                MockAnalyticsService.VerifyTraceProperty(nameof(ClientSyncStatus), clientSyncStatus);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.AllLocalEntities = 3);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.SyncedLocalEntities = 2);
                 MockSyncStatusHandler.Mock.VerifySet(x => x.IsConnected = true);
