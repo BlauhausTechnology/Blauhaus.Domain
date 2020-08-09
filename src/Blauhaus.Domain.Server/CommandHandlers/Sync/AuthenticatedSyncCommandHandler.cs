@@ -49,6 +49,8 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
 
             var totalActiveEntityCount = dbQuery.Count(x => x.EntityState != EntityState.Deleted);
 
+            var entityName = typeof(TEntity).Name;
+
             if(command.IsForSingleEntity())
             {
                 dbQuery = dbQuery.Where(x => x.Id == command.Id.Value);
@@ -58,14 +60,14 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
                     dbQuery = dbQuery.Where(x => x.ModifiedAt > command.NewerThan.ToUtcDateTime());
                 }
 
-                traceMessage = "SyncCommand for single entity processed";
+                traceMessage = $"SyncCommand for single {entityName} entity processed";
             }
 
             else if (command.IsFirstSyncForDevice())
             {
                 dbQuery = dbQuery.Where(x => x.EntityState != EntityState.Deleted)
                     .OrderByDescending(x => x.ModifiedAt);
-                traceMessage = "SyncCommand for new device processed";
+                traceMessage = $"SyncCommand for all {entityName} entities processed";
             }
 
             else if (command.IsForOlderEntities())
@@ -75,14 +77,14 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
                     x.EntityState != EntityState.Deleted && 
                     x.ModifiedAt < command.OlderThan.ToUtcDateTime())
                     .OrderByDescending(x => x.ModifiedAt);
-                traceMessage = "SyncCommand for older entities processed";
+                traceMessage = $"SyncCommand for older {entityName} entities processed";
             }
              
             else if (command.IsForNewerEntities())
             {
                 dbQuery = dbQuery.Where(x => x.ModifiedAt > command.NewerThan.ToUtcDateTime())
                     .OrderBy(x => x.ModifiedAt);
-                traceMessage = "SyncCommand for newer entities processed";
+                traceMessage = $"SyncCommand for newer {entityName} entities processed";
             }
              
             var modifiedEntityCount = dbQuery.Count();
@@ -91,12 +93,9 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
                 .Take(command.BatchSize)
                 .ToList();
 
-            _analyticsService.TraceVerbose(this, traceMessage, new Dictionary<string, object>
-            {
-                {nameof(SyncResult<TEntity>.EntityBatch) + "Count", entities.Count},
-                {nameof(SyncResult<TEntity>.TotalActiveEntityCount), totalActiveEntityCount},
-                {nameof(SyncResult<TEntity>.EntitiesToDownloadCount), modifiedEntityCount}
-            });
+            traceMessage += $". {entities.Count} returned. {modifiedEntityCount - entities.Count} still to send out of {totalActiveEntityCount} in total";
+
+            _analyticsService.TraceVerbose(this, traceMessage);
 
             return Result.Success(new SyncResult<TEntity>
             {
