@@ -79,11 +79,7 @@ namespace Blauhaus.Domain.Client.Sync.Client
 
         public IObservable<TModel> Connect(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler)
         {
-            TraceStatus(SyncClientState.Starting, $"{typeof(TModel).Name} SyncClient connected. Required: {syncRequirement} (batch size {syncCommand.BatchSize})", syncStatusHandler, new Dictionary<string, object>
-            {
-                {"SyncCommand", syncCommand},
-                {"SyncRequirement", syncRequirement}
-            });
+            TraceStatus(SyncClientState.Starting, $"{typeof(TModel).Name} SyncClient connected. Required: {syncRequirement} (batch size {syncCommand.BatchSize})", syncStatusHandler);
 
             _numberOfModelsToPublish = syncCommand.BatchSize;
             syncStatusHandler.PublishedEntities = 0;
@@ -95,7 +91,7 @@ namespace Blauhaus.Domain.Client.Sync.Client
                 
                 ClientSyncStatus syncStatus = await _syncClientRepository.GetSyncStatusAsync(syncCommand);
 
-                TraceStatus(SyncClientState.Starting, $"Initializing sync for {typeof(TModel).Name}. Local status {syncStatus}", syncStatusHandler, syncStatus.ToObjectDictionary(nameof(ClientSyncStatus)));
+                TraceStatus(SyncClientState.Starting, $"Initializing sync for {typeof(TModel).Name}. Local status {syncStatus}", syncStatusHandler);
                 
                 syncStatusHandler.IsConnected = _connectivityService.IsConnectedToInternet;
                 syncStatusHandler.AllLocalEntities = syncStatus.AllLocalEntities;
@@ -205,7 +201,6 @@ namespace Blauhaus.Domain.Client.Sync.Client
         private async Task ReloadFromClientAsync(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler, IObserver<TModel> observer, CancellationToken token)
         {
             TraceStatus(SyncClientState.LoadingLocal, $"Reload from client invoked. Loading all models from local store", syncStatusHandler);
-            ClientSyncStatus syncStatus = await _syncClientRepository.GetSyncStatusAsync(syncCommand);
             syncCommand.OlderThan = null;
             syncCommand.NewerThan = null;
             var localModels = await _syncClientRepository.LoadModelsAsync(syncCommand);
@@ -362,11 +357,11 @@ namespace Blauhaus.Domain.Client.Sync.Client
             }
         }
         
-        private void TraceStatus(SyncClientState state, string message, ISyncStatusHandler statusHandler, Dictionary<string, object>? properties = null)
+        private void TraceStatus(SyncClientState state, string message, ISyncStatusHandler statusHandler)
         {
             statusHandler.StatusMessage = message;
             statusHandler.State = state;
-            _analyticsService.TraceVerbose(this, $"{state}: {message}", properties ?? statusHandler.ToObjectDictionary("SyncStatus"));
+            _analyticsService.TraceVerbose(this, $"{state}: {message}");
         }
          
 
