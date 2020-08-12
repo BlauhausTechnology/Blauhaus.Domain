@@ -1,7 +1,7 @@
 ﻿using System;
 using Blauhaus.Domain.Common.Entities;
 
-namespace Blauhaus.Domain.Server.EFCore.Entities
+namespace Blauhaus.Domain.Server.Entities
 {
     public abstract class BaseEntity : IServerEntity
     {

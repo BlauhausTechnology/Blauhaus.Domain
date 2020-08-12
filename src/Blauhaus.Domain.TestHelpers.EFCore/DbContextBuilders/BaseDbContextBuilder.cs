@@ -13,16 +13,12 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.DbContextBuilders
         where TDbContext : DbContext 
         where TBuilder : BaseDbContextBuilder<TBuilder, TDbContext>
     {
-        private readonly DbContextOptions<TDbContext> _options;
         private readonly LoggerFactory _loggerFactory;
          
         protected BaseDbContextBuilder()
         {
-            _loggerFactory = new LoggerFactory(new[] 
-            {
-                new ConsoleLoggerProvider((_, __) => true, true)
-            });
-
+            _loggerFactory = new LoggerFactory();
+            _loggerFactory.AddConsole();
         }
 
 
