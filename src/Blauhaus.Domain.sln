@@ -18,7 +18,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blauhaus.Domain.TestHelpers", "Blauhaus.Domain.TestHelpers\Blauhaus.Domain.TestHelpers.csproj", "{41628AB2-A8CF-416C-B7D3-3C5CCEE2239B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blauhaus.Domain.Client.Sqlite", "Blauhaus.Domain.Client.Sqlite\Blauhaus.Domain.Client.Sqlite.csproj", "{789193CE-CFAA-4960-836C-1B6E6E88ADEE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blauhaus.Domain.Client.Sqlite", "Blauhaus.Domain.Client.Sqlite\Blauhaus.Domain.Client.Sqlite.csproj", "{789193CE-CFAA-4960-836C-1B6E6E88ADEE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blauhaus.Domain.Server.EFCore", "Blauhaus.Domain.Server.EFCore\Blauhaus.Domain.Server.EFCore.csproj", "{7E06B181-B090-44E7-82B1-A4F37D2849EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blauhaus.Domain.TestHelpers.EFCore", "Blauhaus.Domain.TestHelpers.EFCore\Blauhaus.Domain.TestHelpers.EFCore.csproj", "{8013A032-AC65-4615-9332-DEF3ECD4848F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,6 +54,14 @@ Global
 		{789193CE-CFAA-4960-836C-1B6E6E88ADEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{789193CE-CFAA-4960-836C-1B6E6E88ADEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{789193CE-CFAA-4960-836C-1B6E6E88ADEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E06B181-B090-44E7-82B1-A4F37D2849EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E06B181-B090-44E7-82B1-A4F37D2849EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E06B181-B090-44E7-82B1-A4F37D2849EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E06B181-B090-44E7-82B1-A4F37D2849EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8013A032-AC65-4615-9332-DEF3ECD4848F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8013A032-AC65-4615-9332-DEF3ECD4848F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8013A032-AC65-4615-9332-DEF3ECD4848F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8013A032-AC65-4615-9332-DEF3ECD4848F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
