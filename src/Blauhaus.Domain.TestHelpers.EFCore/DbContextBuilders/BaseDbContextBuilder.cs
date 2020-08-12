@@ -2,9 +2,6 @@
 using Blauhaus.TestHelpers.Builders._Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 
 namespace Blauhaus.Domain.TestHelpers.EFCore.DbContextBuilders

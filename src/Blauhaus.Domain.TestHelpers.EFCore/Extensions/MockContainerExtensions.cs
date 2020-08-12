@@ -13,7 +13,7 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.Extensions
             return mocks.AddMock<SqliteInMemoryDbContextBuilder<TDbContext>, TDbContext>();
         }
 
-        public static Func<InMemoryDbContextBuilder<TDbContext>> AdInMemoryDbContext<TDbContext>(this MockContainer mocks) 
+        public static Func<InMemoryDbContextBuilder<TDbContext>> AddInMemoryDbContext<TDbContext>(this MockContainer mocks) 
             where TDbContext : DbContext
         {
             return mocks.AddMock<InMemoryDbContextBuilder<TDbContext>, TDbContext>();

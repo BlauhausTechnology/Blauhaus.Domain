@@ -17,8 +17,8 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.DbContextBuilders
         protected override DbContextOptions<TDbContext> GetOptions()
         {
             return new DbContextOptionsBuilder<TDbContext>()
-                .UseLoggerFactory(_loggerFactory)
-                .EnableSensitiveDataLogging()
+                //.UseLoggerFactory(_loggerFactory)
+                //.EnableSensitiveDataLogging()
                 .EnableDetailedErrors()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
         }

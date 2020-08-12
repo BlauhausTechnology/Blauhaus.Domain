@@ -29,8 +29,8 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.DbContextBuilders
 
             //Now we have the EF Core commands to create SQLite options
             var options = new DbContextOptionsBuilder<TDbContext>();
-            options.EnableSensitiveDataLogging();
-            options.UseLoggerFactory(_loggerFactory);
+            //options.EnableSensitiveDataLogging();
+            //options.UseLoggerFactory(_loggerFactory);
             options.UseSqlite(connection);
 
             return options.Options;
