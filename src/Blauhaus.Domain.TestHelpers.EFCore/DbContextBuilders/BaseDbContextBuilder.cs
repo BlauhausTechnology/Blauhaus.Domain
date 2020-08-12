@@ -13,20 +13,22 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.DbContextBuilders
         where TDbContext : DbContext 
         where TBuilder : BaseDbContextBuilder<TBuilder, TDbContext>
     {
-        private readonly LoggerFactory _loggerFactory;
-         
-        protected BaseDbContextBuilder()
-        {
-            _loggerFactory = new LoggerFactory();
-            _loggerFactory.AddConsole();
-        }
-
+          
 
         protected override TDbContext Construct()
         {
-            return (TDbContext) Activator.CreateInstance(typeof(TDbContext), GetOptions(_loggerFactory));
+            return (TDbContext) Activator.CreateInstance(typeof(TDbContext), GetOptions());
         }
 
-        protected abstract DbContextOptions<TDbContext> GetOptions(LoggerFactory loggerFactory);
+        protected abstract DbContextOptions<TDbContext> GetOptions();
+
+        protected LoggerFactory CreateLogger() 
+        {
+            return new LoggerFactory (new [] {
+                new ConsoleLoggerProvider ((category, level) =>
+                    category == DbLoggerCategory.Database.Command.Name &&
+                    level == LogLevel.Information, true)
+            });
+        }
     }
 }
