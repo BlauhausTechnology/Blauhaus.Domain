@@ -1,20 +1,17 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Blauhaus.Domain.TestHelpers.EFCore.DbContextBuilders
 {
-    public class InMemoryDbContextProvider<TDbContext> : BaseDbContextBuilder<InMemoryDbContextProvider<TDbContext>, TDbContext> 
+    public class InMemoryDbContextBuilder<TDbContext> : BaseDbContextBuilder<InMemoryDbContextBuilder<TDbContext>, TDbContext> 
         where TDbContext : DbContext
-    {
-        public InMemoryDbContextProvider() 
-            : base(GetOptions())
-        {
-        }
+    {  
 
-        private static DbContextOptions<TDbContext> GetOptions()
+        protected override DbContextOptions<TDbContext> GetOptions(LoggerFactory loggerFactory)
         {
             return new DbContextOptionsBuilder<TDbContext>()
-                .UseLoggerFactory(LoggerFactory)
+                .UseLoggerFactory(loggerFactory)
                 .EnableSensitiveDataLogging()
                 .EnableDetailedErrors()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;

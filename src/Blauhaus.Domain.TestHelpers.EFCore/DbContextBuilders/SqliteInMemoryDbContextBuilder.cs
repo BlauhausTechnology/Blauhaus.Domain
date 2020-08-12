@@ -1,16 +1,12 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Blauhaus.Domain.TestHelpers.EFCore.DbContextBuilders
 {
     public class SqliteInMemoryDbContextBuilder<TDbContext> : BaseDbContextBuilder<SqliteInMemoryDbContextBuilder<TDbContext>, TDbContext> where TDbContext : DbContext
-    {
-        public SqliteInMemoryDbContextBuilder() 
-            : base(GetOptions())
-        {
-        }
-
-        private static DbContextOptions<TDbContext> GetOptions()
+    {  
+        protected override DbContextOptions<TDbContext> GetOptions(LoggerFactory loggerFactory)
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = ":memory:" };
             var connectionString = connectionStringBuilder.ToString();
@@ -25,7 +21,7 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.DbContextBuilders
             //Now we have the EF Core commands to create SQLite options
             var options = new DbContextOptionsBuilder<TDbContext>();
             options.EnableSensitiveDataLogging();
-            options.UseLoggerFactory(LoggerFactory);
+            options.UseLoggerFactory(loggerFactory);
             options.UseSqlite(connection);
 
             return options.Options;

@@ -9,30 +9,28 @@ using Microsoft.Extensions.Logging.Console;
 
 namespace Blauhaus.Domain.TestHelpers.EFCore.DbContextBuilders
 {
-    public abstract class BaseDbContextBuilder<TBuilder, TContext> : BaseBuilder<TBuilder, TContext>
-        where TContext : DbContext 
-        where TBuilder : BaseDbContextBuilder<TBuilder, TContext>
+    public abstract class BaseDbContextBuilder<TBuilder, TDbContext> : BaseBuilder<TBuilder, TDbContext>
+        where TDbContext : DbContext 
+        where TBuilder : BaseDbContextBuilder<TBuilder, TDbContext>
     {
-        private readonly DbContextOptions<TContext> _options;
-
-        protected static readonly ILoggerFactory LoggerFactory;
-
-        protected BaseDbContextBuilder(DbContextOptions<TContext> options)
+        private readonly DbContextOptions<TDbContext> _options;
+        private readonly LoggerFactory _loggerFactory;
+         
+        protected BaseDbContextBuilder()
         {
-            _options = options;
-            LoggerFactory 
-                = new LoggerFactory(new[] 
-                {
-                    new ConsoleLoggerProvider((_, __) => true, true)
-                });
+            _loggerFactory = new LoggerFactory(new[] 
+            {
+                new ConsoleLoggerProvider((_, __) => true, true)
+            });
+
         }
 
 
-        protected override TContext Construct()
+        protected override TDbContext Construct()
         {
-            return (TContext) Activator.CreateInstance(typeof(TContext), _options);
+            return (TDbContext) Activator.CreateInstance(typeof(TDbContext), GetOptions(_loggerFactory));
         }
 
-       
+        protected abstract DbContextOptions<TDbContext> GetOptions(LoggerFactory loggerFactory);
     }
 }
