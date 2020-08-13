@@ -1,8 +1,8 @@
 ﻿using System;
 using Blauhaus.TestHelpers.Builders._Base;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
 
 namespace Blauhaus.Domain.TestHelpers.EFCore.DbContextBuilders
 {
@@ -10,22 +10,54 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.DbContextBuilders
         where TDbContext : DbContext 
         where TBuilder : BaseDbContextBuilder<TBuilder, TDbContext>
     {
-          
+        private readonly DbContextOptions<TDbContext> _options;
+
+        protected BaseDbContextBuilder(bool useSqlLite)
+        {
+            _options = useSqlLite ? GetSqLiteDbContextOptions() : GetInMemoryDbContextOptions();
+        }
 
         protected override TDbContext Construct()
         {
-            return (TDbContext) Activator.CreateInstance(typeof(TDbContext), GetOptions());
+            var context = (TDbContext) Activator.CreateInstance(typeof(TDbContext), _options);
+            context.Database.EnsureCreated();
+            return context;
         }
 
-        protected abstract DbContextOptions<TDbContext> GetOptions();
-
-        protected LoggerFactory CreateLogger() 
-        {
-            return new LoggerFactory (new [] {
-                new ConsoleLoggerProvider ((category, level) =>
-                    category == DbLoggerCategory.Database.Command.Name &&
-                    level == LogLevel.Information, true)
+        private readonly ILoggerFactory _myLoggerFactory
+            = LoggerFactory.Create(builder =>
+            {
+                builder.AddConsole(); 
             });
+
+        private DbContextOptions<TDbContext> GetInMemoryDbContextOptions()
+        {
+            return new DbContextOptionsBuilder<TDbContext>()
+                .UseLoggerFactory(_myLoggerFactory)
+                .EnableSensitiveDataLogging()
+                .EnableDetailedErrors()
+                .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
+        }
+
+        private DbContextOptions<TDbContext> GetSqLiteDbContextOptions()
+        {
+            var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = ":memory:" };
+            var connectionString = connectionStringBuilder.ToString();
+ 
+            //This creates a SqliteConnectionwith that string
+            var connection = new SqliteConnection(connectionString);
+ 
+            //The connection MUST be opened here
+            connection.Open();
+            connection.EnableExtensions();
+
+            //Now we have the EF Core commands to create SQLite options
+            var options = new DbContextOptionsBuilder<TDbContext>();
+            options.EnableSensitiveDataLogging();
+            options.UseLoggerFactory(_myLoggerFactory);
+            options.UseSqlite(connection);
+
+            return options.Options;
         }
     }
 }
