@@ -10,8 +10,8 @@ using Newtonsoft.Json;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories
 {
-    public class BaseSyncClientRepositoryMockBuilder<TModel, TDto, TSyncCommand> 
-        : BaseSyncClientRepositoryMockBuilder<BaseSyncClientRepositoryMockBuilder<TModel, TDto, TSyncCommand>,  ISyncClientRepository<TModel, TDto, TSyncCommand> , TModel, TDto, TSyncCommand>
+    public class SyncClientRepositoryMockBuilder<TModel, TDto, TSyncCommand> 
+        : BaseSyncClientRepositoryMockBuilder<SyncClientRepositoryMockBuilder<TModel, TDto, TSyncCommand>,  ISyncClientRepository<TModel, TDto, TSyncCommand> , TModel, TDto, TSyncCommand>
         where TModel : class, IClientEntity
         where TSyncCommand : SyncCommand
     {
