@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blauhaus.Domain.Client", "B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blauhaus.Domain.Server", "Blauhaus.Domain.Server\Blauhaus.Domain.Server.csproj", "{F8AD9E7B-5A22-4B6E-93B4-B96AEB88B9C2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blauhaus.Domain.Abstractions", "Blauhaus.Domain.Common\Blauhaus.Domain.Abstractions.csproj", "{279F7733-FB6E-425D-8B19-321B1E72BFCE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blauhaus.Domain.Abstractions", "Blauhaus.Domain.Abstractions\Blauhaus.Domain.Abstractions.csproj", "{279F7733-FB6E-425D-8B19-321B1E72BFCE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blauhaus.Domain.Tests", "Blauhaus.Domain.Tests\Blauhaus.Domain.Tests.csproj", "{EF4A4B01-7DC8-460E-BA43-4CA0D2A48432}"
 EndProject

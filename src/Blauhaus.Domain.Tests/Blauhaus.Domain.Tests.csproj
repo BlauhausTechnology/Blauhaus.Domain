@@ -24,7 +24,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Blauhaus.Domain.Client.Sqlite\Blauhaus.Domain.Client.Sqlite.csproj" />
     <ProjectReference Include="..\Blauhaus.Domain.Client\Blauhaus.Domain.Client.csproj" />
-    <ProjectReference Include="..\Blauhaus.Domain.Common\Blauhaus.Domain.Abstractions.csproj" />
     <ProjectReference Include="..\Blauhaus.Domain.Server\Blauhaus.Domain.Server.csproj" />
     <ProjectReference Include="..\Blauhaus.Domain.TestHelpers\Blauhaus.Domain.TestHelpers.csproj" />
   </ItemGroup>

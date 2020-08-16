@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Blauhaus.Domain.Common\Blauhaus.Domain.Abstractions.csproj" />
+    <ProjectReference Include="..\Blauhaus.Domain.Abstractions\Blauhaus.Domain.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>
