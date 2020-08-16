@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using Blauhaus.Domain.Common.CommandHandlers.Sync;
+using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
 
-namespace Blauhaus.Domain.Common.Extensions
+namespace Blauhaus.Domain.Abstractions.Extensions
 {
     public static class SyncCommandExtensions
     {

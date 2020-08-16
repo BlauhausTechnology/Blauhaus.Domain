@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
-using Blauhaus.Domain.Common.CommandHandlers;
+using Blauhaus.Domain.Abstractions.CommandHandlers;
 using CSharpFunctionalExtensions;
 
 namespace Blauhaus.Domain.Client.CommandHandlers

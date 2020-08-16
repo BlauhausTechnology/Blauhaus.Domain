@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Domain.Client.Sync.Collection;
-using Blauhaus.Domain.Common.Entities;
+using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.TestHelpers.Extensions;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients;
 using Blauhaus.Domain.Tests._Base;

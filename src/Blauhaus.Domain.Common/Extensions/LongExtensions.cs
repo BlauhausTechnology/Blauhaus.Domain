@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Blauhaus.Domain.Common.Extensions
+namespace Blauhaus.Domain.Abstractions.Extensions
 {
     public static class LongExtensions
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 using Blauhaus.Common.Utils.NotifyPropertyChanged;
-using Blauhaus.Domain.Common.Entities;
+using Blauhaus.Domain.Abstractions.Entities;
 
 namespace Blauhaus.Domain.Client.Sync.Collection
 {

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Blauhaus.Domain.Client.Sync;
-using Blauhaus.Domain.Client.Sync.Client;
-using Blauhaus.Domain.Common.CommandHandlers.Sync;
-using Blauhaus.Domain.Common.Entities;
+using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
+using Blauhaus.Domain.Abstractions.Entities;
 
-namespace Blauhaus.Domain.Client.Repositories
+namespace Blauhaus.Domain.Abstractions.Repositories
 {
 
     public interface ISyncClientRepository<TModel, in TDto> : ISyncClientRepository<TModel, TDto, SyncCommand>

@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Blauhaus.Domain.Common.Entities;
+using Blauhaus.Domain.Abstractions.Entities;
 
-namespace Blauhaus.Domain.Client.Repositories
+namespace Blauhaus.Domain.Abstractions.Repositories
 {
     public interface IClientRepository<TModel, in TDto> 
         where TModel : class, IClientEntity

@@ -1,7 +1,7 @@
 ﻿using Blauhaus.Analytics.Abstractions.Service;
+using Blauhaus.Domain.Abstractions.Repositories;
 using Blauhaus.Domain.Client.CommandHandlers;
-using Blauhaus.Domain.Client.Repositories;
-using Blauhaus.Domain.Common.CommandHandlers;
+using Blauhaus.Domain.Abstractions.CommandHandlers;
 
 namespace Blauhaus.Domain.Tests.ClientTests.TestObjects
 {

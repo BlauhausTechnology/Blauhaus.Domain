@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq.Expressions;
 using Blauhaus.Common.Utils.Extensions;
-using Blauhaus.Domain.Common.Entities;
+using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Errors;
 
-namespace Blauhaus.Domain.Common.Errors
+namespace Blauhaus.Domain.Abstractions.Errors
 {
     public class DomainErrors
     {

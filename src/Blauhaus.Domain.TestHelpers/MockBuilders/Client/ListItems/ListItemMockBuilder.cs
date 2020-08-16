@@ -1,5 +1,5 @@
 ﻿using Blauhaus.Domain.Client.Sync.Collection;
-using Blauhaus.Domain.Common.Entities;
+using Blauhaus.Domain.Abstractions.Entities;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.ListItems
 {

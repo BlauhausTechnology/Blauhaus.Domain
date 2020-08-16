@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Blauhaus.Domain.Abstractions.Repositories;
 using Blauhaus.Domain.Client.CommandHandlers;
-using Blauhaus.Domain.Client.Repositories;
 using Blauhaus.Domain.Client.Sync.CommandHandler;
-using Blauhaus.Domain.Common.CommandHandlers;
-using Blauhaus.Domain.Common.Entities;
+using Blauhaus.Domain.Abstractions.CommandHandlers;
+using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories;
 using Blauhaus.Domain.Tests._Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;

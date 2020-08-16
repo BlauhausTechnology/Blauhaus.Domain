@@ -5,9 +5,9 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.ClientDatabase.Sqlite.Service;
-using Blauhaus.Domain.Client.Repositories;
+using Blauhaus.Domain.Abstractions.Repositories;
 using Blauhaus.Domain.Client.Sqlite.Entities;
-using Blauhaus.Domain.Common.Entities;
+using Blauhaus.Domain.Abstractions.Entities;
 using SqlKata;
 using SqlKata.Compilers;
 

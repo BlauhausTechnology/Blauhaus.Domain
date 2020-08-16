@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
 
-namespace Blauhaus.Domain.Common.CommandHandlers
+namespace Blauhaus.Domain.Abstractions.CommandHandlers
 {
     
     public interface IVoidCommandHandler<TCommand> 

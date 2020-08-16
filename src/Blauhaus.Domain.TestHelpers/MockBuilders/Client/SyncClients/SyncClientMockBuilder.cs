@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Blauhaus.Domain.Client.Sync.Client;
-using Blauhaus.Domain.Common.CommandHandlers.Sync;
-using Blauhaus.Domain.Common.Entities;
+using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
+using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.TestHelpers.MockBuilders;
 using Moq;
 

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Blauhaus.Domain.Common.Entities;
+using Blauhaus.Domain.Abstractions.Entities;
 
-namespace Blauhaus.Domain.Common.CommandHandlers.Sync
+namespace Blauhaus.Domain.Abstractions.CommandHandlers.Sync
 {
     public class SyncResult<TPayload>  
         where TPayload : IEntity

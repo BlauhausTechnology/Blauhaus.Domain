@@ -2,11 +2,11 @@
 using Blauhaus.Common.Time.Service;
 using Blauhaus.DeviceServices.Abstractions.Connectivity;
 using Blauhaus.DeviceServices.TestHelpers.MockBuilders;
-using Blauhaus.Domain.Client.Repositories;
+using Blauhaus.Domain.Abstractions.Repositories;
 using Blauhaus.Domain.Client.Sync;
 using Blauhaus.Domain.Client.Sync.Client;
-using Blauhaus.Domain.Common.CommandHandlers;
-using Blauhaus.Domain.Common.CommandHandlers.Sync;
+using Blauhaus.Domain.Abstractions.CommandHandlers;
+using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers;

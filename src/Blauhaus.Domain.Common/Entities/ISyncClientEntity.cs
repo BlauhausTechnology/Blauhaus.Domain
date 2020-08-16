@@ -1,4 +1,4 @@
-﻿namespace Blauhaus.Domain.Common.Entities
+﻿namespace Blauhaus.Domain.Abstractions.Entities
 {
     public interface ISyncClientEntity : IClientEntity
     {

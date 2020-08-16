@@ -1,5 +1,5 @@
-﻿using Blauhaus.Domain.Common.CommandHandlers.Sync;
-using Blauhaus.Domain.Common.Entities;
+﻿using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
+using Blauhaus.Domain.Abstractions.Entities;
 using SqlKata;
 
 namespace Blauhaus.Domain.Client.Sqlite.SyncRepository

@@ -1,6 +1,6 @@
-﻿using Blauhaus.Domain.Common.Entities;
+﻿using Blauhaus.Domain.Abstractions.Entities;
 
-namespace Blauhaus.Domain.Common.Extensions
+namespace Blauhaus.Domain.Abstractions.Extensions
 {
     public static class EntityExtensions
     {

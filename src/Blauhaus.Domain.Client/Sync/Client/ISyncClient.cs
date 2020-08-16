@@ -1,6 +1,6 @@
 ﻿using System;
-using Blauhaus.Domain.Common.CommandHandlers.Sync;
-using Blauhaus.Domain.Common.Entities;
+using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
+using Blauhaus.Domain.Abstractions.Entities;
 
 namespace Blauhaus.Domain.Client.Sync.Client
 {

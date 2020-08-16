@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 
-namespace Blauhaus.Domain.Common.CommandHandlers.Sync
+namespace Blauhaus.Domain.Abstractions.CommandHandlers.Sync
 {
     public class SyncCommand
     {

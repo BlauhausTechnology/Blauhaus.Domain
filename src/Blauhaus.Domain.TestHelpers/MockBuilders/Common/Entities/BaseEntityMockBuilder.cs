@@ -1,5 +1,5 @@
 ﻿using System;
-using Blauhaus.Domain.Common.Entities;
+using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.TestHelpers.MockBuilders;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.Entities

@@ -1,13 +1,13 @@
-﻿using Blauhaus.Domain.Client.Repositories;
+﻿using Blauhaus.Domain.Abstractions.CommandHandlers;
+using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
+using Blauhaus.Domain.Abstractions.Entities;
+using Blauhaus.Domain.Abstractions.Repositories;
 using Blauhaus.Domain.Client.Sqlite.Entities;
 using Blauhaus.Domain.Client.Sqlite.Repository;
 using Blauhaus.Domain.Client.Sqlite.SyncRepository;
 using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Domain.Client.Sync.CommandHandler;
-using Blauhaus.Domain.Client.Sync.Model;
-using Blauhaus.Domain.Common.CommandHandlers;
-using Blauhaus.Domain.Common.CommandHandlers.Sync;
-using Blauhaus.Domain.Common.Entities;
+using Blauhaus.Domain.Client.Sync.Model; 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 

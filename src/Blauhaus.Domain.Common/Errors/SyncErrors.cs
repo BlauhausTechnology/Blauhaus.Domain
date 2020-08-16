@@ -1,6 +1,6 @@
 ﻿using Blauhaus.Errors;
 
-namespace Blauhaus.Domain.Common.Errors
+namespace Blauhaus.Domain.Abstractions.Errors
 {
     public static class SyncErrors
     {

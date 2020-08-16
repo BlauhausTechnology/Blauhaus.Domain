@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
-using Blauhaus.Domain.Client.Repositories;
-using Blauhaus.Domain.Common.Entities;
+using Blauhaus.Domain.Abstractions.Repositories;
+using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.TestHelpers.MockBuilders;
 using Moq;
 

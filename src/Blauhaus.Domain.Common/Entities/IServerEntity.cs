@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Blauhaus.Domain.Common.Entities
+namespace Blauhaus.Domain.Abstractions.Entities
 {
     public interface IServerEntity : IEntity
     {
