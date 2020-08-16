@@ -21,6 +21,8 @@ namespace Blauhaus.Domain.Client.Sqlite._Ioc
             where TEntityConverter : class, IClientEntityConverter<TModel, TDto, TRootEntity>
         {
             services.AddTransient<IClientRepository<TModel, TDto>, ClientRepository<TModel, TDto, TRootEntity>>();
+            services.TryAddTransient<IClientRepository<TModel>, ClientRepository<TModel, TDto, TRootEntity>>();
+
             services.AddTransient<IClientEntityConverter<TModel, TDto, TRootEntity>, TEntityConverter>();
             return services;
         }
@@ -59,6 +61,8 @@ namespace Blauhaus.Domain.Client.Sqlite._Ioc
 
             services.TryAddTransient<ISyncClientRepository<TModel, TModelDto, TSyncCommand>, SyncClientRepository<TModel, TModelDto, TSyncCommand, TRootEntity>>();
             services.TryAddTransient<IClientRepository<TModel, TModelDto>, SyncClientRepository<TModel, TModelDto, TSyncCommand, TRootEntity>>();
+            services.TryAddTransient<IClientRepository<TModel>, SyncClientRepository<TModel, TModelDto, TSyncCommand, TRootEntity>>();
+            
             services.TryAddTransient<IClientEntityConverter<TModel, TModelDto, TRootEntity>, TEntityConverter>();
             services.TryAddTransient<ISyncClientSqlQueryGenerator<TSyncCommand, TRootEntity>, TSqlQueryGenerator>();
             services.AddTransient<ICommandHandler<SyncResult<TModel>, TSyncCommand>, SyncCommandClientHandler<TModel, TModelDto, TSyncCommandDto, TSyncCommand>>();
