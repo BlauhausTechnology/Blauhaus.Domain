@@ -50,9 +50,9 @@ namespace Blauhaus.Domain.Abstractions.Errors
 
         public static Error InvalidCommand(string propertyName) => Error.Create($"The value provided for {propertyName} on the command was invalid");
         public static Error InvalidCommand<TCommand>() => Error.Create($"The {typeof(TCommand).Name} was invalid");
-        public static Error InvalidCommand<TCommand>(string propertyName) => Error.Create($"The value provided for {propertyName} on {typeof(TCommand).Name} was invalid");
-        public static Error InvalidCommand<TCommand>(string propertyName, string reason) 
-            => Error.Create($"The value provided for {propertyName} on {typeof(TCommand).Name} was invalid: {reason}");
+        public static Error InvalidCommand<TCommand>(Expression<Func<TCommand, object>> property) => Error.Create($"The value provided for {property.ToPropertyName()} on {typeof(TCommand).Name} was invalid");
+        public static Error InvalidCommand<TCommand>(Expression<Func<TCommand, object>> property,  string reason) 
+            => Error.Create($"The value provided for {property.ToPropertyName()} on {typeof(TCommand).Name} was invalid: {reason}");
 
         #endregion
     }
