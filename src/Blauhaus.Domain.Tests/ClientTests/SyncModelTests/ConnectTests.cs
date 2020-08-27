@@ -7,6 +7,7 @@ using Blauhaus.Domain.Client.Sync.Model;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Errors;
 using Blauhaus.Domain.Abstractions.Extensions;
+using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.TestHelpers.Extensions;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients;
 using Blauhaus.Domain.Tests._Base;

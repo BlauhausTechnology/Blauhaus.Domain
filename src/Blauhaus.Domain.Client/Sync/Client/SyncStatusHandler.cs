@@ -1,5 +1,6 @@
 ﻿using Blauhaus.Common.Utils.Attributes;
 using Blauhaus.Common.Utils.NotifyPropertyChanged;
+using Blauhaus.Domain.Abstractions.Sync;
 
 namespace Blauhaus.Domain.Client.Sync.Client
 {

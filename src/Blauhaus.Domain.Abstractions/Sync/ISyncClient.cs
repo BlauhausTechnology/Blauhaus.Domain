@@ -2,7 +2,7 @@
 using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
 using Blauhaus.Domain.Abstractions.Entities;
 
-namespace Blauhaus.Domain.Client.Sync.Client
+namespace Blauhaus.Domain.Abstractions.Sync
 {
     public interface ISyncClient<TModel, TSyncCommand> 
         where TModel : IClientEntity

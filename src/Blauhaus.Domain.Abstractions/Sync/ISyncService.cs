@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Blauhaus.Domain.Client.Sync.Service
+namespace Blauhaus.Domain.Abstractions.Sync
 {
     public interface ISyncService
     {

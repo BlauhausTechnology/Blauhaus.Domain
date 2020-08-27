@@ -14,6 +14,7 @@ using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Extensions;
 using Blauhaus.Domain.Abstractions.Repositories;
+using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.Extensions;
 using Blauhaus.Errors;
 using Blauhaus.Errors.Extensions;

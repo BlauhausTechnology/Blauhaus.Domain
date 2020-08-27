@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Blauhaus.Domain.Client.Sync.Client;
 
-namespace Blauhaus.Domain.Client.Sync.Service
+namespace Blauhaus.Domain.Abstractions.Sync
 {
     public interface ISyncClientFactory<TSyncCommand>
     {
