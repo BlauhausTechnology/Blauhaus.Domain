@@ -17,6 +17,7 @@ namespace Blauhaus.Domain.Client.Sync.Collection
         void Initialize();
         void LoadNewFromServer();
         void LoadNewFromClient();
+        void ReloadFromClient();
     }
 
     public interface ISyncCollection<TModel, TListItem, TSyncCommand> : ISyncCollection
