@@ -50,6 +50,12 @@ namespace Blauhaus.Domain.TestHelpers.Extensions
         public static Func<VoidCommandHandlerMockBuilder<TCommand>> AddMockVoidCommandHandler<TCommand>(this MockContainer mocks)   where TCommand : notnull  
             => mocks.AddMock<VoidCommandHandlerMockBuilder<TCommand>, IVoidCommandHandler<TCommand>>();
 
+        public static Func<AuthenticatedCommandHandlerMockBuilder<TModel, TCommand, TUser>> AddMockAuthenticatedCommandHandler<TModel, TCommand, TUser>(this MockContainer mocks)  where TCommand : notnull
+            => mocks.AddMock<AuthenticatedCommandHandlerMockBuilder<TModel, TCommand, TUser>, IAuthenticatedCommandHandler<TModel, TCommand, TUser>>();
+
+        public static Func<VoidAuthenticatedCommandHandlerMockBuilder<TCommand, TUser>> AddMockVoidAuthenticatedCommandHandler<TCommand, TUser>(this MockContainer mocks)  where TCommand : notnull
+            => mocks.AddMock<VoidAuthenticatedCommandHandlerMockBuilder<TCommand, TUser>, IVoidAuthenticatedCommandHandler<TCommand, TUser>>();
+
 
         //Sync collections
         public static Func<SyncCollectionMockBuilder<TModel, TListItem>> AddMockSyncCollection<TModel, TListItem>(this MockContainer mocks) where TModel : IClientEntity where TListItem : IListItem<TModel> 
