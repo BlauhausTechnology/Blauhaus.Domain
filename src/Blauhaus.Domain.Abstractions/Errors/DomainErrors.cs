@@ -56,5 +56,14 @@ namespace Blauhaus.Domain.Abstractions.Errors
             => Error.Create($"The value provided for {property.ToPropertyName()} on {typeof(TCommand).Name} was invalid: {reason}");
 
         #endregion
+
+        #region RequiredCommandParameter
+
+        public static Error RequiredParameterMissing() => Error.Create("A required parameter was not provided");
+        public static Error RequiredParameterMissing(string propertyName) => Error.Create($"A value is required for {propertyName}");
+        public static Error RequiredParameterMissing<TCommand>() => Error.Create($"The {typeof(TCommand).Name} was missing a required parameter");
+        public static Error RequiredParameterMissing<TCommand>(Expression<Func<TCommand, object>> property) => Error.Create($"The {property.ToPropertyName()} on {typeof(TCommand).Name} is required");
+
+        #endregion
     }
 }
