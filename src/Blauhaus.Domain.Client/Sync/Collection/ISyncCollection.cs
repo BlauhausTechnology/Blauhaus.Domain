@@ -1,8 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
+using Blauhaus.Domain.Abstractions.Entities;
+using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.Sync.Client;
-using Blauhaus.Domain.Common.CommandHandlers.Sync;
-using Blauhaus.Domain.Common.Entities;
 
 namespace Blauhaus.Domain.Client.Sync.Collection
 {
@@ -16,6 +17,7 @@ namespace Blauhaus.Domain.Client.Sync.Collection
         void Initialize();
         void LoadNewFromServer();
         void LoadNewFromClient();
+        void ReloadFromClient();
     }
 
     public interface ISyncCollection<TModel, TListItem, TSyncCommand> : ISyncCollection

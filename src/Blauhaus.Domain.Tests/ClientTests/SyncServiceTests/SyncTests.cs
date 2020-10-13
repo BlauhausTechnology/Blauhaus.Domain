@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Service;
+using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Domain.Client.Sync.Service;
 using Blauhaus.Domain.TestHelpers.Extensions;

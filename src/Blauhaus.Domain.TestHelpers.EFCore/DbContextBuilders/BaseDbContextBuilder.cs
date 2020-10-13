@@ -1,8 +1,10 @@
 ﻿using System;
 using Blauhaus.TestHelpers.Builders._Base;
+using Castle.Core.Logging;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using ILoggerFactory = Microsoft.Extensions.Logging.ILoggerFactory;
 
 namespace Blauhaus.Domain.TestHelpers.EFCore.DbContextBuilders
 {
@@ -16,6 +18,8 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.DbContextBuilders
         {
             _options = useSqlLite ? GetSqLiteDbContextOptions() : GetInMemoryDbContextOptions();
         }
+        
+        public TDbContext NewContext => (TDbContext) Activator.CreateInstance(typeof(TDbContext), _options);
 
         protected override TDbContext Construct()
         {

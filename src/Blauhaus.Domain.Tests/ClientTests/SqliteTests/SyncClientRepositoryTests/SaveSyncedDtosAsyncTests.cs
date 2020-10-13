@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Blauhaus.Domain.Client.Sqlite.SyncRepository;
-using Blauhaus.Domain.Common.Entities;
+using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Tests.ClientTests.SqliteTests._Base;
 using Blauhaus.Domain.Tests.ClientTests.SqliteTests._TestObjects;
 using Blauhaus.TestHelpers.MockBuilders;

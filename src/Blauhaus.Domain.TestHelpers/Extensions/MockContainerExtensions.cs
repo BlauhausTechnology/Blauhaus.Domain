@@ -1,12 +1,13 @@
 ﻿using System;
-using Blauhaus.Domain.Client.Repositories;
+using Blauhaus.Domain.Abstractions.Repositories;
 using Blauhaus.Domain.Client.Sqlite.Repository;
 using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Domain.Client.Sync.Collection;
 using Blauhaus.Domain.Client.Sync.Model;
-using Blauhaus.Domain.Common.CommandHandlers;
-using Blauhaus.Domain.Common.CommandHandlers.Sync;
-using Blauhaus.Domain.Common.Entities;
+using Blauhaus.Domain.Abstractions.CommandHandlers;
+using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
+using Blauhaus.Domain.Abstractions.Entities;
+using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.ClientEntityConverters;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients;
@@ -30,8 +31,8 @@ namespace Blauhaus.Domain.TestHelpers.Extensions
         public static Func<ClientRepositoryMockBuilder<TModel, TDto>> AddMockClientRepository<TModel, TDto>(this MockContainer mocks) where TModel : class, IClientEntity
             => mocks.AddMock<ClientRepositoryMockBuilder<TModel, TDto>, IClientRepository<TModel, TDto>>();
 
-        public static Func<BaseSyncClientRepositoryMockBuilder<TModel, TDto, TSyncCommand>> AddMockSyncClientRepository<TModel, TDto, TSyncCommand>(this MockContainer mocks) where TModel : class, IClientEntity where TSyncCommand : SyncCommand
-            => mocks.AddMock<BaseSyncClientRepositoryMockBuilder<TModel, TDto, TSyncCommand>, ISyncClientRepository<TModel, TDto, TSyncCommand>>();
+        public static Func<SyncClientRepositoryMockBuilder<TModel, TDto, TSyncCommand>> AddMockSyncClientRepository<TModel, TDto, TSyncCommand>(this MockContainer mocks) where TModel : class, IClientEntity where TSyncCommand : SyncCommand
+            => mocks.AddMock<SyncClientRepositoryMockBuilder<TModel, TDto, TSyncCommand>, ISyncClientRepository<TModel, TDto, TSyncCommand>>();
         
 
         //Sync clients
@@ -48,6 +49,12 @@ namespace Blauhaus.Domain.TestHelpers.Extensions
         
         public static Func<VoidCommandHandlerMockBuilder<TCommand>> AddMockVoidCommandHandler<TCommand>(this MockContainer mocks)   where TCommand : notnull  
             => mocks.AddMock<VoidCommandHandlerMockBuilder<TCommand>, IVoidCommandHandler<TCommand>>();
+
+        public static Func<AuthenticatedCommandHandlerMockBuilder<TModel, TCommand, TUser>> AddMockAuthenticatedCommandHandler<TModel, TCommand, TUser>(this MockContainer mocks)  where TCommand : notnull
+            => mocks.AddMock<AuthenticatedCommandHandlerMockBuilder<TModel, TCommand, TUser>, IAuthenticatedCommandHandler<TModel, TCommand, TUser>>();
+
+        public static Func<VoidAuthenticatedCommandHandlerMockBuilder<TCommand, TUser>> AddMockVoidAuthenticatedCommandHandler<TCommand, TUser>(this MockContainer mocks)  where TCommand : notnull
+            => mocks.AddMock<VoidAuthenticatedCommandHandlerMockBuilder<TCommand, TUser>, IVoidAuthenticatedCommandHandler<TCommand, TUser>>();
 
 
         //Sync collections

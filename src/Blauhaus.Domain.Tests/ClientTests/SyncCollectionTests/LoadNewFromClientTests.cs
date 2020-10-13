@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Domain.Client.Sync.Collection;
 using Blauhaus.Domain.TestHelpers.Extensions;

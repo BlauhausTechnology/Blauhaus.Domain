@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Threading;
-using Blauhaus.Domain.Common.CommandHandlers;
+using Blauhaus.Domain.Abstractions.CommandHandlers;
 using Blauhaus.Errors;
 using Blauhaus.TestHelpers.MockBuilders;
 using CSharpFunctionalExtensions;
@@ -42,7 +42,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base
         }
 
 
-        public TBuilder Where_HandleAsync_returns_throws(Exception exception)
+        public TBuilder Where_HandleAsync_throws(Exception exception)
         {
             Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>(), It.IsAny<CancellationToken>()))
                 .ThrowsAsync(exception);

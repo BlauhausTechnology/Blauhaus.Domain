@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
-using Blauhaus.Domain.Common.CommandHandlers;
+using Blauhaus.Domain.Abstractions.CommandHandlers;
 using Blauhaus.Errors;
 using Blauhaus.TestHelpers.MockBuilders;
 using CSharpFunctionalExtensions;

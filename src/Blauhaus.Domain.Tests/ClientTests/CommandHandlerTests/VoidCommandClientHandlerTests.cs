@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Blauhaus.Domain.Client.CommandHandlers;
-using Blauhaus.Domain.Common.CommandHandlers;
+using Blauhaus.Domain.Abstractions.CommandHandlers;
 using Blauhaus.Domain.Tests._Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
 using Blauhaus.TestHelpers.MockBuilders;
