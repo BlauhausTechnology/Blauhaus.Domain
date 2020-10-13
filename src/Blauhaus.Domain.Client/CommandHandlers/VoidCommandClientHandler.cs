@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
+using Blauhaus.Responses;
 using CSharpFunctionalExtensions;
 
 namespace Blauhaus.Domain.Client.CommandHandlers
@@ -22,7 +23,7 @@ namespace Blauhaus.Domain.Client.CommandHandlers
             _dtoCommandHandler = dtoCommandHandler;
         }
 
-        public async Task<Result> HandleAsync(TCommand command, CancellationToken token)
+        public async Task<Response> HandleAsync(TCommand command, CancellationToken token)
         {
             _analyticsService.TraceVerbose(this, $"{typeof(TCommand).Name} Handler started", command.ToObjectDictionary("Command"));
 
@@ -30,12 +31,12 @@ namespace Blauhaus.Domain.Client.CommandHandlers
             var dtoResult = await _dtoCommandHandler.HandleAsync(commandDto, token);
             if (dtoResult.IsFailure)
             {
-                return Result.Failure(dtoResult.Error);
+                return Response.Failure(dtoResult.Error);
             }
 
             _analyticsService.TraceVerbose(this, $"{typeof(TCommand).Name} Handler succeeded");
 
-            return Result.Success();
+            return Response.Success();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Blauhaus.Responses;
 using CSharpFunctionalExtensions;
 
 namespace Blauhaus.Domain.Abstractions.CommandHandlers
@@ -8,6 +9,6 @@ namespace Blauhaus.Domain.Abstractions.CommandHandlers
         where TCommand : notnull
         where TUser : notnull
     {
-        Task<Result> HandleAsync(TCommand command, TUser authenticatedUser, CancellationToken token);
+        Task<Response> HandleAsync(TCommand command, TUser authenticatedUser, CancellationToken token);
     }
 }

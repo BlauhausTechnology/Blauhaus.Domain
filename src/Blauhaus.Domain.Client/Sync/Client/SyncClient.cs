@@ -275,15 +275,13 @@ namespace Blauhaus.Domain.Client.Sync.Client
                 var serverDownloadResult = await _syncCommandHandler.HandleAsync(syncCommand, token);
                 if (serverDownloadResult.IsFailure)
                 {
-                    var errorMessage = $"Failed to load {typeof(TModel).Name} entities from server: " + serverDownloadResult.Error;
+                    var errorMessage = $"Failed to load {typeof(TModel).Name} entities from server: " + serverDownloadResult.Error.Description;
                     
                     _analyticsService.TraceError(this, errorMessage);
                     syncStatusHandler.State = SyncClientState.Error;
                     syncStatusHandler.StatusMessage = errorMessage;
 
-                    observer.OnError(serverDownloadResult.Error.IsError(out var error) 
-                        ? new ErrorException(error) 
-                        : new Exception(errorMessage));
+                    observer.OnError(new ErrorException(serverDownloadResult.Error));
 
                 }
 

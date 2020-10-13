@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
 using Blauhaus.Errors;
+using Blauhaus.Responses;
 using Blauhaus.TestHelpers.MockBuilders;
 using CSharpFunctionalExtensions;
 using Moq;
@@ -25,11 +26,11 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base
         public TBuilder Where_HandleAsync_returns(TPayload payload)
         {
             Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>(), It.IsAny<TUser>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Result.Success(payload));
+                .ReturnsAsync(Response.Success(payload));
             return this as TBuilder;
         }
 
-        public TBuilder Where_HandleAsync_returns_result(Result<TPayload> payload)
+        public TBuilder Where_HandleAsync_returns_result(Response<TPayload> payload)
         {
             Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>(),  It.IsAny<TUser>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(payload);
@@ -39,14 +40,14 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base
         public TBuilder Where_HandleAsync_returns_fails(string error)
         {
             Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>(), It.IsAny<TUser>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Result.Failure<TPayload>(error));
+                .ReturnsAsync(Response.Failure<TPayload>(Error.Create(error)));
             return this as TBuilder;
         }
         
         public TBuilder Where_HandleAsync_returns_fails(Error error)
         {
             Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>(), It.IsAny<TUser>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Result.Failure<TPayload>(error.ToString()));
+                .ReturnsAsync(Response.Failure<TPayload>(error));
             return this as TBuilder;
         }
 

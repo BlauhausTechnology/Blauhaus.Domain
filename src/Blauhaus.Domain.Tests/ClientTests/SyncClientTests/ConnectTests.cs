@@ -89,7 +89,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             public async Task WHEN_Server_fails_SHOULD_fail_and_trace()
             { 
                 //Arrange
-                MockSyncCommandHandler.Where_HandleAsync_returns_fail("oops");
+                MockSyncCommandHandler.Where_HandleAsync_returns_fail(AuthErrors.NotAuthenticated);
                 Exception e = new Exception();
 
                 //Act
@@ -101,9 +101,9 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 await Task.Delay(20);
 
                 //Assert
-                Assert.AreEqual("Failed to load TestModel entities from server: oops", e.Message);
-                MockAnalyticsService.VerifyTrace("Failed to load TestModel entities from server: oops", LogSeverity.Error);
-                MockSyncStatusHandler.Mock.VerifySet(x => x.StatusMessage = "Failed to load TestModel entities from server: oops");
+                Assert.AreEqual(AuthErrors.NotAuthenticated.ToString(), e.Message);
+                MockAnalyticsService.VerifyTrace("Failed to load TestModel entities from server: The current user has not been successfully authenticated", LogSeverity.Error);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.StatusMessage = "Failed to load TestModel entities from server: The current user has not been successfully authenticated");
             }
 
             [Test]
@@ -124,8 +124,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 //Assert
                 Assert.That(e, Is.InstanceOf<ErrorException>());
                 Assert.That(((ErrorException)e).Error, Is.EqualTo(AuthErrors.NotAuthenticated));
-                MockAnalyticsService.VerifyTrace("Failed to load TestModel entities from server: " + AuthErrors.NotAuthenticated, LogSeverity.Error);
-                MockSyncStatusHandler.Mock.VerifySet(x => x.StatusMessage = "Failed to load TestModel entities from server: " + AuthErrors.NotAuthenticated);
+                MockAnalyticsService.VerifyTrace("Failed to load TestModel entities from server: " + AuthErrors.NotAuthenticated.Description, LogSeverity.Error);
+                MockSyncStatusHandler.Mock.VerifySet(x => x.StatusMessage = "Failed to load TestModel entities from server: " + AuthErrors.NotAuthenticated.Description);
             }
 
             [Test]

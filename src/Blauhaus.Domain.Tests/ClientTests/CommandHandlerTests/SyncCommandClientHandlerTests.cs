@@ -10,6 +10,8 @@ using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories;
 using Blauhaus.Domain.Tests._Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
+using Blauhaus.Errors;
+using Blauhaus.Responses;
 using Blauhaus.TestHelpers.MockBuilders;
 using CSharpFunctionalExtensions;
 using Moq;
@@ -54,7 +56,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.CommandHandlerTests
 
             MockCommandConverter.Mock.Setup(x => x.Convert(_command)).Returns(_commandDto);
             MockDtoCommandHandler.Mock.Setup(x => x.HandleAsync(_commandDto, CancelToken))
-                .ReturnsAsync(Result.Success(_dtoSyncResult));
+                .ReturnsAsync(Response.Success(_dtoSyncResult));
             MockBaseSyncClientRepository.Where_SaveSyncedDtosAsync_returns(new List<TestModel> {_model});
 
             AddService(MockCommandConverter.Object);
@@ -88,13 +90,13 @@ namespace Blauhaus.Domain.Tests.ClientTests.CommandHandlerTests
         public async Task IF_handler_fails_SHOULD_return_failure()
         {
             //Arrange
-            MockDtoCommandHandler.Mock.Setup(x => x.HandleAsync(_commandDto, CancelToken)).ReturnsAsync(Result.Failure<DtoSyncResult<TestModelDto>>("oops"));
+            MockDtoCommandHandler.Mock.Setup(x => x.HandleAsync(_commandDto, CancelToken)).ReturnsAsync(Response.Failure<DtoSyncResult<TestModelDto>>(Error.Create("oops")));
 
             //Act
             var result = await Sut.HandleAsync(_command, CancelToken);
 
             //Assert
-            Assert.AreEqual("oops", result.Error);
+            Assert.AreEqual("oops", result.Error.Description);
         }
 
         [Test]

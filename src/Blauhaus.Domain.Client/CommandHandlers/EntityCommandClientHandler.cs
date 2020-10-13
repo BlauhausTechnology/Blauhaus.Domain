@@ -5,6 +5,7 @@ using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Repositories;
+using Blauhaus.Responses;
 using CSharpFunctionalExtensions;
 
 namespace Blauhaus.Domain.Client.CommandHandlers
@@ -33,7 +34,7 @@ namespace Blauhaus.Domain.Client.CommandHandlers
 
         //todo handle offline case and return error?
 
-        public async Task<Result<TModel>> HandleAsync(TCommand command, CancellationToken token)
+        public async Task<Response<TModel>> HandleAsync(TCommand command, CancellationToken token)
         {
             _analyticsService.TraceVerbose(this, $"{typeof(TCommand).Name} Handler started", command.ToObjectDictionary("Command"));
 
@@ -41,14 +42,14 @@ namespace Blauhaus.Domain.Client.CommandHandlers
             var dtoResult = await _dtoCommandHandler.HandleAsync(commandDto, token);
             if (dtoResult.IsFailure)
             {
-                return Result.Failure<TModel>(dtoResult.Error);
+                return Response.Failure<TModel>(dtoResult.Error);
             }
 
             var model = await _repository.SaveDtoAsync(dtoResult.Value);
 
             _analyticsService.TraceVerbose(this, $"{typeof(TCommand).Name} Handler succeeded");
 
-            return Result.Success(model);
+            return Response.Success(model);
         }
     }
 }

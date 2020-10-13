@@ -10,6 +10,7 @@ using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Errors;
 using Blauhaus.Domain.Abstractions.Extensions;
+using Blauhaus.Responses;
 using CSharpFunctionalExtensions;
 
 namespace Blauhaus.Domain.Server.CommandHandlers.Sync
@@ -30,18 +31,18 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
             _queryLoader = queryLoader;
         }
 
-        public  async Task<Result<SyncResult<TEntity>>> HandleAsync(TSyncCommand command, TUser authenticatedUser, CancellationToken token)
+        public  async Task<Response<SyncResult<TEntity>>> HandleAsync(TSyncCommand command, TUser authenticatedUser, CancellationToken token)
         {
 
             if (command.IsForNewerEntities() && command.IsForOlderEntities())
             {
-                return _analyticsService.TraceErrorResult<SyncResult<TEntity>>(this, SyncErrors.InvalidSyncCommand);
+                return _analyticsService.TraceErrorResponse<SyncResult<TEntity>>(this, SyncErrors.InvalidSyncCommand);
             }
 
             var dbQueryResult = await _queryLoader.HandleAsync(command, authenticatedUser, token);
             if (dbQueryResult.IsFailure)
             {
-                return Result.Failure<SyncResult<TEntity>>(dbQueryResult.Error);
+                return Response.Failure<SyncResult<TEntity>>(dbQueryResult.Error);
             }
 
             var dbQuery = dbQueryResult.Value;
@@ -97,7 +98,7 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
 
             _analyticsService.TraceVerbose(this, traceMessage);
 
-            return Result.Success(new SyncResult<TEntity>
+            return Response.Success(new SyncResult<TEntity>
             {
                 EntityBatch = entities,
                 EntitiesToDownloadCount = modifiedEntityCount,

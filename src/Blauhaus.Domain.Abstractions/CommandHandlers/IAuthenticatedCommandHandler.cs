@@ -1,14 +1,15 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Blauhaus.Responses;
 using CSharpFunctionalExtensions;
 
 namespace Blauhaus.Domain.Abstractions.CommandHandlers
 {
-    public interface IAuthenticatedCommandHandler<TPayload, TCommand, TUser> 
+    public interface IAuthenticatedCommandHandler<TPayload, in TCommand, in TUser> 
         where TCommand : notnull
         where TUser : notnull
     {
-        Task<Result<TPayload>> HandleAsync(TCommand command, TUser authenticatedUser, CancellationToken token);
+        Task<Response<TPayload>> HandleAsync(TCommand command, TUser authenticatedUser, CancellationToken token);
     }
 
 

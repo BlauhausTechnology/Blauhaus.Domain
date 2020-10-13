@@ -12,6 +12,8 @@ using Blauhaus.Domain.Server.CommandHandlers.Sync;
 using Blauhaus.Domain.Tests._Base;
 using Blauhaus.Domain.Tests.Extensions;
 using Blauhaus.Domain.Tests.ServerTests.TestObjects;
+using Blauhaus.Errors;
+using Blauhaus.Responses;
 using Blauhaus.TestHelpers.MockBuilders;
 using CSharpFunctionalExtensions;
 using Moq;
@@ -36,7 +38,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
             var entityQuery = TestServerEntity.GenerateList(12);
 
             MockQueryLoader.Mock.Setup(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), _user, CancelToken))
-                .ReturnsAsync(Result.Success(entityQuery));
+                .ReturnsAsync(Response.Success(entityQuery));
 
             _entities = entityQuery.ToList();
 
@@ -56,8 +58,8 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 var queryResult = await Sut.HandleAsync(_command, _user, CancelToken);
 
                 //Assert
-                Assert.AreEqual(SyncErrors.InvalidSyncCommand.ToString(), queryResult.Error);
-                MockAnalyticsService.VerifyTrace(SyncErrors.InvalidSyncCommand.Code, LogSeverity.Error);
+                Assert.AreEqual(SyncErrors.InvalidSyncCommand.ToString(), queryResult.Error.ToString());
+                MockAnalyticsService.VerifyTrace(SyncErrors.InvalidSyncCommand.ToString(), LogSeverity.Error);
             }
         }
 
@@ -68,13 +70,13 @@ namespace Blauhaus.Domain.Tests.ServerTests
             {
                 //Arrange
                 MockQueryLoader.Mock.Setup(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), It.IsAny<TestAuthenticatedUser>(), It.IsAny<CancellationToken>()))
-                    .ReturnsAsync(Result.Failure<IQueryable<TestServerEntity>>("oh no"));
+                    .ReturnsAsync(Response.Failure<IQueryable<TestServerEntity>>(Error.Create("oh no")));
 
                 //Act
                 var queryResult = await Sut.HandleAsync(_command, _user, CancelToken);
 
                 //Assert
-                Assert.That(queryResult.Error, Is.EqualTo("oh no"));
+                Assert.That(queryResult.Error.Description, Is.EqualTo("oh no"));
             }
         }
 
@@ -111,7 +113,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 //Arrange
                 _command.OlderThan = DateTime.UtcNow.Ticks;
                 MockQueryLoader.Mock.Setup(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), _user, CancelToken))
-                    .ReturnsAsync(Result.Success(new List<TestServerEntity>
+                    .ReturnsAsync(Response.Success(new List<TestServerEntity>
                     {
                         new TestServerEntity(Guid.NewGuid(), EntityState.Active, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
                         new TestServerEntity(Guid.NewGuid(), EntityState.Draft, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
@@ -201,7 +203,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 //Arrange
                 _command.NewerThan = DateTime.UtcNow.AddDays(-11).Ticks;
                 MockQueryLoader.Mock.Setup(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), _user, CancelToken))
-                    .ReturnsAsync(Result.Success(new List<TestServerEntity>
+                    .ReturnsAsync(Response.Success(new List<TestServerEntity>
                     {
                         new TestServerEntity(Guid.NewGuid(), EntityState.Deleted, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
                         new TestServerEntity(Guid.NewGuid(), EntityState.Active, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
@@ -284,7 +286,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
             {
                 //Arrange
                 MockQueryLoader.Mock.Setup(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), _user, CancelToken))
-                    .ReturnsAsync(Result.Success(new List<TestServerEntity>
+                    .ReturnsAsync(Response.Success(new List<TestServerEntity>
                     {
                         new TestServerEntity(Guid.NewGuid(), EntityState.Active, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
                         new TestServerEntity(Guid.NewGuid(), EntityState.Draft, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
