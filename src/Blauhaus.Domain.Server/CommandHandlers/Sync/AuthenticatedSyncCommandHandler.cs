@@ -5,11 +5,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
-using Blauhaus.Domain.Common.CommandHandlers;
-using Blauhaus.Domain.Common.CommandHandlers.Sync;
-using Blauhaus.Domain.Common.Entities;
-using Blauhaus.Domain.Common.Errors;
-using Blauhaus.Domain.Common.Extensions;
+using Blauhaus.Domain.Abstractions.CommandHandlers;
+using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
+using Blauhaus.Domain.Abstractions.Entities;
+using Blauhaus.Domain.Abstractions.Errors;
+using Blauhaus.Domain.Abstractions.Extensions;
 using CSharpFunctionalExtensions;
 
 namespace Blauhaus.Domain.Server.CommandHandlers.Sync

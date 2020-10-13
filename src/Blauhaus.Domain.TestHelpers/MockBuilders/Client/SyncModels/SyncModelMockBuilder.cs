@@ -1,5 +1,5 @@
-﻿using Blauhaus.Domain.Client.Sync.Model;
-using Blauhaus.Domain.Common.Entities;
+﻿using Blauhaus.Domain.Abstractions.Entities;
+using Blauhaus.Domain.Client.Sync.Model;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncModels
 {

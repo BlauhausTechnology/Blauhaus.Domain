@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.Sync.Client;
 
 namespace Blauhaus.Domain.Client.Sync.Service

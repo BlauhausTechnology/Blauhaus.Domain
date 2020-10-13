@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Blauhaus.Domain.Client.Repositories;
+using Blauhaus.Domain.Abstractions.Repositories;
 using Blauhaus.Domain.Client.Sync.Client;
-using Blauhaus.Domain.Common.CommandHandlers.Sync;
-using Blauhaus.Domain.Common.Entities;
+using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
+using Blauhaus.Domain.Abstractions.Entities;
 using Moq;
 using Newtonsoft.Json;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories
 {
-    public class BaseSyncClientRepositoryMockBuilder<TModel, TDto, TSyncCommand> 
-        : BaseSyncClientRepositoryMockBuilder<BaseSyncClientRepositoryMockBuilder<TModel, TDto, TSyncCommand>,  ISyncClientRepository<TModel, TDto, TSyncCommand> , TModel, TDto, TSyncCommand>
+    public class SyncClientRepositoryMockBuilder<TModel, TDto, TSyncCommand> 
+        : BaseSyncClientRepositoryMockBuilder<SyncClientRepositoryMockBuilder<TModel, TDto, TSyncCommand>,  ISyncClientRepository<TModel, TDto, TSyncCommand> , TModel, TDto, TSyncCommand>
         where TModel : class, IClientEntity
         where TSyncCommand : SyncCommand
     {

@@ -2,11 +2,12 @@
 using Blauhaus.Common.Time.Service;
 using Blauhaus.DeviceServices.Abstractions.Connectivity;
 using Blauhaus.DeviceServices.TestHelpers.MockBuilders;
-using Blauhaus.Domain.Client.Repositories;
+using Blauhaus.Domain.Abstractions.Repositories;
 using Blauhaus.Domain.Client.Sync;
 using Blauhaus.Domain.Client.Sync.Client;
-using Blauhaus.Domain.Common.CommandHandlers;
-using Blauhaus.Domain.Common.CommandHandlers.Sync;
+using Blauhaus.Domain.Abstractions.CommandHandlers;
+using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
+using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers;
@@ -31,8 +32,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests._Base
         protected ConnectivityServiceMockBuilder MockConnectivityService => AddMock<ConnectivityServiceMockBuilder, IConnectivityService>().Invoke();
         protected MockBuilder<ITimeService> MockTimeService => AddMock<ITimeService>().Invoke();
 
-        protected BaseSyncClientRepositoryMockBuilder<TestModel, TestModelDto, TestSyncCommand> MockBaseSyncClientRepository 
-            => AddMock<BaseSyncClientRepositoryMockBuilder<TestModel, TestModelDto, TestSyncCommand>, ISyncClientRepository<TestModel, TestModelDto, TestSyncCommand>>().Invoke();
+        protected SyncClientRepositoryMockBuilder<TestModel, TestModelDto, TestSyncCommand> MockBaseSyncClientRepository 
+            => AddMock<SyncClientRepositoryMockBuilder<TestModel, TestModelDto, TestSyncCommand>, ISyncClientRepository<TestModel, TestModelDto, TestSyncCommand>>().Invoke();
 
         protected CommandHandlerMockBuilder<SyncResult<TestModel>, TestSyncCommand> MockSyncCommandHandler 
             => AddMock<CommandHandlerMockBuilder<SyncResult<TestModel>, TestSyncCommand>, ICommandHandler<SyncResult<TestModel>, TestSyncCommand>>().Invoke();

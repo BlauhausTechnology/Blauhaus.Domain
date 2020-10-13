@@ -1,5 +1,5 @@
 ﻿using System;
-using Blauhaus.Domain.Common.Extensions;
+using Blauhaus.Domain.Abstractions.Extensions;
 using NUnit.Framework;
 
 namespace Blauhaus.Domain.Tests.CommonTests.ExtensionsTests.LongExtensionsTests

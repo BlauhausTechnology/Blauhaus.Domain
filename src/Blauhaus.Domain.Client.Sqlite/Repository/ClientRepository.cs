@@ -1,7 +1,7 @@
 ﻿using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.ClientDatabase.Sqlite.Service;
 using Blauhaus.Domain.Client.Sqlite.Entities;
-using Blauhaus.Domain.Common.Entities;
+using Blauhaus.Domain.Abstractions.Entities;
 
 namespace Blauhaus.Domain.Client.Sqlite.Repository
 {

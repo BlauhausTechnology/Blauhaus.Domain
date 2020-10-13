@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Blauhaus.Domain.Common.Entities;
+using Blauhaus.Domain.Abstractions.Entities;
 using NUnit.Framework;
 
 namespace Blauhaus.Domain.Tests.Extensions
