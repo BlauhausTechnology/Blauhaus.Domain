@@ -252,7 +252,7 @@ namespace Blauhaus.Domain.Client.Sync.Client
         {
             if (syncStatusHandler.IsExecuting())
             {
-                TraceStatus(SyncClientState.DownloadingNew, $"ReloadFromServer invoked. Loading up to {syncCommand.BatchSize} new from server", syncStatusHandler);
+                _analyticsService.Trace(this, "ReloadFromServer invoked, but already busy: " + syncStatusHandler.State);
                 return;
             }
 
