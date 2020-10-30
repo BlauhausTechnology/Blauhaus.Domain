@@ -72,8 +72,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             Assert.AreEqual(SyncClientState.Completed, StateUpdates[9]);
             
             Assert.AreEqual(8, StatusMessages.Count);
-            Assert.AreEqual("TestModel SyncClient connected. Required: All (batch size 3)", StatusMessages[0]);
-            Assert.AreEqual("Initializing sync for TestModel. Local status Synced: 3. (total: 3)", StatusMessages[1]);
+            Assert.AreEqual("SyncClient connected. Required: All (batch size 3)", StatusMessages[0]);
+            Assert.AreEqual("Initializing sync. Local status Synced: 3. (total: 3)", StatusMessages[1]);
             Assert.AreEqual("Loading data from local store", StatusMessages[2]);
             Assert.AreEqual("Loaded 3 local models", StatusMessages[3]);
             Assert.AreEqual("0 newer TestModel entities downloaded (0 in total). 0 of 0 still to download", StatusMessages[4]);

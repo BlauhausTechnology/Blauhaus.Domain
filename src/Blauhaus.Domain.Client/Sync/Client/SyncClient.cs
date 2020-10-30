@@ -78,7 +78,7 @@ namespace Blauhaus.Domain.Client.Sync.Client
 
         public IObservable<TModel> Connect(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler)
         {
-            TraceStatus(SyncClientState.Starting, $"{typeof(TModel).Name} SyncClient connected. Required: {syncRequirement} (batch size {syncCommand.BatchSize})", syncStatusHandler);
+            TraceStatus(SyncClientState.Starting, $"SyncClient connected. Required: {syncRequirement} (batch size {syncCommand.BatchSize})", syncStatusHandler);
 
             _numberOfModelsToPublish = syncCommand.BatchSize;
             syncStatusHandler.PublishedEntities = 0;
@@ -90,7 +90,7 @@ namespace Blauhaus.Domain.Client.Sync.Client
                 
                 ClientSyncStatus syncStatus = await _syncClientRepository.GetSyncStatusAsync(syncCommand);
 
-                TraceStatus(SyncClientState.Starting, $"Initializing sync for {typeof(TModel).Name}. Local status {syncStatus}", syncStatusHandler);
+                TraceStatus(SyncClientState.Starting, $"Initializing sync. Local status {syncStatus}", syncStatusHandler);
                 
                 syncStatusHandler.IsConnected = _connectivityService.IsConnectedToInternet;
                 syncStatusHandler.AllLocalEntities = syncStatus.AllLocalEntities;
