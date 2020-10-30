@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Blauhaus.Domain.Abstractions.Sync;
-using Blauhaus.Domain.Client.Sync.Service;
 using Blauhaus.TestHelpers.MockBuilders;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncService

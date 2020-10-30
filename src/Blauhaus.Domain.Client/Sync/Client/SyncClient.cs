@@ -17,8 +17,6 @@ using Blauhaus.Domain.Abstractions.Repositories;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.Extensions;
 using Blauhaus.Errors;
-using Blauhaus.Errors.Extensions;
-using CSharpFunctionalExtensions;
 
 namespace Blauhaus.Domain.Client.Sync.Client
 {
@@ -360,7 +358,7 @@ namespace Blauhaus.Domain.Client.Sync.Client
         {
             statusHandler.StatusMessage = message;
             statusHandler.State = state;
-            _analyticsService.TraceVerbose(this, $"{state}: {message}");
+            _analyticsService.TraceVerbose(this, $"{typeof(TModel).Name} {state}: {message}");
         }
          
 

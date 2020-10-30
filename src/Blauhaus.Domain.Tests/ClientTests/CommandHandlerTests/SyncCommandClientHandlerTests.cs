@@ -13,10 +13,8 @@ using Blauhaus.Domain.Tests.ClientTests.TestObjects;
 using Blauhaus.Errors;
 using Blauhaus.Responses;
 using Blauhaus.TestHelpers.MockBuilders;
-using CSharpFunctionalExtensions;
 using Moq;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 
 namespace Blauhaus.Domain.Tests.ClientTests.CommandHandlerTests
 {

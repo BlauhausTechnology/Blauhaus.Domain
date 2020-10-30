@@ -4,10 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Service;
-using Blauhaus.Auth.Abstractions.User;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Errors;
-using Blauhaus.Domain.Server.CommandHandlers;
 using Blauhaus.Domain.Server.CommandHandlers.Sync;
 using Blauhaus.Domain.Tests._Base;
 using Blauhaus.Domain.Tests.Extensions;
@@ -15,7 +13,6 @@ using Blauhaus.Domain.Tests.ServerTests.TestObjects;
 using Blauhaus.Errors;
 using Blauhaus.Responses;
 using Blauhaus.TestHelpers.MockBuilders;
-using CSharpFunctionalExtensions;
 using Moq;
 using NUnit.Framework;
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Blauhaus.Analytics.Abstractions.Service;
@@ -11,7 +10,6 @@ using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Errors.Handler;
 using Blauhaus.Ioc.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Blauhaus.Domain.Client.Sync.Collection
 {

@@ -5,7 +5,6 @@ using Blauhaus.Domain.Abstractions.CommandHandlers;
 using Blauhaus.Errors;
 using Blauhaus.Responses;
 using Blauhaus.TestHelpers.MockBuilders;
-using CSharpFunctionalExtensions;
 using Moq;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base

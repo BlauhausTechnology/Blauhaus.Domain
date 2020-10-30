@@ -9,7 +9,6 @@ using Blauhaus.Domain.Tests.ClientTests.SqliteTests._TestObjects;
 using Blauhaus.TestHelpers.MockBuilders;
 using Moq;
 using NUnit.Framework;
-using SQLite;
 using SqlKata;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTests

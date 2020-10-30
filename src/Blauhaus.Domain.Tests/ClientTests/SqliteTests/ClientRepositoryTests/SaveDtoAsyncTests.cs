@@ -8,7 +8,6 @@ using Blauhaus.Domain.Tests.ClientTests.SqliteTests._TestObjects;
 using Blauhaus.TestHelpers.MockBuilders;
 using Moq;
 using NUnit.Framework;
-using SQLite;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
 {

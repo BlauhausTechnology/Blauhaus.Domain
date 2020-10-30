@@ -3,7 +3,6 @@ using Blauhaus.Common.Time.Service;
 using Blauhaus.DeviceServices.Abstractions.Connectivity;
 using Blauhaus.DeviceServices.TestHelpers.MockBuilders;
 using Blauhaus.Domain.Abstractions.Repositories;
-using Blauhaus.Domain.Client.Sync;
 using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
 using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
@@ -14,7 +13,6 @@ using Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers;
 using Blauhaus.Domain.Tests._Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
 using Blauhaus.TestHelpers.MockBuilders;
-using Moq;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests._Base
 {

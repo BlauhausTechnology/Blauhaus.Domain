@@ -6,7 +6,6 @@ using Blauhaus.Domain.Tests.ClientTests.TestObjects;
 using Blauhaus.Errors;
 using Blauhaus.Responses;
 using Blauhaus.TestHelpers.MockBuilders;
-using CSharpFunctionalExtensions;
 using Moq;
 using NUnit.Framework;
 

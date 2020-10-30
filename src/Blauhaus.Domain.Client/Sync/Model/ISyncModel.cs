@@ -1,6 +1,5 @@
 ﻿using System;
 using Blauhaus.Domain.Abstractions.Entities;
-using Blauhaus.Domain.Client.Sync.Client;
 
 namespace Blauhaus.Domain.Client.Sync.Model
 {
