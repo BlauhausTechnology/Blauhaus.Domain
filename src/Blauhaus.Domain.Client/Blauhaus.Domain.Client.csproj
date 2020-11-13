@@ -10,7 +10,7 @@
     <PackageReference Include="Blauhaus.Common.Time" Version="1.8.2" />
     <PackageReference Include="Blauhaus.Common.Utils" Version="1.8.2" />
     <PackageReference Include="Blauhaus.DeviceServices.Abstractions" Version="0.8.2" />
-    <PackageReference Include="Blauhaus.Ioc.Abstractions" Version="1.2.3" />
+    <PackageReference Include="Blauhaus.Ioc.Abstractions" Version="1.2.4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
   </ItemGroup>
