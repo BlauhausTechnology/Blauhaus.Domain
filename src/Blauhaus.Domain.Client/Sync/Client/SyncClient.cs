@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
-using Blauhaus.Common.Time.Service;
 using Blauhaus.DeviceServices.Abstractions.Connectivity;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
 using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
@@ -66,7 +65,6 @@ namespace Blauhaus.Domain.Client.Sync.Client
         public SyncClient(
             IAnalyticsService analyticsService, 
             IConnectivityService connectivityService,
-            ITimeService timeService,
             ISyncClientRepository<TModel, TDto, TSyncCommand> syncClientRepository,
             ICommandHandler<SyncResult<TModel>, TSyncCommand> syncCommandHandler)
         {

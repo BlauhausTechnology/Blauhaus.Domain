@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Blauhaus.Common.Time.Service;
 using Blauhaus.DeviceServices.Abstractions.Connectivity;
 using Blauhaus.DeviceServices.TestHelpers.MockBuilders;
 using Blauhaus.Domain.Abstractions.Repositories;
@@ -26,9 +25,6 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests._Base
         protected List<SyncClientState> StateUpdates => MockSyncStatusHandler.StateUpdates;
 
 
-        protected SyncStatusHandlerMockBuilder MockSyncStatusHandler => AddMock<SyncStatusHandlerMockBuilder, ISyncStatusHandler>().Invoke();
-        protected ConnectivityServiceMockBuilder MockConnectivityService => AddMock<ConnectivityServiceMockBuilder, IConnectivityService>().Invoke();
-        protected MockBuilder<ITimeService> MockTimeService => AddMock<ITimeService>().Invoke();
 
         protected SyncClientRepositoryMockBuilder<TestModel, TestModelDto, TestSyncCommand> MockBaseSyncClientRepository 
             => AddMock<SyncClientRepositoryMockBuilder<TestModel, TestModelDto, TestSyncCommand>, ISyncClientRepository<TestModel, TestModelDto, TestSyncCommand>>().Invoke();
@@ -54,7 +50,6 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests._Base
 
             AddService(MockBaseSyncClientRepository.Object);
             AddService(MockSyncCommandHandler.Object);
-            AddService(MockTimeService.Object);
             AddService(MockConnectivityService.Object);
         }
     }
