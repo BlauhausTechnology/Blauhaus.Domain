@@ -13,6 +13,7 @@ using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncCollections;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncModels;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base;
 using Blauhaus.TestHelpers;
 
 namespace Blauhaus.Domain.TestHelpers.Extensions
@@ -42,7 +43,11 @@ namespace Blauhaus.Domain.TestHelpers.Extensions
              => mocks.AddMock<SyncClientMockBuilder<TModel, TSyncCommand>, ISyncClient<TModel, TSyncCommand>>();
 
 
-        //command handlers
+        //handlers 
+        
+        public static Func<HandlerMockBuilder<TModel>> AddMockHandler<TModel>(this MockContainer mocks)  
+            => mocks.AddMock<HandlerMockBuilder<TModel>, IHandler<TModel>>();
+
         public static Func<CommandHandlerMockBuilder<TModel, TCommand>> AddMockCommandHandler<TModel, TCommand>(this MockContainer mocks)  where TCommand : notnull
             => mocks.AddMock<CommandHandlerMockBuilder<TModel, TCommand>, ICommandHandler<TModel, TCommand>>();
         
