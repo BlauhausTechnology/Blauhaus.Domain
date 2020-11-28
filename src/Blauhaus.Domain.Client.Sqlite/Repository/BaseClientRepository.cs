@@ -43,10 +43,9 @@ namespace Blauhaus.Domain.Client.Sqlite.Repository
 
         protected async Task<IReadOnlyList<TModel>> LoadAsync(Expression<Func<TRootEntity, bool>> predicate)
         {
-            var db = await DatabaseService.GetDatabaseConnectionAsync();
             var models = new List<TModel>();
 
-            await db.RunInTransactionAsync(connection =>
+            await DatabaseService.AsyncConnection.RunInTransactionAsync(connection =>
             {
                 var rootEntities = connection.Table<TRootEntity>()
                     .Where(predicate);
@@ -63,11 +62,9 @@ namespace Blauhaus.Domain.Client.Sqlite.Repository
 
         public async Task<TModel> SaveDtoAsync(TDto dto)
         {
-            TModel? model = default;
+            TModel? model = default; 
 
-            var db = await DatabaseService.GetDatabaseConnectionAsync();
-
-            await db.RunInTransactionAsync(connection =>
+            await DatabaseService.AsyncConnection.RunInTransactionAsync(connection =>
             {
                 var entities = EntityConverter.ExtractEntitiesFromDto(dto);
 

@@ -34,8 +34,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
                 new SqliteTestRootEntity{ Id = _rootId3 }
             };
 
-            var connection = SqliteDatabaseService.GetDatabaseConnectionAsync().Result;
-            connection.InsertAllAsync(entities);
+            var connection = SqliteDatabaseService.AsyncConnection;
+            connection.InsertAllAsync(entities).Wait();
         }
 
 
