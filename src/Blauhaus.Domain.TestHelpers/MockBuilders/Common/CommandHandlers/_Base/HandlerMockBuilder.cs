@@ -25,7 +25,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base
 
         public TBuilder Where_HandleAsync_returns(TPayload payload)
         {
-            Mock.Setup(x => x.HandleAsync(It.IsAny<CancellationToken>()))
+            Mock.Setup(x => x.HandleAsync())
                 .ReturnsAsync(Response.Success(payload));
             return (TBuilder) this;
         }
@@ -38,14 +38,14 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base
                 queue.Enqueue(Response.Success(payload));
             }
 
-            Mock.Setup(x => x.HandleAsync(It.IsAny<CancellationToken>()))
+            Mock.Setup(x => x.HandleAsync())
                 .ReturnsAsync(queue.Dequeue);
             return (TBuilder) this;
         }
 
         public TBuilder Where_HandleAsync_returns_result(Response<TPayload> payload)
         {
-            Mock.Setup(x => x.HandleAsync(It.IsAny<CancellationToken>()))
+            Mock.Setup(x => x.HandleAsync())
                 .ReturnsAsync(payload);
             return (TBuilder) this;
         }
@@ -53,7 +53,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base
         
         public TBuilder Where_HandleAsync_returns_fail(Error error)
         {
-            Mock.Setup(x => x.HandleAsync(It.IsAny<CancellationToken>()))
+            Mock.Setup(x => x.HandleAsync())
                 .ReturnsAsync(Response.Failure<TPayload>(error));
             return (TBuilder) this;
         }
@@ -61,7 +61,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base
 
         public TBuilder Where_HandleAsync_throws(Exception exception)
         {
-            Mock.Setup(x => x.HandleAsync(It.IsAny<CancellationToken>()))
+            Mock.Setup(x => x.HandleAsync())
                 .ThrowsAsync(exception);
             return (TBuilder) this;
         }
@@ -69,7 +69,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base
 
         public void Verify_HandleAsync_called_Times(int times)
         {
-            Mock.Verify(x => x.HandleAsync(It.IsAny<CancellationToken>()), Times.Exactly(times));
+            Mock.Verify(x => x.HandleAsync(), Times.Exactly(times));
         } 
          
     }

@@ -6,6 +6,6 @@ namespace Blauhaus.Domain.Abstractions.CommandHandlers
 { 
     public interface IHandler<TPayload>
     {
-        Task<Response<TPayload>> HandleAsync(CancellationToken token);
+        Task<Response<TPayload>> HandleAsync();
     }
 }

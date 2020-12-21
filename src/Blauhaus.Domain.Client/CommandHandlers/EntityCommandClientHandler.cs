@@ -33,12 +33,12 @@ namespace Blauhaus.Domain.Client.CommandHandlers
 
         //todo handle offline case and return error?
 
-        public async Task<Response<TModel>> HandleAsync(TCommand command, CancellationToken token)
+        public async Task<Response<TModel>> HandleAsync(TCommand command)
         {
             _analyticsService.TraceVerbose(this, $"{typeof(TCommand).Name} Handler started", command.ToObjectDictionary("Command"));
 
             var commandDto = _converter.Convert(command);
-            var dtoResult = await _dtoCommandHandler.HandleAsync(commandDto, token);
+            var dtoResult = await _dtoCommandHandler.HandleAsync(commandDto);
             if (dtoResult.IsFailure)
             {
                 return Response.Failure<TModel>(dtoResult.Error);

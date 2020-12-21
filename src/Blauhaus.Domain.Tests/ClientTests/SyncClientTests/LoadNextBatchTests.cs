@@ -119,7 +119,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 y.FavouriteFood == "Lasagne" &&
                 y.BatchSize == 3 && 
                 y.NewerThan == null && 
-                y.OlderThan == localModels.Last().ModifiedAtTicks), It.IsAny<CancellationToken>()));
+                y.OlderThan == localModels.Last().ModifiedAtTicks)));
             Assert.AreEqual(3, publishedModels.Count);
             Assert.AreEqual(serverModels[0].Id, publishedModels[0].Id);
             Assert.AreEqual(serverModels[1].Id, publishedModels[1].Id);

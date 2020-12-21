@@ -22,21 +22,21 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base
     { 
         public TBuilder Where_HandleAsync_returns_result(Response result)
         {
-            Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>(), It.IsAny<CancellationToken>()))
+            Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>()))
                 .ReturnsAsync(result);
             return this as TBuilder;
         }
 
         public TBuilder Where_HandleAsync_returns_fail(string error)
         {
-            Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>(), It.IsAny<CancellationToken>()))
+            Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>()))
                 .ReturnsAsync(Response.Failure(Error.Create(error)));
             return this as TBuilder;
         }
         
         public TBuilder Where_HandleAsync_returns_fail(Error error)
         {
-            Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>(), It.IsAny<CancellationToken>()))
+            Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>()))
                 .ReturnsAsync(Response.Failure(error));
             return this as TBuilder;
         }
@@ -44,24 +44,24 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base
 
         public TBuilder Where_HandleAsync_throws(Exception exception)
         {
-            Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>(), It.IsAny<CancellationToken>()))
+            Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>()))
                 .ThrowsAsync(exception);
             return this as TBuilder;
         }
 
         public void Verify_HandleAsync_called_With(Expression<Func<TCommand, bool>> predicate)
         {
-            Mock.Verify(x => x.HandleAsync(It.Is<TCommand>(predicate), It.IsAny<CancellationToken>()));
+            Mock.Verify(x => x.HandleAsync(It.Is<TCommand>(predicate)));
         }
 
         public void Verify_HandleAsync_NOT_called_With(Expression<Func<TCommand, bool>> predicate)
         {
-            Mock.Verify(x => x.HandleAsync(It.Is<TCommand>(predicate), It.IsAny<CancellationToken>()), Times.Never);
+            Mock.Verify(x => x.HandleAsync(It.Is<TCommand>(predicate)), Times.Never);
         }
 
         public void Verify_HandleAsync_NOT_called()
         {
-            Mock.Verify(x => x.HandleAsync(It.IsAny<TCommand>(), It.IsAny<CancellationToken>()), Times.Never);
+            Mock.Verify(x => x.HandleAsync(It.IsAny<TCommand>()), Times.Never);
         }
     }
 }

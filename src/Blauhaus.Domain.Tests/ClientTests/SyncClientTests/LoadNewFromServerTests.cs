@@ -53,7 +53,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 y.FavouriteFood == "Lasagne" &&
                 y.BatchSize == 3 && 
                 y.NewerThan == localModels.First().ModifiedAtTicks && 
-                y.OlderThan == null), It.IsAny<CancellationToken>()));
+                y.OlderThan == null)));
             Assert.AreEqual(3, publishedModels.Count);
             Assert.AreEqual(serverModels[0].Id, publishedModels[0].Id);
             Assert.AreEqual(serverModels[1].Id, publishedModels[1].Id);
@@ -122,7 +122,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             await Task.Delay(20);
 
             //Assert
-            MockSyncCommandHandler.Mock.Verify(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), It.IsAny<CancellationToken>()), Times.Never);
+            MockSyncCommandHandler.Mock.Verify(x => x.HandleAsync(It.IsAny<TestSyncCommand>()), Times.Never);
         }
     }
 }

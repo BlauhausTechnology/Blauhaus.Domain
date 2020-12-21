@@ -28,7 +28,7 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
             _queryLoader = queryLoader;
         }
 
-        public  async Task<Response<SyncResult<TEntity>>> HandleAsync(TSyncCommand command, TUser authenticatedUser, CancellationToken token)
+        public  async Task<Response<SyncResult<TEntity>>> HandleAsync(TSyncCommand command, TUser authenticatedUser)
         {
 
             if (command.IsForNewerEntities() && command.IsForOlderEntities())
@@ -36,7 +36,7 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
                 return _analyticsService.TraceErrorResponse<SyncResult<TEntity>>(this, SyncErrors.InvalidSyncCommand);
             }
 
-            var dbQueryResult = await _queryLoader.HandleAsync(command, authenticatedUser, token);
+            var dbQueryResult = await _queryLoader.HandleAsync(command, authenticatedUser);
             if (dbQueryResult.IsFailure)
             {
                 return Response.Failure<SyncResult<TEntity>>(dbQueryResult.Error);

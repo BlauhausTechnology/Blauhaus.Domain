@@ -182,7 +182,7 @@ namespace Blauhaus.Domain.Client.Sync.Client
                     TraceStatus(SyncClientState.DownloadingOld, $"LoadMore invoked. Loading next {syncCommand.BatchSize} of {_numberOfModelsToPublish} from server", syncStatusHandler);
                     syncCommand.OlderThan = OldestModelPublished;
                     syncCommand.NewerThan = null;
-                    var serverModels = await _syncCommandHandler.HandleAsync(syncCommand, token);
+                    var serverModels = await _syncCommandHandler.HandleAsync(syncCommand);
                     PublishModelsIfRequired(serverModels.Value.EntityBatch, observer, syncStatusHandler);
                 }
 
@@ -268,7 +268,7 @@ namespace Blauhaus.Domain.Client.Sync.Client
                 {
                     break;
                 }
-                var serverDownloadResult = await _syncCommandHandler.HandleAsync(syncCommand, token);
+                var serverDownloadResult = await _syncCommandHandler.HandleAsync(syncCommand);
                 if (serverDownloadResult.IsFailure)
                 {
                     var errorMessage = $"Failed to load {typeof(TModel).Name} entities from server: " + serverDownloadResult.Error.Description;

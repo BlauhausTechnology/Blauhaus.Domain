@@ -4,10 +4,10 @@ using Blauhaus.Responses;
 
 namespace Blauhaus.Domain.Abstractions.CommandHandlers
 {
-    public interface IVoidAuthenticatedCommandHandler<TCommand, TUser> 
+    public interface IVoidAuthenticatedCommandHandler<in TCommand, in TUser> 
         where TCommand : notnull
         where TUser : notnull
     {
-        Task<Response> HandleAsync(TCommand command, TUser authenticatedUser, CancellationToken token);
+        Task<Response> HandleAsync(TCommand command, TUser authenticatedUser);
     }
 }

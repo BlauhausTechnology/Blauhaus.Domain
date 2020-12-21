@@ -53,7 +53,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.CommandHandlerTests
             };
 
             MockCommandConverter.Mock.Setup(x => x.Convert(_command)).Returns(_commandDto);
-            MockDtoCommandHandler.Mock.Setup(x => x.HandleAsync(_commandDto, CancelToken))
+            MockDtoCommandHandler.Mock.Setup(x => x.HandleAsync(_commandDto))
                 .ReturnsAsync(Response.Success(_dtoSyncResult));
             MockBaseSyncClientRepository.Where_SaveSyncedDtosAsync_returns(new List<TestModel> {_model});
 
@@ -66,7 +66,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.CommandHandlerTests
         public async Task SHOULD_trace_start_and_success()
         {
             //Act
-            await Sut.HandleAsync(_command, CancelToken);
+            await Sut.HandleAsync(_command);
 
             //Assert
             MockAnalyticsService.VerifyTrace("TestSyncCommand handler for TestModel started");
@@ -78,20 +78,20 @@ namespace Blauhaus.Domain.Tests.ClientTests.CommandHandlerTests
         public async Task SHOULD_convert_Command_to_CommandDto_and_handle()
         {
             //Act
-            await Sut.HandleAsync(_command, CancelToken);
+            await Sut.HandleAsync(_command);
 
             //Assert
-            MockDtoCommandHandler.Mock.Verify(x => x.HandleAsync(_commandDto, CancelToken));
+            MockDtoCommandHandler.Mock.Verify(x => x.HandleAsync(_commandDto));
         }
 
         [Test]
         public async Task IF_handler_fails_SHOULD_return_failure()
         {
             //Arrange
-            MockDtoCommandHandler.Mock.Setup(x => x.HandleAsync(_commandDto, CancelToken)).ReturnsAsync(Response.Failure<DtoSyncResult<TestModelDto>>(Error.Create("oops")));
+            MockDtoCommandHandler.Mock.Setup(x => x.HandleAsync(_commandDto)).ReturnsAsync(Response.Failure<DtoSyncResult<TestModelDto>>(Error.Create("oops")));
 
             //Act
-            var result = await Sut.HandleAsync(_command, CancelToken);
+            var result = await Sut.HandleAsync(_command);
 
             //Assert
             Assert.AreEqual("oops", result.Error.Description);
@@ -101,7 +101,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.CommandHandlerTests
         public async Task IF_handler_succeeds_SHOULD_save_and_return_Dtos()
         {
             //Act
-            var result = await Sut.HandleAsync(_command, CancelToken);
+            var result = await Sut.HandleAsync(_command);
 
             //Assert
             MockBaseSyncClientRepository.Mock.Verify(x => x.SaveSyncedDtosAsync(It.Is<IReadOnlyList<TestModelDto>>(y => 

@@ -22,12 +22,12 @@ namespace Blauhaus.Domain.Client.CommandHandlers
             _dtoCommandHandler = dtoCommandHandler;
         }
 
-        public async Task<Response> HandleAsync(TCommand command, CancellationToken token)
+        public async Task<Response> HandleAsync(TCommand command)
         {
             _analyticsService.TraceVerbose(this, $"{typeof(TCommand).Name} Handler started", command.ToObjectDictionary("Command"));
 
             var commandDto = _converter.Convert(command);
-            var dtoResult = await _dtoCommandHandler.HandleAsync(commandDto, token);
+            var dtoResult = await _dtoCommandHandler.HandleAsync(commandDto);
             if (dtoResult.IsFailure)
             {
                 return Response.Failure(dtoResult.Error);
