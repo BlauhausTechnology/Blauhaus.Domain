@@ -1,10 +1,16 @@
 ﻿using System;
+using Blauhaus.Common.Utils.Contracts;
 
 namespace Blauhaus.Domain.Abstractions.Entities
 {
-    public interface IEntity
+    public interface IEntity<out TId> : IHasId<TId>
     {
-        Guid Id { get; }
         EntityState EntityState { get; }
     }
+    
+    public interface IEntity: IEntity<Guid>
+    {
+
+    }
+    
 }
