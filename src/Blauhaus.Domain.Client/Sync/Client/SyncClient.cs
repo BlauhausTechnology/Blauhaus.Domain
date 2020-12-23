@@ -9,13 +9,13 @@ using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.DeviceServices.Abstractions.Connectivity;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
-using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Extensions;
 using Blauhaus.Domain.Abstractions.Repositories;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.Extensions;
 using Blauhaus.Errors;
+using Blauhaus.Sync.Abstractions;
 
 namespace Blauhaus.Domain.Client.Sync.Client
 {

@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Auth.Abstractions.Errors;
 using Blauhaus.Domain.Abstractions.Repositories;
-using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Tests.ClientTests.SyncClientTests._Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
 using Blauhaus.Errors;
+using Blauhaus.Sync.Abstractions;
 using Moq;
 using NUnit.Framework;
 

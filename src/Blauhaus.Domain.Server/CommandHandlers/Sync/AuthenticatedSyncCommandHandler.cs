@@ -1,14 +1,13 @@
 ﻿using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
-using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Errors;
 using Blauhaus.Domain.Abstractions.Extensions;
 using Blauhaus.Responses;
+using Blauhaus.Sync.Abstractions;
 
 namespace Blauhaus.Domain.Server.CommandHandlers.Sync
 {

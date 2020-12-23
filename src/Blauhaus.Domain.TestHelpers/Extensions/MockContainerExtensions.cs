@@ -4,7 +4,6 @@ using Blauhaus.Domain.Client.Sqlite.Repository;
 using Blauhaus.Domain.Client.Sync.Collection;
 using Blauhaus.Domain.Client.Sync.Model;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
-using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.ClientEntityConverters;
@@ -13,7 +12,7 @@ using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncCollections;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncModels;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers;
-using Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base;
+using Blauhaus.Sync.Abstractions;
 using Blauhaus.TestHelpers;
 
 namespace Blauhaus.Domain.TestHelpers.Extensions

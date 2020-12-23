@@ -1,5 +1,5 @@
 ﻿using System;
-using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
+using Blauhaus.Sync.Abstractions;
 
 namespace Blauhaus.Domain.Abstractions.Extensions
 {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Blauhaus.Domain.Abstractions.Entities
+﻿namespace Blauhaus.Domain.Abstractions.Entities
 {
     public interface IClientEntity<out TId> : IEntity<TId>
     {

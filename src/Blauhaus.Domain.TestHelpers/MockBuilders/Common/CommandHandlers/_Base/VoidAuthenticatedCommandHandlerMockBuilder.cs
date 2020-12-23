@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq.Expressions;
-using System.Threading;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
 using Blauhaus.Errors;
 using Blauhaus.Responses;

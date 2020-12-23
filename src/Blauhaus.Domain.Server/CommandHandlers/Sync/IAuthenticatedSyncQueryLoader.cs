@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
-using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
 using Blauhaus.Domain.Abstractions.Entities;
+using Blauhaus.Sync.Abstractions;
 
 namespace Blauhaus.Domain.Server.CommandHandlers.Sync
 {

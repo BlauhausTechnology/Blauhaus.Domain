@@ -1,17 +1,13 @@
 ﻿using System.Collections.Generic;
-using Blauhaus.DeviceServices.Abstractions.Connectivity;
-using Blauhaus.DeviceServices.TestHelpers.MockBuilders;
 using Blauhaus.Domain.Abstractions.Repositories;
 using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
-using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories;
-using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers;
 using Blauhaus.Domain.Tests._Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
-using Blauhaus.TestHelpers.MockBuilders;
+using Blauhaus.Sync.Abstractions;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests._Base
 {
