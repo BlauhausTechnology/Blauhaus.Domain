@@ -8,7 +8,6 @@ using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Errors;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Errors;
-using Blauhaus.Sync.Abstractions;
 
 namespace Blauhaus.Domain.Client.Sync.Model
 {

@@ -5,9 +5,9 @@ using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Repositories;
+using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.CommandHandlers;
 using Blauhaus.Responses;
-using Blauhaus.Sync.Abstractions;
 
 namespace Blauhaus.Domain.Client.Sync.CommandHandler
 {

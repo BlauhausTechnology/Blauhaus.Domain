@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Blauhaus.Domain.Abstractions.Repositories;
 using Blauhaus.Domain.Abstractions.Entities;
-using Blauhaus.Sync.Abstractions;
+using Blauhaus.Domain.Abstractions.Sync;
 using Moq;
 using Newtonsoft.Json;
 

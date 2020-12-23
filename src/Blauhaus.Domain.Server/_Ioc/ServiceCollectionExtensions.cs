@@ -1,8 +1,8 @@
 ﻿using Blauhaus.Auth.Abstractions.User;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
 using Blauhaus.Domain.Abstractions.Entities;
+using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Server.CommandHandlers.Sync;
-using Blauhaus.Sync.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Blauhaus.Domain.Server._Ioc

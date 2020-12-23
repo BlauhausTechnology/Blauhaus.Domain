@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Sync;
-using Blauhaus.Sync.Abstractions;
 
 namespace Blauhaus.Domain.Client.Sync.Collection
 {

@@ -12,7 +12,6 @@ using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncCollections;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncModels;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers;
-using Blauhaus.Sync.Abstractions;
 using Blauhaus.TestHelpers;
 
 namespace Blauhaus.Domain.TestHelpers.Extensions

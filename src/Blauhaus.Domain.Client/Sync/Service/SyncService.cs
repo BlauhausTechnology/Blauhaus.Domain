@@ -6,7 +6,6 @@ using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Ioc.Abstractions;
-using Blauhaus.Sync.Abstractions;
 
 namespace Blauhaus.Domain.Client.Sync.Service
 {

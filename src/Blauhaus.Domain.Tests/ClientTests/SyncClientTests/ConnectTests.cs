@@ -9,7 +9,6 @@ using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Tests.ClientTests.SyncClientTests._Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
 using Blauhaus.Errors;
-using Blauhaus.Sync.Abstractions;
 using Moq;
 using NUnit.Framework;
 

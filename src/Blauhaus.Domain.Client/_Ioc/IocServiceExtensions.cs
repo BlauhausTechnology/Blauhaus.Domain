@@ -7,7 +7,6 @@ using Blauhaus.Domain.Client.Sync.Collection;
 using Blauhaus.Domain.Client.Sync.Model;
 using Blauhaus.Domain.Client.Sync.Service;
 using Blauhaus.Ioc.Abstractions;
-using Blauhaus.Sync.Abstractions;
 
 namespace Blauhaus.Domain.Client._Ioc
 {

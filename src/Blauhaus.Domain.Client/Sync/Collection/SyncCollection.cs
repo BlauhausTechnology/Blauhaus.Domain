@@ -9,7 +9,6 @@ using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Errors.Handler;
 using Blauhaus.Ioc.Abstractions;
-using Blauhaus.Sync.Abstractions;
 
 namespace Blauhaus.Domain.Client.Sync.Collection
 {

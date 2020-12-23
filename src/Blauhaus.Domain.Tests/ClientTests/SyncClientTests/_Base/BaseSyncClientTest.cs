@@ -7,7 +7,6 @@ using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers;
 using Blauhaus.Domain.Tests._Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
-using Blauhaus.Sync.Abstractions;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests._Base
 {

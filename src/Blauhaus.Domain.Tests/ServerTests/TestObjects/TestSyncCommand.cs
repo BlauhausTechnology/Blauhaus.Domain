@@ -1,4 +1,4 @@
-﻿using Blauhaus.Sync.Abstractions;
+﻿using Blauhaus.Domain.Abstractions.Sync;
 
 namespace Blauhaus.Domain.Tests.ServerTests.TestObjects
 {
