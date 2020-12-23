@@ -7,7 +7,7 @@ namespace Blauhaus.Domain.Abstractions.CommandHandlers
         where TCommand : notnull
         where TUser : notnull
     {
-        Task<Response<TPayload>> HandleAsync(TCommand command, TUser authenticatedUser);
+        Task<Response<TPayload>> HandleAsync(TCommand command, TUser user);
     }
 
 
