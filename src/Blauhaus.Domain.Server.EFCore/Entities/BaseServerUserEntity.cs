@@ -4,7 +4,7 @@ using Blauhaus.Domain.Abstractions.Entities;
 
 namespace Blauhaus.Domain.Server.EFCore.Entities
 {
-    public class BaseServerUserEntity : BaseServerEntity, IHasUserId<Guid>
+    public abstract class BaseServerUserEntity : BaseServerEntity, IHasUserId
     {
         protected internal BaseServerUserEntity()
         {

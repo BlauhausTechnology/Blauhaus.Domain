@@ -22,22 +22,22 @@ namespace Blauhaus.Domain.Server.EFCore.Extensions
             return dbSet.AsNoTracking().FirstOrDefault(x => x.Id == id && x.EntityState != EntityState.Deleted);
         }
                  
-        public static async Task<TEntity?> LoadOneByUserIdAsync<TEntity>(this DbSet<TEntity> dbSet, Guid userId) where TEntity : class, IServerEntity, IHasUserId<Guid>
+        public static async Task<TEntity?> LoadOneByUserIdAsync<TEntity>(this DbSet<TEntity> dbSet, Guid userId) where TEntity : class, IServerEntity, IHasUserId
         {
             return await dbSet.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == userId && x.EntityState != EntityState.Deleted);
         }
         
-        public static TEntity? LoadOneByUserId<TEntity>(this DbSet<TEntity> dbSet, Guid userId) where TEntity : class, IServerEntity, IHasUserId<Guid>
+        public static TEntity? LoadOneByUserId<TEntity>(this DbSet<TEntity> dbSet, Guid userId) where TEntity : class, IServerEntity, IHasUserId
         {
             return dbSet.AsNoTracking().FirstOrDefault(x => x.UserId == userId && x.EntityState != EntityState.Deleted);
         }
             
-        public static async Task<List<TEntity>> LoadByUserIdAsync<TEntity>(this DbSet<TEntity> dbSet, Guid userId) where TEntity : class, IServerEntity, IHasUserId<Guid>
+        public static async Task<List<TEntity>> LoadByUserIdAsync<TEntity>(this DbSet<TEntity> dbSet, Guid userId) where TEntity : class, IServerEntity, IHasUserId
         {
             return await dbSet.AsNoTracking().Where(x => x.UserId == userId && x.EntityState!= EntityState.Deleted).ToListAsync();
         }
         
-        public static async Task<List<Guid>> LoadIdsByUserIdAsync<TEntity>(this DbSet<TEntity> dbSet, Guid userId) where TEntity : class, IServerEntity, IHasUserId<Guid>
+        public static async Task<List<Guid>> LoadIdsByUserIdAsync<TEntity>(this DbSet<TEntity> dbSet, Guid userId) where TEntity : class, IServerEntity, IHasUserId
         {
             return await dbSet.AsNoTracking()
                 .Where(x => x.UserId == userId && x.EntityState != EntityState.Deleted)
