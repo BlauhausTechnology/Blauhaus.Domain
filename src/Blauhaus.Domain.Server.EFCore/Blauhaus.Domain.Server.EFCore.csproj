@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Blauhaus.Domain.Abstractions\Blauhaus.Domain.Abstractions.csproj" />
+    <ProjectReference Include="..\Blauhaus.Domain.TestHelpers\Blauhaus.Domain.TestHelpers.csproj" />
   </ItemGroup>
 
 </Project>
