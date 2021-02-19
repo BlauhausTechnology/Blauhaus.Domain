@@ -1,9 +1,8 @@
 ﻿using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.ClientDatabase.Sqlite.Service;
-using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
 using Blauhaus.Domain.Abstractions.Entities;
-using Blauhaus.Domain.Client.Sqlite.Entities;
-using Blauhaus.Domain.Client.Sqlite.Repository; 
+using Blauhaus.Domain.Abstractions.Sync;
+using Blauhaus.Domain.Client.Sqlite.Repository;
 
 namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
 {

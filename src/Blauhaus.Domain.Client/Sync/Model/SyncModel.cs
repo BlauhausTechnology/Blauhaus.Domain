@@ -4,11 +4,9 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
-using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Errors;
 using Blauhaus.Domain.Abstractions.Sync;
-using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Errors;
 
 namespace Blauhaus.Domain.Client.Sync.Model

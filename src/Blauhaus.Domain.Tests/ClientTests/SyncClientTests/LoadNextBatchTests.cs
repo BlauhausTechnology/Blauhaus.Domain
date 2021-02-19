@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Blauhaus.Domain.Abstractions.Repositories;
-using Blauhaus.Domain.Client.Sync;
-using Blauhaus.Domain.Client.Sync.Client;
-using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Tests.ClientTests.SyncClientTests._Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
@@ -74,8 +70,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             Assert.AreEqual(SyncClientState.Completed, StateUpdates[9]);
             
             Assert.AreEqual(8, StatusMessages.Count);
-            Assert.AreEqual("TestModel SyncClient connected. Required: All (batch size 3)", StatusMessages[0]);
-            Assert.AreEqual("Initializing sync for TestModel. Local status Synced: 6. (total: 6)", StatusMessages[1]);
+            Assert.AreEqual("SyncClient connected. Required: All (batch size 3)", StatusMessages[0]);
+            Assert.AreEqual("Initializing sync. Local status Synced: 6. (total: 6)", StatusMessages[1]);
             Assert.AreEqual("Loading data from local store", StatusMessages[2]);
             Assert.AreEqual("Loaded 3 local models", StatusMessages[3]);
             Assert.AreEqual("0 newer TestModel entities downloaded (0 in total). 0 of 0 still to download", StatusMessages[4]);
@@ -121,7 +117,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 y.FavouriteFood == "Lasagne" &&
                 y.BatchSize == 3 && 
                 y.NewerThan == null && 
-                y.OlderThan == localModels.Last().ModifiedAtTicks), It.IsAny<CancellationToken>()));
+                y.OlderThan == localModels.Last().ModifiedAtTicks)));
             Assert.AreEqual(3, publishedModels.Count);
             Assert.AreEqual(serverModels[0].Id, publishedModels[0].Id);
             Assert.AreEqual(serverModels[1].Id, publishedModels[1].Id);
@@ -145,8 +141,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             Assert.AreEqual(SyncClientState.Completed, StateUpdates[9]);
             
             Assert.AreEqual(8, StatusMessages.Count);
-            Assert.AreEqual("TestModel SyncClient connected. Required: All (batch size 3)", StatusMessages[0]);
-            Assert.AreEqual("Initializing sync for TestModel. Local status Synced: 3. (total: 3)", StatusMessages[1]);
+            Assert.AreEqual("SyncClient connected. Required: All (batch size 3)", StatusMessages[0]);
+            Assert.AreEqual("Initializing sync. Local status Synced: 3. (total: 3)", StatusMessages[1]);
             Assert.AreEqual("Loading data from local store", StatusMessages[2]);
             Assert.AreEqual("Loaded 3 local models", StatusMessages[3]);
             Assert.AreEqual("0 newer TestModel entities downloaded (0 in total). 0 of 0 still to download", StatusMessages[4]);

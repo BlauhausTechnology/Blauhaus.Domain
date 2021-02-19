@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
-using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Repositories;
+using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.CommandHandlers;
-using CSharpFunctionalExtensions;
+using Blauhaus.Responses;
 
 namespace Blauhaus.Domain.Client.Sync.CommandHandler
 {
@@ -35,22 +34,22 @@ namespace Blauhaus.Domain.Client.Sync.CommandHandler
         }
 
 
-        public async Task<Result<SyncResult<TModel>>> HandleAsync(TSyncCommand command, CancellationToken token)
+        public async Task<Response<SyncResult<TModel>>> HandleAsync(TSyncCommand command)
         {
             _analyticsService.TraceVerbose(this, $"{typeof(TSyncCommand).Name} handler for {typeof(TModel).Name} started", command.ToObjectDictionary("Command"));
 
             var commandDto = _converter.Convert(command);
-            var dtoResult = await _dtoCommandHandler.HandleAsync(commandDto, token);
+            var dtoResult = await _dtoCommandHandler.HandleAsync(commandDto);
             if (dtoResult.IsFailure)
             {
-                return Result.Failure<SyncResult<TModel>>(dtoResult.Error);
+                return Response.Failure<SyncResult<TModel>>(dtoResult.Error);
             }
 
             var models = await _repository.SaveSyncedDtosAsync(dtoResult.Value.Dtos);
 
             _analyticsService.TraceVerbose(this,  $"{typeof(TSyncCommand).Name} handler for {typeof(TModel).Name} succeeded");
 
-            return Result.Success(new SyncResult<TModel>
+            return Response.Success(new SyncResult<TModel>
             {
                 EntityBatch = (List<TModel>) models,
                 TotalActiveEntityCount = dtoResult.Value.TotalEntityCount,

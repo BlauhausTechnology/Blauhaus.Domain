@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Service;
-using Blauhaus.Analytics.TestHelpers;
 using Blauhaus.Analytics.TestHelpers.MockBuilders;
 using Blauhaus.ClientDatabase.Sqlite.Service;
 using Blauhaus.DeviceServices.Abstractions.DeviceInfo;
@@ -26,7 +25,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests._Base
             Cleanup();            
             SqliteDatabaseService = new SqliteInMemoryDatabase(new SqliteConfig(MockDeviceInfoService.Object));
             Task.Run(async () => await SqliteDatabaseService.DeleteDataAsync()).Wait();
-            Connection = SqliteDatabaseService.GetDatabaseConnectionAsync().Result;
+            Connection = SqliteDatabaseService.AsyncConnection;
             AddService(SqliteDatabaseService);
             AddService(x => MockClientEntityConverter.Object);
             AddService(x => MockSyncClientSqlQueryGenerator.Object);

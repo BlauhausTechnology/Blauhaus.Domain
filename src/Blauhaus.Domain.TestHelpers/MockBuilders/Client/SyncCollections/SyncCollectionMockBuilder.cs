@@ -1,6 +1,6 @@
 ﻿using Blauhaus.Domain.Client.Sync.Collection;
-using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
 using Blauhaus.Domain.Abstractions.Entities;
+using Blauhaus.Domain.Abstractions.Sync;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncCollections
 {

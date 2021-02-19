@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Blauhaus.Domain.Abstractions.Repositories;
-using Blauhaus.Domain.Client.Sync;
-using Blauhaus.Domain.Client.Sync.Client;
-using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
-using Blauhaus.Domain.Abstractions.Errors;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Tests.ClientTests.SyncClientTests._Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
-using Blauhaus.Errors.Extensions;
 using Moq;
 using NUnit.Framework;
 
@@ -57,7 +51,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 y.FavouriteFood == "Lasagne" &&
                 y.BatchSize == 3 && 
                 y.NewerThan == localModels.First().ModifiedAtTicks && 
-                y.OlderThan == null), It.IsAny<CancellationToken>()));
+                y.OlderThan == null)));
             Assert.AreEqual(3, publishedModels.Count);
             Assert.AreEqual(serverModels[0].Id, publishedModels[0].Id);
             Assert.AreEqual(serverModels[1].Id, publishedModels[1].Id);
@@ -82,8 +76,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             Assert.AreEqual(SyncClientState.Completed, StateUpdates[10]);
             
             Assert.AreEqual(9, StatusMessages.Count);
-            Assert.AreEqual("TestModel SyncClient connected. Required: All (batch size 3)", StatusMessages[0]);
-            Assert.AreEqual("Initializing sync for TestModel. Local status Synced: 3. (total: 3)", StatusMessages[1]);
+            Assert.AreEqual("SyncClient connected. Required: All (batch size 3)", StatusMessages[0]);
+            Assert.AreEqual("Initializing sync. Local status Synced: 3. (total: 3)", StatusMessages[1]);
             Assert.AreEqual("Loading data from local store", StatusMessages[2]);
             Assert.AreEqual("Loaded 3 local models", StatusMessages[3]);
             Assert.AreEqual("0 newer TestModel entities downloaded (0 in total). 0 of 0 still to download", StatusMessages[4]);
@@ -126,7 +120,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             await Task.Delay(20);
 
             //Assert
-            MockSyncCommandHandler.Mock.Verify(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), It.IsAny<CancellationToken>()), Times.Never);
+            MockSyncCommandHandler.Mock.Verify(x => x.HandleAsync(It.IsAny<TestSyncCommand>()), Times.Never);
         }
     }
 }

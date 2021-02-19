@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 
-namespace Blauhaus.Domain.Abstractions.CommandHandlers.Sync
+namespace Blauhaus.Domain.Abstractions.Sync
 {
     public class SyncCommand
     {
-
         /// <summary>
         /// Used only when asking for entities that have been modified after the last sync. Returns older entities first
         /// </summary>
@@ -25,5 +25,9 @@ namespace Blauhaus.Domain.Abstractions.CommandHandlers.Sync
         /// </summary>
         public Guid? Id { get; set; } = null;
 
+        /// <summary>
+        /// Addidtional properties if needed to filter the sync. Must be the same across multiple syncs with the same intent!
+        /// </summary>
+        public Dictionary<string, string>? Filters { get; set; } = null;
     }
 }

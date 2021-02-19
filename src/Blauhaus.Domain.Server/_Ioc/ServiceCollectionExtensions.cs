@@ -1,10 +1,7 @@
-﻿using System;
-using System.Linq;
-using Blauhaus.Auth.Abstractions.User;
+﻿using Blauhaus.Auth.Abstractions.User;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
-using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
 using Blauhaus.Domain.Abstractions.Entities;
-using Blauhaus.Domain.Server.CommandHandlers;
+using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Server.CommandHandlers.Sync;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Service;
-using Blauhaus.Auth.Abstractions.User;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Errors;
-using Blauhaus.Domain.Server.CommandHandlers;
 using Blauhaus.Domain.Server.CommandHandlers.Sync;
 using Blauhaus.Domain.Tests._Base;
 using Blauhaus.Domain.Tests.Extensions;
 using Blauhaus.Domain.Tests.ServerTests.TestObjects;
+using Blauhaus.Errors;
+using Blauhaus.Responses;
 using Blauhaus.TestHelpers.MockBuilders;
-using CSharpFunctionalExtensions;
 using Moq;
 using NUnit.Framework;
 
@@ -35,8 +33,8 @@ namespace Blauhaus.Domain.Tests.ServerTests
             _user = new TestAuthenticatedUser {UserId = Guid.NewGuid()};
             var entityQuery = TestServerEntity.GenerateList(12);
 
-            MockQueryLoader.Mock.Setup(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), _user, CancelToken))
-                .ReturnsAsync(Result.Success(entityQuery));
+            MockQueryLoader.Mock.Setup(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), _user))
+                .ReturnsAsync(Response.Success(entityQuery));
 
             _entities = entityQuery.ToList();
 
@@ -53,11 +51,11 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 _command.NewerThan = 100;
 
                 //Act
-                var queryResult = await Sut.HandleAsync(_command, _user, CancelToken);
+                var queryResult = await Sut.HandleAsync(_command, _user);
 
                 //Assert
-                Assert.AreEqual(SyncErrors.InvalidSyncCommand.ToString(), queryResult.Error);
-                MockAnalyticsService.VerifyTrace(SyncErrors.InvalidSyncCommand.Code, LogSeverity.Error);
+                Assert.AreEqual(SyncErrors.InvalidSyncCommand.ToString(), queryResult.Error.ToString());
+                MockAnalyticsService.VerifyTrace(SyncErrors.InvalidSyncCommand.ToString(), LogSeverity.Error);
             }
         }
 
@@ -67,14 +65,14 @@ namespace Blauhaus.Domain.Tests.ServerTests
             public async Task WHEN_QueryLoader_fails_SHOULD_fail()
             {
                 //Arrange
-                MockQueryLoader.Mock.Setup(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), It.IsAny<TestAuthenticatedUser>(), It.IsAny<CancellationToken>()))
-                    .ReturnsAsync(Result.Failure<IQueryable<TestServerEntity>>("oh no"));
+                MockQueryLoader.Mock.Setup(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), It.IsAny<TestAuthenticatedUser>()))
+                    .ReturnsAsync(Response.Failure<IQueryable<TestServerEntity>>(Error.Create("oh no")));
 
                 //Act
-                var queryResult = await Sut.HandleAsync(_command, _user, CancelToken);
+                var queryResult = await Sut.HandleAsync(_command, _user);
 
                 //Assert
-                Assert.That(queryResult.Error, Is.EqualTo("oh no"));
+                Assert.That(queryResult.Error.Description, Is.EqualTo("oh no"));
             }
         }
 
@@ -88,7 +86,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 _command.OlderThan = _entities[5].ModifiedAt.Ticks;
 
                 //Act
-                var queryResult = await Sut.HandleAsync(_command, _user, CancelToken);
+                var queryResult = await Sut.HandleAsync(_command, _user);
                 var result = queryResult.Value;
 
                 //Assert
@@ -110,8 +108,8 @@ namespace Blauhaus.Domain.Tests.ServerTests
             {
                 //Arrange
                 _command.OlderThan = DateTime.UtcNow.Ticks;
-                MockQueryLoader.Mock.Setup(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), _user, CancelToken))
-                    .ReturnsAsync(Result.Success(new List<TestServerEntity>
+                MockQueryLoader.Mock.Setup(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), _user))
+                    .ReturnsAsync(Response.Success(new List<TestServerEntity>
                     {
                         new TestServerEntity(Guid.NewGuid(), EntityState.Active, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
                         new TestServerEntity(Guid.NewGuid(), EntityState.Draft, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
@@ -120,7 +118,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
                     }.AsQueryable()));
 
                 //Act
-                var queryResult = await Sut.HandleAsync(_command, _user, CancelToken);
+                var queryResult = await Sut.HandleAsync(_command, _user);
                 var result = queryResult.Value;
 
                 //Assert
@@ -138,7 +136,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 {
                     BatchSize = 4,
                     OlderThan = _entities[5].ModifiedAt.Ticks
-                }, _user, CancelToken);
+                }, _user);
                 Assert.AreEqual(4, result1.Value.EntityBatch.Count);
                 Assert.AreEqual(12, result1.Value.TotalActiveEntityCount);
                 Assert.AreEqual(6, result1.Value.EntitiesToDownloadCount);
@@ -155,7 +153,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 {
                     BatchSize = 4,
                     OlderThan = result1.Value.EntityBatch.Last().ModifiedAt.Ticks
-                }, _user, CancelToken);
+                }, _user);
                 Assert.AreEqual(2, result2.Value.EntityBatch.Count);
                 Assert.AreEqual(12, result2.Value.TotalActiveEntityCount);
                 Assert.AreEqual(2, result2.Value.EntitiesToDownloadCount);
@@ -179,7 +177,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 _command.NewerThan = _entities[5].ModifiedAt.Ticks;
 
                 //Act
-                var queryResult = await Sut.HandleAsync(_command, _user, CancelToken);
+                var queryResult = await Sut.HandleAsync(_command, _user);
                 var result = queryResult.Value;
 
                 //Assert
@@ -200,15 +198,15 @@ namespace Blauhaus.Domain.Tests.ServerTests
             {
                 //Arrange
                 _command.NewerThan = DateTime.UtcNow.AddDays(-11).Ticks;
-                MockQueryLoader.Mock.Setup(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), _user, CancelToken))
-                    .ReturnsAsync(Result.Success(new List<TestServerEntity>
+                MockQueryLoader.Mock.Setup(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), _user))
+                    .ReturnsAsync(Response.Success(new List<TestServerEntity>
                     {
                         new TestServerEntity(Guid.NewGuid(), EntityState.Deleted, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
                         new TestServerEntity(Guid.NewGuid(), EntityState.Active, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
                     }.AsQueryable()));
 
                 //Act
-                var queryResult = await Sut.HandleAsync(_command, _user, CancelToken);
+                var queryResult = await Sut.HandleAsync(_command, _user);
                 var result = queryResult.Value;
 
                 //Assert
@@ -225,7 +223,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 {
                     BatchSize = 4,
                     NewerThan = _entities[5].ModifiedAt.Ticks
-                }, _user, CancelToken);
+                }, _user);
                 Assert.AreEqual(4, result1.Value.EntityBatch.Count);
                 Assert.AreEqual(12, result1.Value.TotalActiveEntityCount);
                 Assert.AreEqual(5, result1.Value.EntitiesToDownloadCount);
@@ -242,7 +240,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 {
                     BatchSize = 4,
                     NewerThan = result1.Value.EntityBatch.Last().ModifiedAt.Ticks
-                }, _user, CancelToken);
+                }, _user);
                 Assert.AreEqual(1, result2.Value.EntityBatch.Count);
                 Assert.AreEqual(12, result2.Value.TotalActiveEntityCount);
                 Assert.AreEqual(1, result2.Value.EntitiesToDownloadCount);
@@ -263,7 +261,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 _command.BatchSize = 3;
 
                 //Act
-                var queryResult = await Sut.HandleAsync(_command, _user, CancelToken);
+                var queryResult = await Sut.HandleAsync(_command, _user);
                 var result = queryResult.Value;
 
                 //Assert
@@ -283,8 +281,8 @@ namespace Blauhaus.Domain.Tests.ServerTests
             public async Task SHOULD_exclude_deleted_entities()
             {
                 //Arrange
-                MockQueryLoader.Mock.Setup(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), _user, CancelToken))
-                    .ReturnsAsync(Result.Success(new List<TestServerEntity>
+                MockQueryLoader.Mock.Setup(x => x.HandleAsync(It.IsAny<TestSyncCommand>(), _user))
+                    .ReturnsAsync(Response.Success(new List<TestServerEntity>
                     {
                         new TestServerEntity(Guid.NewGuid(), EntityState.Active, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
                         new TestServerEntity(Guid.NewGuid(), EntityState.Draft, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(-1)),
@@ -293,7 +291,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
                     }.AsQueryable()));
 
                 //Act
-                var queryResult = await Sut.HandleAsync(_command, _user, CancelToken);
+                var queryResult = await Sut.HandleAsync(_command, _user);
                 var result = queryResult.Value;
 
                 //Assert
@@ -310,7 +308,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 var result1 = await Sut.HandleAsync(new TestSyncCommand
                 {
                     BatchSize = 5
-                }, _user, CancelToken);
+                }, _user);
                 Assert.AreEqual(5, result1.Value.EntityBatch.Count);
                 Assert.AreEqual(12, result1.Value.TotalActiveEntityCount);
                 Assert.AreEqual(12, result1.Value.EntitiesToDownloadCount);
@@ -328,7 +326,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 {
                     BatchSize = 5,
                     OlderThan = result1.Value.EntityBatch.Last().ModifiedAt.Ticks
-                }, _user, CancelToken);
+                }, _user);
                 Assert.AreEqual(5, result2.Value.EntityBatch.Count);
                 Assert.AreEqual(12, result2.Value.TotalActiveEntityCount);
                 Assert.AreEqual(7, result2.Value.EntitiesToDownloadCount);
@@ -346,7 +344,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 {
                     BatchSize = 5,
                     OlderThan = result2.Value.EntityBatch.Last().ModifiedAt.Ticks
-                }, _user, CancelToken);
+                }, _user);
                 Assert.AreEqual(2, result3.Value.EntityBatch.Count); 
                 Assert.AreEqual(12, result3.Value.TotalActiveEntityCount);
                 Assert.AreEqual(2, result3.Value.EntitiesToDownloadCount);
@@ -369,7 +367,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 _command.NewerThan = null;
 
                 //Act
-                var queryResult = await Sut.HandleAsync(_command, _user, CancelToken);
+                var queryResult = await Sut.HandleAsync(_command, _user);
                 var result = queryResult.Value;
 
                 //Assert
@@ -391,7 +389,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 _command.NewerThan = _entities[4].ModifiedAtTicks;
 
                 //Act
-                var queryResult = await Sut.HandleAsync(_command, _user, CancelToken);
+                var queryResult = await Sut.HandleAsync(_command, _user);
                 var result = queryResult.Value;
 
                 //Assert
@@ -409,7 +407,7 @@ namespace Blauhaus.Domain.Tests.ServerTests
                 _command.NewerThan = _entities[4].ModifiedAtTicks - 1;
 
                 //Act
-                var queryResult = await Sut.HandleAsync(_command, _user, CancelToken);
+                var queryResult = await Sut.HandleAsync(_command, _user);
                 var result = queryResult.Value;
 
                 //Assert

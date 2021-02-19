@@ -7,18 +7,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
-using Blauhaus.Common.Time.Service;
 using Blauhaus.DeviceServices.Abstractions.Connectivity;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
-using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Extensions;
 using Blauhaus.Domain.Abstractions.Repositories;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.Extensions;
 using Blauhaus.Errors;
-using Blauhaus.Errors.Extensions;
-using CSharpFunctionalExtensions;
 
 namespace Blauhaus.Domain.Client.Sync.Client
 {
@@ -68,7 +64,6 @@ namespace Blauhaus.Domain.Client.Sync.Client
         public SyncClient(
             IAnalyticsService analyticsService, 
             IConnectivityService connectivityService,
-            ITimeService timeService,
             ISyncClientRepository<TModel, TDto, TSyncCommand> syncClientRepository,
             ICommandHandler<SyncResult<TModel>, TSyncCommand> syncCommandHandler)
         {
@@ -80,7 +75,7 @@ namespace Blauhaus.Domain.Client.Sync.Client
 
         public IObservable<TModel> Connect(TSyncCommand syncCommand, ClientSyncRequirement syncRequirement, ISyncStatusHandler syncStatusHandler)
         {
-            TraceStatus(SyncClientState.Starting, $"{typeof(TModel).Name} SyncClient connected. Required: {syncRequirement} (batch size {syncCommand.BatchSize})", syncStatusHandler);
+            TraceStatus(SyncClientState.Starting, $"SyncClient connected. Required: {syncRequirement} (batch size {syncCommand.BatchSize})", syncStatusHandler);
 
             _numberOfModelsToPublish = syncCommand.BatchSize;
             syncStatusHandler.PublishedEntities = 0;
@@ -92,7 +87,7 @@ namespace Blauhaus.Domain.Client.Sync.Client
                 
                 ClientSyncStatus syncStatus = await _syncClientRepository.GetSyncStatusAsync(syncCommand);
 
-                TraceStatus(SyncClientState.Starting, $"Initializing sync for {typeof(TModel).Name}. Local status {syncStatus}", syncStatusHandler);
+                TraceStatus(SyncClientState.Starting, $"Initializing sync. Local status {syncStatus}", syncStatusHandler);
                 
                 syncStatusHandler.IsConnected = _connectivityService.IsConnectedToInternet;
                 syncStatusHandler.AllLocalEntities = syncStatus.AllLocalEntities;
@@ -186,7 +181,7 @@ namespace Blauhaus.Domain.Client.Sync.Client
                     TraceStatus(SyncClientState.DownloadingOld, $"LoadMore invoked. Loading next {syncCommand.BatchSize} of {_numberOfModelsToPublish} from server", syncStatusHandler);
                     syncCommand.OlderThan = OldestModelPublished;
                     syncCommand.NewerThan = null;
-                    var serverModels = await _syncCommandHandler.HandleAsync(syncCommand, token);
+                    var serverModels = await _syncCommandHandler.HandleAsync(syncCommand);
                     PublishModelsIfRequired(serverModels.Value.EntityBatch, observer, syncStatusHandler);
                 }
 
@@ -252,7 +247,7 @@ namespace Blauhaus.Domain.Client.Sync.Client
         {
             if (syncStatusHandler.IsExecuting())
             {
-                TraceStatus(SyncClientState.DownloadingNew, $"ReloadFromServer invoked. Loading up to {syncCommand.BatchSize} new from server", syncStatusHandler);
+                _analyticsService.Trace(this, "ReloadFromServer invoked, but already busy: " + syncStatusHandler.State);
                 return;
             }
 
@@ -272,18 +267,16 @@ namespace Blauhaus.Domain.Client.Sync.Client
                 {
                     break;
                 }
-                var serverDownloadResult = await _syncCommandHandler.HandleAsync(syncCommand, token);
+                var serverDownloadResult = await _syncCommandHandler.HandleAsync(syncCommand);
                 if (serverDownloadResult.IsFailure)
                 {
-                    var errorMessage = $"Failed to load {typeof(TModel).Name} entities from server: " + serverDownloadResult.Error;
+                    var errorMessage = $"Failed to load {typeof(TModel).Name} entities from server: " + serverDownloadResult.Error.Description;
                     
                     _analyticsService.TraceError(this, errorMessage);
                     syncStatusHandler.State = SyncClientState.Error;
                     syncStatusHandler.StatusMessage = errorMessage;
 
-                    observer.OnError(serverDownloadResult.Error.IsError(out var error) 
-                        ? new ErrorException(error) 
-                        : new Exception(errorMessage));
+                    observer.OnError(new ErrorException(serverDownloadResult.Error));
 
                 }
 
@@ -362,7 +355,7 @@ namespace Blauhaus.Domain.Client.Sync.Client
         {
             statusHandler.StatusMessage = message;
             statusHandler.State = state;
-            _analyticsService.TraceVerbose(this, $"{state}: {message}");
+            _analyticsService.TraceVerbose(this, $"{typeof(TModel).Name} {state}: {message}");
         }
          
 

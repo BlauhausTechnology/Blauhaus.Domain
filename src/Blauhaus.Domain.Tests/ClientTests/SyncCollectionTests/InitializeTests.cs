@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Domain.Client.Sync.Collection;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Sync;

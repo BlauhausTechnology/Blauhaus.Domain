@@ -1,6 +1,4 @@
-﻿using System;
-using Blauhaus.Domain.Abstractions.CommandHandlers;
-using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
+﻿using Blauhaus.Domain.Abstractions.CommandHandlers;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.CommandHandlers;
@@ -8,7 +6,6 @@ using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Domain.Client.Sync.Collection;
 using Blauhaus.Domain.Client.Sync.Model;
 using Blauhaus.Domain.Client.Sync.Service;
-using Blauhaus.Ioc.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 

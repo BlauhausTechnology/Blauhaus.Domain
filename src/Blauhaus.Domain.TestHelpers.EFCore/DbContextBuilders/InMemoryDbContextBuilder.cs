@@ -1,6 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Blauhaus.Domain.TestHelpers.EFCore.DbContextBuilders
 {

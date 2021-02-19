@@ -1,7 +1,7 @@
 ﻿using System;
 using Blauhaus.Domain.Client.Sqlite.SyncRepository;
-using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
 using Blauhaus.Domain.Abstractions.Entities;
+using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.TestHelpers.MockBuilders;
 using Moq;
 using SqlKata;

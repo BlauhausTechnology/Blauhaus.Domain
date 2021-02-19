@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
-using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Errors;
 using Blauhaus.Domain.Abstractions.Extensions;
-using CSharpFunctionalExtensions;
+using Blauhaus.Domain.Abstractions.Sync;
+using Blauhaus.Responses;
 
 namespace Blauhaus.Domain.Server.CommandHandlers.Sync
 {
@@ -30,18 +27,18 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
             _queryLoader = queryLoader;
         }
 
-        public  async Task<Result<SyncResult<TEntity>>> HandleAsync(TSyncCommand command, TUser authenticatedUser, CancellationToken token)
+        public  async Task<Response<SyncResult<TEntity>>> HandleAsync(TSyncCommand command, TUser authenticatedUser)
         {
 
             if (command.IsForNewerEntities() && command.IsForOlderEntities())
             {
-                return _analyticsService.TraceErrorResult<SyncResult<TEntity>>(this, SyncErrors.InvalidSyncCommand);
+                return _analyticsService.TraceErrorResponse<SyncResult<TEntity>>(this, SyncErrors.InvalidSyncCommand);
             }
 
-            var dbQueryResult = await _queryLoader.HandleAsync(command, authenticatedUser, token);
+            var dbQueryResult = await _queryLoader.HandleAsync(command, authenticatedUser);
             if (dbQueryResult.IsFailure)
             {
-                return Result.Failure<SyncResult<TEntity>>(dbQueryResult.Error);
+                return Response.Failure<SyncResult<TEntity>>(dbQueryResult.Error);
             }
 
             var dbQuery = dbQueryResult.Value;
@@ -97,7 +94,7 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
 
             _analyticsService.TraceVerbose(this, traceMessage);
 
-            return Result.Success(new SyncResult<TEntity>
+            return Response.Success(new SyncResult<TEntity>
             {
                 EntityBatch = entities,
                 EntitiesToDownloadCount = modifiedEntityCount,

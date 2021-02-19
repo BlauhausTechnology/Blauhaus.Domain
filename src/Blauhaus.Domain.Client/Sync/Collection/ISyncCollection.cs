@@ -1,9 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Sync;
-using Blauhaus.Domain.Client.Sync.Client;
 
 namespace Blauhaus.Domain.Client.Sync.Collection
 {

@@ -1,11 +1,9 @@
 ﻿using System;
 using Blauhaus.Domain.Abstractions.Repositories;
 using Blauhaus.Domain.Client.Sqlite.Repository;
-using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Domain.Client.Sync.Collection;
 using Blauhaus.Domain.Client.Sync.Model;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
-using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.ClientEntityConverters;
@@ -43,7 +41,11 @@ namespace Blauhaus.Domain.TestHelpers.Extensions
              => mocks.AddMock<SyncClientMockBuilder<TModel, TSyncCommand>, ISyncClient<TModel, TSyncCommand>>();
 
 
-        //command handlers
+        //handlers 
+        
+        public static Func<HandlerMockBuilder<TModel>> AddMockHandler<TModel>(this MockContainer mocks)  
+            => mocks.AddMock<HandlerMockBuilder<TModel>, IHandler<TModel>>();
+
         public static Func<CommandHandlerMockBuilder<TModel, TCommand>> AddMockCommandHandler<TModel, TCommand>(this MockContainer mocks)  where TCommand : notnull
             => mocks.AddMock<CommandHandlerMockBuilder<TModel, TCommand>, ICommandHandler<TModel, TCommand>>();
         
