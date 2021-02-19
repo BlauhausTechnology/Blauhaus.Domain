@@ -1,6 +1,5 @@
 ﻿using System;
 using Blauhaus.TestHelpers.Builders._Base;
-using Castle.Core.Logging;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Blauhaus.Domain.Abstractions.Repositories;
-using Blauhaus.Domain.Client.Sync.Client;
-using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
 using Blauhaus.Domain.Abstractions.Entities;
+using Blauhaus.Domain.Abstractions.Sync;
 using Moq;
 using Newtonsoft.Json;
 

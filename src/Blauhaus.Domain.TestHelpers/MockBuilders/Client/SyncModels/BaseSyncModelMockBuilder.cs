@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Blauhaus.Domain.Abstractions.Entities;
-using Blauhaus.Domain.Client.Sync.Client;
 using Blauhaus.Domain.Client.Sync.Model;
 using Blauhaus.TestHelpers.MockBuilders;
 using Moq;

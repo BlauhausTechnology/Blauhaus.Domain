@@ -7,8 +7,9 @@ using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories;
 using Blauhaus.Domain.Tests._Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
+using Blauhaus.Errors;
+using Blauhaus.Responses;
 using Blauhaus.TestHelpers.MockBuilders;
-using CSharpFunctionalExtensions;
 using Moq;
 using NUnit.Framework;
 
@@ -38,7 +39,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.CommandHandlerTests
             _model = new TestModel(Guid.NewGuid(), EntityState.Active, 1000, "Bob");
 
             MockCommandConverter.Mock.Setup(x => x.Convert(_command)).Returns(_commandDto);
-            MockDtoCommandHandler.Mock.Setup(x => x.HandleAsync(_commandDto, CancelToken)).ReturnsAsync(Result.Success(_modelDto));
+            MockDtoCommandHandler.Mock.Setup(x => x.HandleAsync(_commandDto)).ReturnsAsync(Response.Success(_modelDto));
             MockClientRepository.Where_SaveDtoAsync_returns(_model);
 
             AddService(MockCommandConverter.Object);
@@ -50,7 +51,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.CommandHandlerTests
         public async Task SHOULD_trace_start_and_success()
         {
             //Act
-            await Sut.HandleAsync(_command, CancelToken);
+            await Sut.HandleAsync(_command);
 
             //Assert
             MockAnalyticsService.VerifyTrace("TestCommand Handler started");
@@ -62,30 +63,30 @@ namespace Blauhaus.Domain.Tests.ClientTests.CommandHandlerTests
         public async Task SHOULD_convert_Command_to_CommandDto_and_handle()
         {
             //Act
-            await Sut.HandleAsync(_command, CancelToken);
+            await Sut.HandleAsync(_command);
 
             //Assert
-            MockDtoCommandHandler.Mock.Verify(x => x.HandleAsync(_commandDto, CancelToken));
+            MockDtoCommandHandler.Mock.Verify(x => x.HandleAsync(_commandDto));
         }
 
         [Test]
         public async Task IF_handler_fails_SHOULD_return_failure()
         {
             //Arrange
-            MockDtoCommandHandler.Mock.Setup(x => x.HandleAsync(_commandDto, CancelToken)).ReturnsAsync(Result.Failure<TestModelDto>("oops"));
+            MockDtoCommandHandler.Mock.Setup(x => x.HandleAsync(_commandDto)).ReturnsAsync(Response.Failure<TestModelDto>(Error.Create("oops")));
             
             //Act
-            var result = await Sut.HandleAsync(_command, CancelToken);
+            var result = await Sut.HandleAsync(_command);
 
             //Assert
-            Assert.AreEqual("oops", result.Error);
+            Assert.AreEqual("oops", result.Error.Description);
         }
 
         [Test]
         public async Task IF_handler_succeeds_SHOULD_save_and_return_Dto()
         {
             //Act
-            var result = await Sut.HandleAsync(_command, CancelToken);
+            var result = await Sut.HandleAsync(_command);
 
             //Assert
             MockClientRepository.Mock.Verify(x => x.SaveDtoAsync(_modelDto));

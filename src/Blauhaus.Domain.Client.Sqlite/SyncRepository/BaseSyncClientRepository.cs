@@ -5,12 +5,9 @@ using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.ClientDatabase.Sqlite.Service;
 using Blauhaus.Domain.Abstractions.Repositories;
-using Blauhaus.Domain.Client.Sqlite.Entities;
 using Blauhaus.Domain.Client.Sqlite.Repository;
-using Blauhaus.Domain.Client.Sync;
-using Blauhaus.Domain.Client.Sync.Client;
-using Blauhaus.Domain.Abstractions.CommandHandlers.Sync;
 using Blauhaus.Domain.Abstractions.Entities;
+using Blauhaus.Domain.Abstractions.Sync;
 using SqlKata;
 
 namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
@@ -39,9 +36,9 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
 
         public async Task<ClientSyncStatus> GetSyncStatusAsync(TSyncCommand syncCommand)
         {
-            var syncStatus = new ClientSyncStatus();
-            var db = await DatabaseService.GetDatabaseConnectionAsync();
-            await db.RunInTransactionAsync(connection =>
+            var syncStatus = new ClientSyncStatus(); 
+
+            await DatabaseService.AsyncConnection.RunInTransactionAsync(connection =>
             {
 
                 var newestModifiedQuery = CreateSqlQuery(syncCommand)
@@ -84,11 +81,10 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
         }
 
         public async Task<IReadOnlyList<TModel>> LoadModelsAsync(TSyncCommand syncCommand)
-        { 
-            var db = await DatabaseService.GetDatabaseConnectionAsync();
+        {  
             var models = new List<TModel>();
 
-            await db.RunInTransactionAsync(connection =>
+            await DatabaseService.AsyncConnection.RunInTransactionAsync(connection =>
             {
                 var query = CreateSqlQuery(syncCommand)
                     .OrderByDesc(nameof(IClientEntity.ModifiedAtTicks))
@@ -133,9 +129,8 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
         public async Task<IReadOnlyList<TModel>> SaveSyncedDtosAsync(IEnumerable<TDto> dtos)
         {
             var models = new List<TModel>();
-
-            var db = await DatabaseService.GetDatabaseConnectionAsync();
-            await db.RunInTransactionAsync(connection =>
+             
+            await DatabaseService.AsyncConnection.RunInTransactionAsync(connection =>
             {
                 foreach (var dto in dtos)
                 {

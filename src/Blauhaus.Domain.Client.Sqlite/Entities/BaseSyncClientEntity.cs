@@ -1,5 +1,4 @@
-﻿using System;
-using Blauhaus.Domain.Abstractions.Entities;
+﻿using Blauhaus.Domain.Abstractions.Entities;
 using SQLite;
 
 namespace Blauhaus.Domain.Client.Sqlite.Entities

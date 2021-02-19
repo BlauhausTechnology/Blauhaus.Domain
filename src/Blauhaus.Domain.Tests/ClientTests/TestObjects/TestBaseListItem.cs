@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Blauhaus.Domain.Client.Sync.Collection;
+﻿using Blauhaus.Domain.Client.Sync.Collection;
 
 namespace Blauhaus.Domain.Tests.ClientTests.TestObjects
 {
