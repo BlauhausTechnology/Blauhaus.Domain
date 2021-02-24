@@ -20,6 +20,20 @@ namespace Blauhaus.Domain.TestHelpers.Extensions
             return entity;
         }
         
+        public static TEntity VerifyNewDraftServerEntity<TEntity>(this TEntity entity, DateTime runTime) 
+            where TEntity : IServerEntity
+        {
+            Assert.That(entity, Is.Not.Null);
+            
+            Assert.That(entity!.Id, Is.Not.EqualTo(Guid.Empty));
+            Assert.That(entity.CreatedAt, Is.EqualTo(runTime));
+            Assert.That(entity.ModifiedAt, Is.EqualTo(runTime));
+            Assert.That(entity.EntityState, Is.EqualTo(EntityState.Draft));
+            
+            return entity;
+        }
+
+        
         public static TEntity VerifyNewServerEntity<TEntity>(this TEntity entity, DateTime runTime) 
             where TEntity : IServerEntity
         {
