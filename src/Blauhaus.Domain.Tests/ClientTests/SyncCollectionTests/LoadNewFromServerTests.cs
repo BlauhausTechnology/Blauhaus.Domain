@@ -3,7 +3,7 @@ using Blauhaus.Domain.Client.Sync.Collection;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.TestHelpers.Extensions;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients;
-using Blauhaus.Domain.Tests._Base;
+using Blauhaus.Domain.Tests.Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;
 using NUnit.Framework;
 

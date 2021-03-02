@@ -27,7 +27,7 @@ namespace Blauhaus.Domain.Server.EFCore.Extensions
             } 
 
             var matchedByName = dbSet.AsNoTracking().FirstOrDefault(x => 
-                EF.Functions.Like(x.Name, command.Name.TrimStart().TrimEnd())&&
+                EF.Functions.Like(x.Name, command.Name.TrimStart().TrimEnd()) &&
                 x.EntityState != EntityState.Deleted);
             
             return matchedByName != null 

@@ -11,7 +11,7 @@ using Blauhaus.TestHelpers.BaseTests;
 using Blauhaus.TestHelpers.MockBuilders;
 using NUnit.Framework;
 
-namespace Blauhaus.Domain.Tests._Base
+namespace Blauhaus.Domain.Tests.Base
 {
     public abstract class BaseDomainTest<TSut> : BaseServiceTest<TSut> where TSut : class
     {
