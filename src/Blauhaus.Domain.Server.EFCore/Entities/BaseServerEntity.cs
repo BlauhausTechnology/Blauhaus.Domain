@@ -29,8 +29,29 @@ namespace Blauhaus.Domain.Server.EFCore.Entities
         
         public void Delete(DateTime now)
         {
-            EntityState = EntityState.Deleted;
-            Modify(now);
+            if (EntityState != EntityState.Deleted)
+            {
+                EntityState = EntityState.Deleted;
+                Modify(now);
+            }
+        }
+        
+        public void Archive(DateTime now)
+        {
+            if (EntityState != EntityState.Archived)
+            {
+                EntityState = EntityState.Archived;
+                Modify(now);
+            }
+        }
+        
+        public void Activate(DateTime now)
+        {
+            if (EntityState != EntityState.Active)
+            {
+                EntityState = EntityState.Active;
+                Modify(now);
+            }
         }
     }
 }
