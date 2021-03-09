@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using Blauhaus.Common.Utils.Contracts;
+using Blauhaus.Common.Abstractions;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Errors;
 using Blauhaus.Responses;

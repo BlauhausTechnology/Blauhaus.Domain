@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Blauhaus.Common.Utils.Contracts;
 using Blauhaus.Domain.Abstractions.Entities;
 using Microsoft.EntityFrameworkCore;
 using EntityState = Blauhaus.Domain.Abstractions.Entities.EntityState;

@@ -4,15 +4,21 @@ namespace Blauhaus.Domain.Abstractions.Extensions
 {
     public static class EntityExtensions
     {
-        public static bool IsOlderThan(this IClientEntity entity, long modifiedAtTicks)
+        public static bool IsActive(this IEntity entity)
         {
-
-            return modifiedAtTicks == 0 || entity.ModifiedAtTicks < modifiedAtTicks;
+            return entity.EntityState == EntityState.Active;
         }
-        
-        public static bool IsNewerThan(this IClientEntity entity, long modifiedAtTicks)
+        public static bool IsArchived(this IEntity entity)
         {
-            return modifiedAtTicks == 0 || entity.ModifiedAtTicks > modifiedAtTicks;
+            return entity.EntityState == EntityState.Archived;
+        }
+        public static bool IsDeleted(this IEntity entity)
+        {
+            return entity.EntityState == EntityState.Deleted;
+        }
+        public static bool IsDraft(this IEntity entity)
+        {
+            return entity.EntityState == EntityState.Draft;
         }
     }
 }

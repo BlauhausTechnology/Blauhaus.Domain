@@ -1,5 +1,5 @@
 ﻿using System;
-using Blauhaus.Common.Utils.Contracts;
+using Blauhaus.Common.Abstractions;
 using Blauhaus.Domain.Abstractions.Entities;
 
 namespace Blauhaus.Domain.Server.EFCore.Entities

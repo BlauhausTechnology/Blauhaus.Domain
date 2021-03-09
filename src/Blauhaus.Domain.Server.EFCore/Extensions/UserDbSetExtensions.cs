@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Blauhaus.Common.Utils.Contracts;
+using Blauhaus.Common.Abstractions;
 using Blauhaus.Domain.Abstractions.Entities;
 using Microsoft.EntityFrameworkCore;
-using EntityState = Microsoft.EntityFrameworkCore.EntityState;
 
 namespace Blauhaus.Domain.Server.EFCore.Extensions
 {
