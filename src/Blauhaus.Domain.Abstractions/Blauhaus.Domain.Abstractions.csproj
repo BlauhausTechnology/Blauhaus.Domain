@@ -11,7 +11,7 @@
     <PackageReference Include="Blauhaus.Auth.Abstractions" Version="0.11.4" />
     <PackageReference Include="Blauhaus.Common.Abstractions" Version="1.9.8" />
     <PackageReference Include="Blauhaus.Common.Utils" Version="1.9.8" />
-    <PackageReference Include="Blauhaus.Errors" Version="0.3.5" />
+    <PackageReference Include="Blauhaus.Errors" Version="0.3.6" />
   </ItemGroup>
 
 </Project>
