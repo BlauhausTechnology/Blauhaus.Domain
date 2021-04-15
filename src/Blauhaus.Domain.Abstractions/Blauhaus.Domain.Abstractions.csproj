@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blauhaus.Analytics.Abstractions" Version="1.5.2" />
-    <PackageReference Include="Blauhaus.Auth.Abstractions" Version="0.11.5" />
-    <PackageReference Include="Blauhaus.Common.Abstractions" Version="1.10.0" />
-    <PackageReference Include="Blauhaus.Common.Utils" Version="1.10.0" />
+    <PackageReference Include="Blauhaus.Analytics.Abstractions" Version="1.5.3" />
+    <PackageReference Include="Blauhaus.Auth.Abstractions" Version="0.11.7" />
+    <PackageReference Include="Blauhaus.Common.Abstractions" Version="1.10.5" />
+    <PackageReference Include="Blauhaus.Common.Utils" Version="1.10.5" />
     <PackageReference Include="Blauhaus.Errors" Version="0.3.6" />
   </ItemGroup>
 
