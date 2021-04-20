@@ -54,7 +54,7 @@ namespace Blauhaus.Domain.Client._Ioc
         
         public static IServiceCollection AddSyncCollection<TModel, TListItem, TSyncCommand>(this IServiceCollection services) 
             where TModel : class, IClientEntity 
-            where TListItem : class, IListItem<TModel>, new() 
+            where TListItem : class, IListItem<TModel>
             where TSyncCommand : SyncCommand, new()
         {
             services.TryAddTransient<ISyncStatusHandler, SyncStatusHandler>();
