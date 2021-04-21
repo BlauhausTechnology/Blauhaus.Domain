@@ -11,7 +11,7 @@ using Blauhaus.Domain.Client.Sync.Model;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Blauhaus.Domain.Client.Sqlite._Ioc
+namespace Blauhaus.Domain.Client.Sqlite.Ioc
 {
     public static class ServiceCollectionExtensions
     {

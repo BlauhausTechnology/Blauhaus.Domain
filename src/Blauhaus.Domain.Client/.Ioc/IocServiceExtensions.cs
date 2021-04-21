@@ -8,7 +8,7 @@ using Blauhaus.Domain.Client.Sync.Model;
 using Blauhaus.Domain.Client.Sync.Service;
 using Blauhaus.Ioc.Abstractions;
 
-namespace Blauhaus.Domain.Client._Ioc
+namespace Blauhaus.Domain.Client.Ioc
 {
     public static class IocServiceExtensions
     {

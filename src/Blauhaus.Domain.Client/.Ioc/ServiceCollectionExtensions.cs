@@ -9,7 +9,7 @@ using Blauhaus.Domain.Client.Sync.Service;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Blauhaus.Domain.Client._Ioc
+namespace Blauhaus.Domain.Client.Ioc
 {
     public static class ServiceCollectionExtensions
     {

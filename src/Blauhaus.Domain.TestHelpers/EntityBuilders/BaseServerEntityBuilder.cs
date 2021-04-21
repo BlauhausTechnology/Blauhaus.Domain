@@ -1,6 +1,6 @@
 ﻿using System;
 using Blauhaus.Domain.Abstractions.Entities;
-using Blauhaus.TestHelpers.Builders._Base;
+using Blauhaus.TestHelpers.Builders.Base;
 
 namespace Blauhaus.Domain.TestHelpers.EntityBuilders
 {
