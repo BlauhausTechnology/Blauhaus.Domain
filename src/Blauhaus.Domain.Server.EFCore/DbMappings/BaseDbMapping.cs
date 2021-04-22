@@ -1,5 +1,5 @@
 ﻿using System;
-using Blauhaus.Domain.Server.EFCore.Entities;
+using Blauhaus.Domain.Server.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
