@@ -1,9 +1,9 @@
 ﻿using System;
 using Blauhaus.Domain.Abstractions.Entities;
 
-namespace Blauhaus.Domain.Server.EFCore.Entities
+namespace Blauhaus.Domain.Server.Entities
 { 
-    public class BaseServerEntity : IServerEntity
+    public abstract class BaseServerEntity : IServerEntity
     {
         protected internal BaseServerEntity()
         {

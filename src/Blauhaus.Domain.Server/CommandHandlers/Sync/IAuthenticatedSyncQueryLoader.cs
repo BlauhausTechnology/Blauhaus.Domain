@@ -5,14 +5,14 @@ using Blauhaus.Domain.Abstractions.Sync;
 
 namespace Blauhaus.Domain.Server.CommandHandlers.Sync
 {
-    public interface IAuthenticatedSyncQueryLoader<TEntity, TSyncCommand, TUser> : IAuthenticatedCommandHandler<IQueryable<TEntity>, TSyncCommand, TUser>
+    public interface IAuthenticatedSyncQueryLoader<TEntity, in TSyncCommand, in TUser> : IAuthenticatedCommandHandler<IQueryable<TEntity>, TSyncCommand, TUser>
         where TSyncCommand : SyncCommand
         where TUser : notnull
         where TEntity : IEntity
     {
     }
 
-    public interface IAuthenticatedSyncQueryLoader<TEntity, TUser> : IAuthenticatedSyncQueryLoader<TEntity, SyncCommand, TUser>
+    public interface IAuthenticatedSyncQueryLoader<TEntity, in TUser> : IAuthenticatedSyncQueryLoader<TEntity, SyncCommand, TUser>
         where TUser : notnull 
         where TEntity : IServerEntity
     {

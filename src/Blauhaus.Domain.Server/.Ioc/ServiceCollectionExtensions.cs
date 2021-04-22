@@ -5,7 +5,7 @@ using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Server.CommandHandlers.Sync;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Blauhaus.Domain.Server._Ioc
+namespace Blauhaus.Domain.Server.Ioc
 {
     public static class ServiceCollectionExtensions
     {

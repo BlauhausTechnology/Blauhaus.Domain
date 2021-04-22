@@ -2,7 +2,7 @@
 using Blauhaus.Common.Abstractions;
 using Blauhaus.Domain.Abstractions.Entities;
 
-namespace Blauhaus.Domain.Server.EFCore.Entities
+namespace Blauhaus.Domain.Server.Entities
 {
     public abstract class BaseServerUserEntity : BaseServerEntity, IHasUserId
     {
