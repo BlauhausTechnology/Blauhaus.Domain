@@ -9,6 +9,12 @@ namespace Blauhaus.Domain.Server.Entities
         protected internal BaseServerUserEntity()
         {
         }
+
+        protected BaseServerUserEntity(DateTime createdAt, Guid userId, Guid id = default, EntityState entityState = EntityState.Active)
+            : base(createdAt, id, entityState)
+        {
+            UserId = userId;
+        }
          
         protected BaseServerUserEntity(DateTime createdAt, Guid id, EntityState entityState, Guid userId)
             : base(createdAt, id, entityState)

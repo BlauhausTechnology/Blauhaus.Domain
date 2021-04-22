@@ -5,13 +5,13 @@ namespace Blauhaus.Domain.Server.Entities
 { 
     public abstract class BaseServerEntity : IServerEntity
     {
-        protected internal BaseServerEntity()
+        protected BaseServerEntity()
         {
         }
          
-        protected BaseServerEntity(DateTime createdAt, Guid id, EntityState entityState)
+        protected BaseServerEntity(DateTime createdAt, Guid id = default, EntityState entityState = EntityState.Active)
         {
-            Id = id;
+            Id = id == default ? Guid.NewGuid() : id;
             EntityState = entityState;
             CreatedAt = DateTime.SpecifyKind(createdAt, DateTimeKind.Utc);
             ModifiedAt = createdAt;
