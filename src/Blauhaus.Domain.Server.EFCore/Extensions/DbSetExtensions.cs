@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Blauhaus.Domain.Abstractions.Entities;
+using Blauhaus.Domain.Server.Entities;
 using Microsoft.EntityFrameworkCore;
 using EntityState = Blauhaus.Domain.Abstractions.Entities.EntityState;
 
@@ -60,6 +61,23 @@ namespace Blauhaus.Domain.Server.EFCore.Extensions
         {
             dbSet.Attach(entity);
             dbSet.Remove(entity);
+        }
+
+        public static void Delete<TEntity>(this DbSet<TEntity> dbSet, DateTime now, TEntity entity) 
+            where TEntity : BaseServerEntity
+        {
+            dbSet.Attach(entity);
+            entity.Delete(now);
+        }
+
+        public static void DeleteWhere<TEntity>(this DbSet<TEntity> dbSet, DateTime now, Func<TEntity,bool> filter) 
+            where TEntity : BaseServerEntity
+        {
+            foreach (var entity in dbSet.Where(filter))
+            {
+                dbSet.Attach(entity);
+                entity.Delete(now);
+            }
         }
          
          
