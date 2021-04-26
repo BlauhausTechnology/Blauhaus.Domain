@@ -7,6 +7,21 @@ namespace Blauhaus.Domain.TestHelpers.Extensions
 { 
     public static class ServerEntityExtensions
     {
+        
+        public static TEntity VerifyDeletedServerEntity<TEntity>(this TEntity entity, DateTime createdAt, DateTime modifiedAt) 
+            where TEntity : IServerEntity
+        {
+            Assert.That(entity, Is.Not.Null);
+            
+            Assert.That(entity!.Id, Is.Not.EqualTo(Guid.Empty));
+            Assert.That(entity.CreatedAt, Is.EqualTo(createdAt));
+            Assert.That(entity.ModifiedAt, Is.EqualTo(modifiedAt));
+            Assert.That(entity.EntityState, Is.EqualTo(EntityState.Deleted));
+            
+            return entity;
+        }
+
+
         public static TEntity VerifyModifiedServerEntity<TEntity>(this TEntity entity, DateTime createdAt, DateTime modifiedAt) 
             where TEntity : IServerEntity
         {

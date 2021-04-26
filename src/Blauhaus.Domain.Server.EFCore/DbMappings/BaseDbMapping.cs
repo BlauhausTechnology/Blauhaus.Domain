@@ -9,9 +9,12 @@ namespace Blauhaus.Domain.Server.EFCore.DbMappings
     {
         protected BaseDbMapping(ModelBuilder modelBuilder)
         {
-            var entityName = typeof(TEntity).Name;
-            var index = entityName.IndexOf("Entity", StringComparison.InvariantCultureIgnoreCase);
-            var tableName = entityName.Remove(index, 6);
+            var tableName = typeof(TEntity).Name;
+            var index = tableName.IndexOf("Entity", StringComparison.InvariantCultureIgnoreCase);
+            if (index > 0)
+            {
+                tableName = tableName.Remove(index, 6);
+            }
 
             modelBuilder
                 .Entity<TEntity>()
