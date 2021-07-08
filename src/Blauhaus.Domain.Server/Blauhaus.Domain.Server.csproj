@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blauhaus.Analytics.Abstractions" Version="1.6.5" />
-    <PackageReference Include="Blauhaus.Auth.Abstractions" Version="0.11.8" />
+    <PackageReference Include="Blauhaus.Analytics.Abstractions" Version="1.6.14" />
+    <PackageReference Include="Blauhaus.Auth.Abstractions" Version="0.11.11" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
   </ItemGroup>
 
