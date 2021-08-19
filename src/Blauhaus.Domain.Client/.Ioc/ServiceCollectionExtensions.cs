@@ -25,7 +25,6 @@ namespace Blauhaus.Domain.Client.Ioc
             services.AddSingleton<Func<TId, Task<IDtoHandler<TDto>>>>(sp => id => Task.FromResult<IDtoHandler<TDto>>(sp.GetRequiredService<TDtoHandler>()));
             return services;
         }
-
         
         public static IServiceCollection AddDtoHandler<TDto, TId, TDtoHandler>(this IServiceCollection services, Func<IServiceProvider, TId, Task<IDtoHandler<TDto>>> resolver) 
             where TDto : class, IHasId<TId>
