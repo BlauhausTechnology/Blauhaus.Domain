@@ -13,13 +13,23 @@ using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncCollections;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncModels;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers;
 using Blauhaus.TestHelpers;
+using Blauhaus.Common.Abstractions;
+using Blauhaus.Domain.Abstractions.DtoHandlers;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoCaches;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoHandlers;
 
 namespace Blauhaus.Domain.TestHelpers.Extensions
 {
     public static class MockContainerExtensions
     {
 
-        
+        //DtoCaches
+        public static Func<DtoCacheMockBuilder<TDto, TId>> AddMockDtoCache<TDto, TId>(this MockContainer mocks) where TDto : class, IHasId<TId>
+            => mocks.AddMock<DtoCacheMockBuilder<TDto, TId>, IDtoCache<TDto, TId>>();
+
+        public static Func<DtoHandlerMockBuilder<TDto, TId>> AddMockDtoHandler<TDto, TId>(this MockContainer mocks) where TDto : class, IHasId<TId>
+            => mocks.AddMock<DtoHandlerMockBuilder<TDto, TId>, IDtoHandler<TDto>>();
+
         //Client entity converters
         public static Func<ClientEntityConverterMockBuilder<TModel, TDto, TRootEntity>> AddMockClientEntityConverter<TModel, TDto, TRootEntity>(this MockContainer mocks) where TModel : class, IClientEntity where TRootEntity : ISyncClientEntity, new() 
             => mocks.AddMock<ClientEntityConverterMockBuilder<TModel, TDto, TRootEntity>, IClientEntityConverter<TModel, TDto, TRootEntity>>();
