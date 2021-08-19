@@ -1,19 +1,22 @@
 ﻿using Blauhaus.Domain.Abstractions.Entities;
 using System;
+using Blauhaus.Domain.Client.Sqlite.Entities;
 
 namespace Blauhaus.Domain.Tests.ClientTests.TestObjects
 {
-    public class MyDto : ISyncClientEntity
+    public class MyDto : ClientEntity<Guid>
     {
-        public MyDto(Guid? id = null)
+        public MyDto()
         {
-            Id = id ?? Guid.NewGuid();
+            Id =  Guid.NewGuid();
         }
-        public Guid Id { get; set; }
+        public MyDto(Guid id)
+        {
+            Id = id;
+        }
+
         public string Name { get; set; }
         
-        public EntityState EntityState { get; set; }
-        public long ModifiedAtTicks { get; set;}
         public SyncState SyncState { get; set; }
     }
 }

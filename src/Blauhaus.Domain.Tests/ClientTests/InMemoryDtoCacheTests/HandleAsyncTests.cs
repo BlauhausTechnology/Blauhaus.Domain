@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace Blauhaus.Domain.Tests.ClientTests.InMemoryDtoCacheTests
 {
-    public class SaveAsyncTests : BaseInMemoryDtoCacheTest
+    public class HandleAsyncTests : BaseInMemoryDtoCacheTest
     {
 
         [Test]

@@ -11,6 +11,7 @@
     <Compile Include=".Base\BaseDomainTest.cs" />
     <Compile Include="ClientTests\InMemoryDtoCacheTests\.Base\BaseInMemoryDtoCacheTest.cs" />
     <Compile Include="ClientTests\InMemoryDtoCacheTests\.Base\TestInMemoryDtoCache.cs" />
+    <Compile Include="ClientTests\SqliteTests\SyncDtoCacheTests\.Base\BaseSyncDtoCacheTest.cs" />
   </ItemGroup>
 
   <ItemGroup>

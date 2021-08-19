@@ -3,7 +3,7 @@ using SQLite;
 
 namespace Blauhaus.Domain.Client.Sqlite.Entities
 {
-    public abstract class BaseSyncClientEntity : BaseClientEntity, ISyncClientEntity
+    public abstract class SyncClientEntity : ClientEntity, ISyncClientEntity
     {
         [Indexed]
         public SyncState SyncState { get; set; }

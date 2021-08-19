@@ -4,10 +4,17 @@ using SQLite;
 
 namespace Blauhaus.Domain.Client.Sqlite.Entities
 {
-    public abstract class BaseClientEntity : IClientEntity
+
+    public class ClientEntity : ClientEntity<Guid>, IClientEntity
+    { 
+         
+    }
+
+
+    public class ClientEntity<TId> : IClientEntity<TId>
     {
         [PrimaryKey]
-        public Guid Id { get; set; }
+        public TId Id { get; set; }
         
         [Indexed]
         public EntityState EntityState { get; set;}
