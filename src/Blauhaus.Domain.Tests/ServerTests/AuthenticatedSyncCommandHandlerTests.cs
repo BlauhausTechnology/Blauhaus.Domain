@@ -6,7 +6,7 @@ using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Errors;
 using Blauhaus.Domain.Server.CommandHandlers.Sync;
-using Blauhaus.Domain.Tests.Base;
+using Blauhaus.Domain.Tests._.Base;
 using Blauhaus.Domain.Tests.Extensions;
 using Blauhaus.Domain.Tests.ServerTests.TestObjects;
 using Blauhaus.Errors;

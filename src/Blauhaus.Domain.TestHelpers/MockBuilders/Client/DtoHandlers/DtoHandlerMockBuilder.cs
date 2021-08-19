@@ -1,0 +1,11 @@
+﻿using Blauhaus.Common.Abstractions;
+using Blauhaus.Domain.Abstractions.CommandHandlers;
+
+namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoHandlers
+{
+    public class DtoHandlerMockBuilder<TDto, TId> : BaseDtoHandlerMockBuilder<DtoHandlerMockBuilder<TDto, TId>, IDtoHandler<TDto>, TDto, TId>
+        where TDto : class, IHasId<TId>
+    {
+        
+    }
+}
