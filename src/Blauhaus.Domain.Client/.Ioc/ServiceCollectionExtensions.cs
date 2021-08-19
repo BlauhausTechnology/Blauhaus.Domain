@@ -1,4 +1,6 @@
-﻿using Blauhaus.Domain.Abstractions.CommandHandlers;
+﻿using Blauhaus.Common.Abstractions;
+using Blauhaus.Domain.Abstractions.CommandHandlers;
+using Blauhaus.Domain.Abstractions.DtoHandlers;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.CommandHandlers;
@@ -8,11 +10,31 @@ using Blauhaus.Domain.Client.Sync.Model;
 using Blauhaus.Domain.Client.Sync.Service;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Threading.Tasks;
+using System;
 
 namespace Blauhaus.Domain.Client.Ioc
 {
     public static class ServiceCollectionExtensions
     {
+        
+        public static IServiceCollection AddDtoHandler<TDto, TId, TDtoHandler>(this IServiceCollection services) 
+            where TDto : class, IHasId<TId>
+            where TDtoHandler : class, IDtoHandler<TDto>
+        {
+            services.AddSingleton<Func<TId, Task<IDtoHandler<TDto>>>>(sp => id => Task.FromResult<IDtoHandler<TDto>>(sp.GetRequiredService<TDtoHandler>()));
+            return services;
+        }
+
+        
+        public static IServiceCollection AddDtoHandler<TDto, TId, TDtoHandler>(this IServiceCollection services, Func<IServiceProvider, TId, Task<IDtoHandler<TDto>>> resolver) 
+            where TDto : class, IHasId<TId>
+            where TDtoHandler : class, IDtoHandler<TDto>
+        {
+            services.AddSingleton<Func<TId, Task<IDtoHandler<TDto>>>>(sp => id => resolver.Invoke(sp, id));
+            return services;
+        }
+
         public static IServiceCollection AddEntityCommandClientHandler<TModel, TModelDto, TCommandDto, TCommand, TCommandConverter, TDtoCommandHandler>(this IServiceCollection services)
             where TModel : class, IClientEntity
             where TCommandConverter : class, ICommandConverter<TCommandDto, TCommand>
