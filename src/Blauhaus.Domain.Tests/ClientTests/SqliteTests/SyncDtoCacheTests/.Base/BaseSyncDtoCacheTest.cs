@@ -2,7 +2,6 @@
 using AutoFixture;
 using Blauhaus.Common.Utils.Extensions;
 using Blauhaus.Domain.Client.Sqlite.DtoCaches;
-using Blauhaus.Domain.Client.Sqlite.Ioc;
 using Blauhaus.Domain.Client.Sqlite.Repository;
 using Blauhaus.Domain.Tests.ClientTests.SqliteTests._Base;
 using Blauhaus.Domain.Tests.ClientTests.TestObjects;

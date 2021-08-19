@@ -8,7 +8,7 @@ namespace Blauhaus.Domain.Client.Sqlite.DtoCaches
 {
     public class CachedDtoEntity<TEntity, TDto, TId> : ClientEntity<TId>, ICachedDtoEntity<TEntity, TDto, TId>
         where TEntity : CachedDtoEntity<TEntity, TDto, TId>
-        where TDto : ClientEntity<TId>, new()
+        where TDto : class, IClientEntity<TId>, new()
     {
  
         [Indexed]

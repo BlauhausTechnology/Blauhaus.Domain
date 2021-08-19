@@ -14,7 +14,7 @@ using Blauhaus.Domain.Client.Sync.Model;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Blauhaus.Domain.Client.Sqlite.Ioc
+namespace Blauhaus.Domain.Client.Sqlite._.Ioc
 {
     public static class ServiceCollectionExtensions
     {
@@ -25,7 +25,6 @@ namespace Blauhaus.Domain.Client.Sqlite.Ioc
             where TId : IEquatable<TId>
         {
             services.AddSingleton<ISyncDtoCache<TDto, TId>, SyncDtoCache<TDto, TId, TCachedDtoEntity>>();
-            services.AddSingleton<ICachedDtoConverter<TDto, TId, TCachedDtoEntity>, CachedDtoConverter<TDto, TId, TCachedDtoEntity>>();
             return services;
         }
          
