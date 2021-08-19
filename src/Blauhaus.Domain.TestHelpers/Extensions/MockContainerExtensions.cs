@@ -14,6 +14,7 @@ using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncModels;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers;
 using Blauhaus.TestHelpers;
 using Blauhaus.Common.Abstractions;
+using Blauhaus.Domain.Abstractions.DtoCaches;
 using Blauhaus.Domain.Abstractions.DtoHandlers;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoCaches;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoHandlers;
