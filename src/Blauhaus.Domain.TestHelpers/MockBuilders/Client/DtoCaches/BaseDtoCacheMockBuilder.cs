@@ -4,6 +4,7 @@ using System.Linq;
 using Blauhaus.Common.Abstractions;
 using Blauhaus.Common.TestHelpers.MockBuilders;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
+using Blauhaus.Domain.Abstractions.DtoHandlers;
 using Moq;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoCaches

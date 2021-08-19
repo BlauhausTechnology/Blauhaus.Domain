@@ -1,9 +1,9 @@
-﻿using Blauhaus.Common.Abstractions;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System;
+using Blauhaus.Common.Abstractions;
 
-namespace Blauhaus.Domain.Abstractions.CommandHandlers
+namespace Blauhaus.Domain.Abstractions.DtoHandlers
 {
     public interface IDtoHandler<in TDto>
     {
