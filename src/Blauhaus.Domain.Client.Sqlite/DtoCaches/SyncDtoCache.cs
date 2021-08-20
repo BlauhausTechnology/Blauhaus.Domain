@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 
 namespace Blauhaus.Domain.Client.Sqlite.DtoCaches
 {
-    public class SyncDtoCache<TDto, TEntity, TId> : BaseActor, ISyncDtoCache<TDto, TEntity, TId> 
+    public class SyncDtoCache<TDto, TEntity, TId> : BaseActor, ISyncDtoCache<TDto, TId> 
         where TDto : class, IClientEntity<TId>
         where TEntity : CachedDtoEntity<TId>, new()
         where TId : IEquatable<TId>
@@ -72,12 +72,7 @@ namespace Blauhaus.Domain.Client.Sqlite.DtoCaches
         {
             return InvokeAsync(async () => await LoadManyAsync(x => true));
         }
-
-        public Task<IReadOnlyList<TDto>> GetWhereAsync(Expression<Func<TEntity, bool>> search)
-        {
-            return InvokeAsync(async () => await LoadManyAsync(search));
-        }
-
+         
         public Task<long> LoadLastModifiedAsync()
         {
             return InvokeLockedAsync(async () => await _sqliteDatabaseService.AsyncConnection

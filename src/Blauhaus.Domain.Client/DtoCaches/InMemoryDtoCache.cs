@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Blauhaus.ClientActors.Actors;
 using Blauhaus.Common.Abstractions;
-using Blauhaus.Domain.Abstractions.CommandHandlers;
 using Blauhaus.Domain.Abstractions.DtoCaches;
-using Blauhaus.Domain.Abstractions.DtoHandlers;
 using Blauhaus.Domain.Abstractions.Errors;
 using Blauhaus.Errors;
 
@@ -58,11 +55,6 @@ namespace Blauhaus.Domain.Client.DtoCaches
             return InvokeAsync<IReadOnlyList<TDto>>(() =>
                 CachedDtos.Values.ToList());
         }
-
-        public Task<IReadOnlyList<TDto>> GetWhereAsync(Expression<Func<TDto, bool>> search)
-        {
-            return InvokeAsync<IReadOnlyList<TDto>>(() =>
-                CachedDtos.Values.Where(search.Compile()).ToList());
-        }
+         
     }
 }

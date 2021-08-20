@@ -7,18 +7,13 @@ using Blauhaus.Domain.Abstractions.DtoHandlers;
 
 namespace Blauhaus.Domain.Abstractions.DtoCaches
 {
-    public interface IDtoCache<TDto, TQueryDto, in TId> : IAsyncPublisher<TDto>, IDtoHandler<TDto>
+    public interface IDtoCache<TDto, in TId> : IAsyncPublisher<TDto>, IDtoHandler<TDto>
         where TDto : class, IHasId<TId>
     {
         Task<TDto> GetOneAsync(TId id);
         Task<TDto?> TryGetOneAsync(TId id);
-        Task<IReadOnlyList<TDto>> GetAllAsync();
-        Task<IReadOnlyList<TDto>> GetWhereAsync(Expression<Func<TQueryDto, bool>> search);
+        Task<IReadOnlyList<TDto>> GetAllAsync(); 
     }
 
-
-    public interface IDtoCache<TDto, in TId> : IDtoCache<TDto, TDto, TId>
-        where TDto : class, IHasId<TId>
-    {
-    }
+     
 }

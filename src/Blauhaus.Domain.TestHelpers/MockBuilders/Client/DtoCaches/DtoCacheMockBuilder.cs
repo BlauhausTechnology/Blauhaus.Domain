@@ -9,15 +9,15 @@ using System.Linq.Expressions;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoCaches
 {
-    public class DtoCacheMockBuilder<TDto, TId> : BaseDtoCacheMockBuilder<DtoCacheMockBuilder<TDto, TId>, IDtoCache<TDto, TId>, TDto, TDto, TId> 
+    public class DtoCacheMockBuilder<TDto, TId> : BaseDtoCacheMockBuilder<DtoCacheMockBuilder<TDto, TId>, IDtoCache<TDto, TId>, TDto, TId> 
         where TDto : class, IHasId<TId>
     {
 
     }
 
-    public abstract class BaseDtoCacheMockBuilder<TBuilder, TMock, TDto, TQueryDto, TId> : BaseAsyncPublisherMockBuilder<TBuilder, TMock, TDto>
-        where TBuilder : BaseDtoCacheMockBuilder<TBuilder, TMock, TDto, TQueryDto, TId> 
-        where TMock : class, IDtoCache<TDto, TQueryDto, TId>
+    public abstract class BaseDtoCacheMockBuilder<TBuilder, TMock, TDto, TId> : BaseAsyncPublisherMockBuilder<TBuilder, TMock, TDto>
+        where TBuilder : BaseDtoCacheMockBuilder<TBuilder, TMock, TDto, TId> 
+        where TMock : class, IDtoCache<TDto, TId>
         where TDto : class, IHasId<TId>
     {
         public void VerifySaveAsync(TDto dto, int times = 1)
@@ -72,21 +72,6 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoCaches
             Mock.Setup(x => x.GetAllAsync()).ReturnsAsync(dtos.ToList());
             return (TBuilder) this;
         } 
- 
-        public TBuilder Where_GetWhereAsync_returns(TDto dto)
-        {
-            Mock.Setup(x => x.GetWhereAsync(It.IsAny<Expression<Func<TQueryDto, bool>>>())).ReturnsAsync(new List<TDto>{dto});
-            return (TBuilder) this;
-        }
-        public TBuilder Where_GetWhereAsync_returns(Func<TDto> dto)
-        {
-            Mock.Setup(x => x.GetWhereAsync(It.IsAny<Expression<Func<TQueryDto, bool>>>())).ReturnsAsync(() => new List<TDto>{dto.Invoke()});
-            return (TBuilder) this;
-        } 
-        public TBuilder Where_GetWhereAsync_returns(IEnumerable<TDto> dtos)
-        {
-            Mock.Setup(x => x.GetWhereAsync(It.IsAny<Expression<Func<TQueryDto, bool>>>())).ReturnsAsync(dtos.ToList());
-            return (TBuilder) this;
-        } 
+  
     }
 }

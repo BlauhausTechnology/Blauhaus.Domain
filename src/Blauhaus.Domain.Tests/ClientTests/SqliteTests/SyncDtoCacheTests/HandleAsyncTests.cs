@@ -26,7 +26,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncDtoCacheTests
             await Sut.HandleAsync(DtoOne);
             
             //Assert
-            var dtpOne = await Sut.GetWhereAsync(x => x.Name == DtoOne.Name);
+            var dtpOne = await Sut.GetAllAsync();
             Assert.That(dtpOne.Count, Is.EqualTo(1));
         }
 
