@@ -5,18 +5,19 @@ using Moq;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoCaches
 {
-    public class DtoCacheMockBuilder<TDto, TId> : BaseDtoCacheMockBuilder<DtoCacheMockBuilder<TDto, TId>, IDtoCache<TDto, TId>,TDto, TId> 
+    public class DtoCacheMockBuilder<TDto, TId> : BaseDtoCacheMockBuilder<DtoCacheMockBuilder<TDto, TId>, IDtoCache<TDto, TId>, TDto, TDto, TId> 
         where TDto : class, IHasId<TId>
     {
 
     }
 
-    public abstract class BaseDtoCacheMockBuilder<TBuilder, TMock, TDto, TId> : BaseAsyncPublisherMockBuilder<TBuilder, TMock, TDto>
-        where TBuilder : BaseDtoCacheMockBuilder<TBuilder, TMock, TDto, TId> 
-        where TMock : class, IDtoCache<TDto, TId>
+    public abstract class BaseDtoCacheMockBuilder<TBuilder, TMock, TDto, TQueryDto, TId> : BaseAsyncPublisherMockBuilder<TBuilder, TMock, TDto>
+        where TBuilder : BaseDtoCacheMockBuilder<TBuilder, TMock, TDto, TQueryDto, TId> 
+        where TMock : class, IDtoCache<TDto, TQueryDto, TId>
         where TDto : class, IHasId<TId>
     {
         public void VerifySaveAsync(TDto dto, int times = 1)
@@ -74,17 +75,17 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoCaches
  
         public TBuilder Where_GetWhereAsync_returns(TDto dto)
         {
-            Mock.Setup(x => x.GetWhereAsync(It.IsAny<Func<TDto, bool>>())).ReturnsAsync(new List<TDto>{dto});
+            Mock.Setup(x => x.GetWhereAsync(It.IsAny<Expression<Func<TQueryDto, bool>>>())).ReturnsAsync(new List<TDto>{dto});
             return (TBuilder) this;
         }
         public TBuilder Where_GetWhereAsync_returns(Func<TDto> dto)
         {
-            Mock.Setup(x => x.GetWhereAsync(It.IsAny<Func<TDto, bool>>())).ReturnsAsync(() => new List<TDto>{dto.Invoke()});
+            Mock.Setup(x => x.GetWhereAsync(It.IsAny<Expression<Func<TQueryDto, bool>>>())).ReturnsAsync(() => new List<TDto>{dto.Invoke()});
             return (TBuilder) this;
         } 
         public TBuilder Where_GetWhereAsync_returns(IEnumerable<TDto> dtos)
         {
-            Mock.Setup(x => x.GetWhereAsync(It.IsAny<Func<TDto, bool>>())).ReturnsAsync(dtos.ToList());
+            Mock.Setup(x => x.GetWhereAsync(It.IsAny<Expression<Func<TQueryDto, bool>>>())).ReturnsAsync(dtos.ToList());
             return (TBuilder) this;
         } 
     }

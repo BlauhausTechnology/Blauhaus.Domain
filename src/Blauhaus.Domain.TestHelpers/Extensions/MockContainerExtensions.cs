@@ -25,8 +25,8 @@ namespace Blauhaus.Domain.TestHelpers.Extensions
     {
 
         //DtoCaches
-        public static Func<SyncDtoCacheMockBuilder<TDto, TId>> AddMockSyncDtoCache<TDto, TId>(this MockContainer mocks) where TDto : class, IClientEntity<TId>
-            => mocks.AddMock<SyncDtoCacheMockBuilder<TDto, TId>, ISyncDtoCache<TDto, TId>>();
+        public static Func<SyncDtoCacheMockBuilder<TDto, TEntity, TId>> AddMockSyncDtoCache<TDto, TEntity, TId>(this MockContainer mocks) where TDto : class, IClientEntity<TId> where TEntity : class, ISyncClientEntity<TId> 
+            => mocks.AddMock<SyncDtoCacheMockBuilder<TDto, TEntity, TId>, ISyncDtoCache<TDto, TEntity,TId>>();
         public static Func<DtoCacheMockBuilder<TDto, TId>> AddMockDtoCache<TDto, TId>(this MockContainer mocks) where TDto : class, IHasId<TId>
             => mocks.AddMock<DtoCacheMockBuilder<TDto, TId>, IDtoCache<TDto, TId>>();
         public static Func<DtoHandlerMockBuilder<TDto, TId>> AddMockDtoHandler<TDto, TId>(this MockContainer mocks) where TDto : class, IHasId<TId>

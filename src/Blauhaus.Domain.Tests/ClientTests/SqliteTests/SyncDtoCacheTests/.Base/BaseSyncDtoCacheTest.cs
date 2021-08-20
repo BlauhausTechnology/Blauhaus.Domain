@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncDtoCacheTests._.Base
 {
-    public abstract class BaseSyncDtoCacheTest : BaseSqliteTest<SyncDtoCache<MyDto, Guid, MyCachedDtoEntity>>
+    public abstract class BaseSyncDtoCacheTest : BaseSqliteTest<TestSyncDtoCache>
     {
         protected MyDto DtoOne = null!;
         protected MyDto DtoTwo = null!;
@@ -27,9 +27,9 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncDtoCacheTests._.Base
             DtoTwo = MyFixture.Create<MyDto>().With(x => x.Name, "Frank").With(x => x.ModifiedAtTicks, 3000);
             DtoThree = MyFixture.Create<MyDto>().With(x => x.Name, "Bill").With(x => x.ModifiedAtTicks, 2000);
 
-            CachedDtoOne = new MyCachedDtoEntity().FromDto(DtoOne);
-            CachedDtoTwo = new MyCachedDtoEntity().FromDto(DtoTwo);
-            CachedDtoThree = new MyCachedDtoEntity().FromDto(DtoThree);
+            CachedDtoOne = new MyCachedDtoEntity(DtoOne);
+            CachedDtoTwo = new MyCachedDtoEntity(DtoTwo);
+            CachedDtoThree = new MyCachedDtoEntity(DtoThree);
 
             
         }

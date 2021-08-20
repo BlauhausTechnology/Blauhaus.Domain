@@ -20,6 +20,17 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncDtoCacheTests
         }
 
         [Test]
+        public async Task SHOULD_populate_extra_properties()
+        {
+            //Act
+            await Sut.HandleAsync(DtoOne);
+            
+            //Assert
+            var dtpOne = await Sut.GetWhereAsync(x => x.Name == DtoOne.Name);
+            Assert.That(dtpOne.Count, Is.EqualTo(1));
+        }
+
+        [Test]
         public async Task SHOULD_not_add_duplicate()
         {
             //Act
