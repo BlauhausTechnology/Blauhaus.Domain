@@ -62,7 +62,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             public void SHOULD_load_from_server_with_modified_fields_Null()
             { 
                 //Arrange
-                MockSyncCommandHandler.Where_HandleAsync_returns(new List<SyncResult<TestModel>>
+                MockSyncCommandHandler.Where_HandleAsync_returns_sequence(new List<SyncResult<TestModel>>
                 {
                     new SyncResult<TestModel>
                     {
@@ -160,7 +160,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 var models2 = TestModel.GenerateList(3).ToList();
                 var models3 = TestModel.GenerateList(3).ToList();
                 MockSyncStatusHandler.Mock.SetupAllProperties();
-                MockSyncCommandHandler.Where_HandleAsync_returns(new List<SyncResult<TestModel>>
+                MockSyncCommandHandler.Where_HandleAsync_returns_sequence(new List<SyncResult<TestModel>>
                 {
                     new SyncResult<TestModel>
                     {
@@ -181,7 +181,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                         TotalActiveEntityCount = 9
                     }
                 });
-                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
+                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns_sequence(new List<ClientSyncStatus>
                 {
                     new ClientSyncStatus
                     {
@@ -246,7 +246,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 var models1 = serverModels.Skip(0).Take(3).ToList();
                 var models2 = serverModels.Skip(3).Take(3).ToList();
                 var models3 = serverModels.Skip(6).Take(3).ToList();
-                MockSyncCommandHandler.Where_HandleAsync_returns(new List<SyncResult<TestModel>>
+                MockSyncCommandHandler.Where_HandleAsync_returns_sequence(new List<SyncResult<TestModel>>
                 {
                     new SyncResult<TestModel>
                     {
@@ -267,7 +267,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                         TotalActiveEntityCount = 9
                     }
                 });
-                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
+                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns_sequence(new List<ClientSyncStatus>
                 {
                     new ClientSyncStatus
                     {
@@ -327,7 +327,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 var models2 = serverModels.Skip(3).Take(3).ToList();
                 var models3 = serverModels.Skip(6).Take(3).ToList();
                 MockSyncStatusHandler.Mock.SetupAllProperties();
-                MockSyncCommandHandler.Where_HandleAsync_returns(new List<SyncResult<TestModel>>
+                MockSyncCommandHandler.Where_HandleAsync_returns_sequence(new List<SyncResult<TestModel>>
                 {
                     new SyncResult<TestModel>
                     {
@@ -348,7 +348,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                         TotalActiveEntityCount = 9
                     }
                 });
-                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
+                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns_sequence(new List<ClientSyncStatus>
                 {
                     new ClientSyncStatus
                     {
@@ -422,7 +422,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 var models1 = TestModel.GenerateList(3).ToList();
                 var models2 = TestModel.GenerateList(3).ToList();
                 var models3 = TestModel.GenerateList(3).ToList();
-                MockSyncCommandHandler.Where_HandleAsync_returns(new List<SyncResult<TestModel>>
+                MockSyncCommandHandler.Where_HandleAsync_returns_sequence(new List<SyncResult<TestModel>>
                 {
                     new SyncResult<TestModel>
                     {
@@ -443,7 +443,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                         TotalActiveEntityCount = 9
                     }
                 });
-                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
+                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns_sequence(new List<ClientSyncStatus>
                 {
                     new ClientSyncStatus
                     {
@@ -505,7 +505,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 var models2 = serverModels.Skip(3).Take(3).ToList();
                 var models3 = serverModels.Skip(6).Take(3).ToList();
                 MockSyncStatusHandler.Mock.SetupAllProperties();
-                MockSyncCommandHandler.Where_HandleAsync_returns(new List<SyncResult<TestModel>>
+                MockSyncCommandHandler.Where_HandleAsync_returns_sequence(new List<SyncResult<TestModel>>
                 {
                     new SyncResult<TestModel>
                     {
@@ -526,7 +526,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                         TotalActiveEntityCount = 9
                     }
                 });
-                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
+                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns_sequence(new List<ClientSyncStatus>
                 {
                     new ClientSyncStatus
                     {
@@ -594,7 +594,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 var models1 = TestModel.GenerateList(3).ToList();
                 var models2 = TestModel.GenerateList(3).ToList();
                 var models3 = TestModel.GenerateList(3).ToList(); 
-                MockSyncCommandHandler.Where_HandleAsync_returns(new List<SyncResult<TestModel>>
+                MockSyncCommandHandler.Where_HandleAsync_returns_sequence(new List<SyncResult<TestModel>>
                 {
                     new SyncResult<TestModel>
                     {
@@ -615,7 +615,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                         TotalActiveEntityCount = 9
                     }
                 });
-                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
+                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns_sequence(new List<ClientSyncStatus>
                 {
                     new ClientSyncStatus
                     {
@@ -685,7 +685,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                 var oldServerModels2 = oldServerModels.Skip(3).Take(3).ToList();
 
                 MockBaseSyncClientRepository.Where_LoadModelsAsync_returns(localModels);
-                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
+                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns_sequence(new List<ClientSyncStatus>
                 {
                     //local entities
                     new ClientSyncStatus
@@ -728,7 +728,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                         OldestModifiedAt = oldServerModels2.Last().ModifiedAtTicks
                     },
                 });
-                MockSyncCommandHandler.Where_HandleAsync_returns(new List<SyncResult<TestModel>>
+                MockSyncCommandHandler.Where_HandleAsync_returns_sequence(new List<SyncResult<TestModel>>
                 {
                     new SyncResult<TestModel>
                     {
@@ -900,7 +900,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                  var oldServerModels1 = oldServerModels.Skip(0).Take(3).ToList();
                  var oldServerModels2 = oldServerModels.Skip(3).Take(3).ToList();
                 MockBaseSyncClientRepository.Where_LoadModelsAsync_returns(localModels);
-                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns(new List<ClientSyncStatus>
+                MockBaseSyncClientRepository.Where_GetSyncStatusAsync_returns_sequence(new List<ClientSyncStatus>
                 {
                     //local entities
                     new ClientSyncStatus
@@ -943,7 +943,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
                         OldestModifiedAt = oldServerModels2.Last().ModifiedAtTicks
                     },
                 });
-                MockSyncCommandHandler.Where_HandleAsync_returns(new List<SyncResult<TestModel>>
+                MockSyncCommandHandler.Where_HandleAsync_returns_sequence(new List<SyncResult<TestModel>>
                 {
                     new SyncResult<TestModel>
                     {

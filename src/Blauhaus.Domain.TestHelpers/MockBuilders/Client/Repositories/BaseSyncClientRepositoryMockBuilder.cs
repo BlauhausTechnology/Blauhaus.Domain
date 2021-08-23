@@ -38,7 +38,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories
             return (TBuilder) this;
         }
         
-        public List<TSyncCommand> Where_LoadModelsAsync_returns(List<List<TModel>> models)
+        public List<TSyncCommand> Where_LoadModelsAsync_returns_sequence(List<List<TModel>> models)
         {
             var invokedWithCommands = new List<TSyncCommand>();
             var queue = new Queue<List<TModel>>(models);
@@ -81,7 +81,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories
             return (TBuilder) this;
         }
 
-        public TBuilder Where_GetSyncStatusAsync_returns(List<ClientSyncStatus> values)
+        public TBuilder Where_GetSyncStatusAsync_returns_sequence(List<ClientSyncStatus> values)
         {
             var queue = new Queue<ClientSyncStatus>(values.ToList());
             Mock.Setup(x => x.GetSyncStatusAsync(It.IsAny<TSyncCommand>()))

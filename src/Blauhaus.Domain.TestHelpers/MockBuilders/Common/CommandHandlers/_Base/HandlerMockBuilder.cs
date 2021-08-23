@@ -33,7 +33,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base
             return (TBuilder) this;
         }
 
-        public TBuilder Where_HandleAsync_returns(List<TPayload> payloads)
+        public TBuilder Where_HandleAsync_returns_sequence(List<TPayload> payloads)
         {
             var queue = new Queue<Response<TPayload>>();
             foreach (var payload in payloads)
