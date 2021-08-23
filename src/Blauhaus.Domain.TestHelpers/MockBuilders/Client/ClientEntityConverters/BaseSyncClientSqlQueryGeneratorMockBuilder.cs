@@ -20,7 +20,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.ClientEntityConverters
 
     public abstract class BaseSyncClientSqlQueryGeneratorMockBuilder<TBuilder, TMock, TRootEntity, TSyncCommand> : BaseMockBuilder<TBuilder, TMock>
         where TMock : class, ISyncClientSqlQueryGenerator<TSyncCommand, TRootEntity> 
-        where TBuilder : BaseMockBuilder<TBuilder, TMock>
+        where TBuilder : BaseSyncClientSqlQueryGeneratorMockBuilder<TBuilder, TMock, TRootEntity, TSyncCommand>
         where TRootEntity : ISyncClientEntity
         where TSyncCommand : SyncCommand
     {
@@ -30,7 +30,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.ClientEntityConverters
         {
             Mock.Setup(x => x.GenerateQuery(It.IsAny<TSyncCommand>()))
                 .Returns(query.Invoke);
-            return this as TBuilder;
+            return (TBuilder)this;
         }
 
     }

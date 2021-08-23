@@ -24,21 +24,21 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories
         {
             Mock.Setup(x => x.LoadByIdAsync(id))
                 .ReturnsAsync(model);
-            return this as TBuilder;
+            return (TBuilder)this;
         }
 
         public TBuilder Where_LoadByIdAsync_returns(TModel model)
         {
             Mock.Setup(x => x.LoadByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(model);
-            return this as TBuilder;
+            return (TBuilder)this;
         }
         
         public TBuilder Where_LoadByIdAsync_throws(Exception e)
         {
             Mock.Setup(x => x.LoadByIdAsync(It.IsAny<Guid>()))
                 .ThrowsAsync(e);
-            return this as TBuilder;
+            return (TBuilder)this;
         }
 
         public void Verify_LoadAsync(Guid id)
@@ -50,13 +50,13 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories
         {
             Mock.Setup(x => x.SaveDtoAsync(It.IsAny<TDto>()))
                 .ReturnsAsync(userModel);
-            return this as TBuilder;
+            return (TBuilder)this;
         }
         public TBuilder Where_SaveDtoAsync_throws(Exception e)
         {
             Mock.Setup(x => x.SaveDtoAsync(It.IsAny<TDto>()))
                 .ThrowsAsync(e);
-            return this as TBuilder;
+            return (TBuilder)this;
         }
         public void VerifySaveDtoAsync(params Expression<Func<TDto, bool>>[] predicates)
         {

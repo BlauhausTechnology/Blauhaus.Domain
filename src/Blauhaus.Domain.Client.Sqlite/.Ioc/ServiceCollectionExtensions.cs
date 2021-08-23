@@ -18,16 +18,7 @@ namespace Blauhaus.Domain.Client.Sqlite._.Ioc
 {
     public static class ServiceCollectionExtensions
     {
-
-        public static IServiceCollection AddSyncDtoCache<TDto, TId, TEntity, TSyncDtoCache>(this IServiceCollection services)
-            where TDto : ClientEntity<TId>, new()
-            where TEntity : CachedDtoEntity<TId>, new()
-            where TSyncDtoCache : SyncDtoCache<TDto, TEntity, TId>
-            where TId : IEquatable<TId>
-        {
-            services.AddSingleton<ISyncDtoCache<TDto, TId>, TSyncDtoCache>();
-            return services;
-        }
+         
 
         public static IServiceCollection AddSyncDtoCache<TDto, TId, TEntity>(this IServiceCollection services)
             where TDto : ClientEntity<TId>, new()

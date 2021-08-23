@@ -86,7 +86,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             public async Task WHEN_Server_fails_SHOULD_fail_and_trace()
             { 
                 //Arrange
-                MockSyncCommandHandler.Where_HandleAsync_returns_fail(AuthErrors.NotAuthenticated);
+                MockSyncCommandHandler.Where_HandleAsync_fails(AuthErrors.NotAuthenticated);
                 Exception e = new Exception();
 
                 //Act
@@ -107,7 +107,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncClientTests
             public async Task WHEN_Server_fails_with_Error_SHOULD_fail_and_trace()
             { 
                 //Arrange
-                MockSyncCommandHandler.Where_HandleAsync_returns_fail(AuthErrors.NotAuthenticated);
+                MockSyncCommandHandler.Where_HandleAsync_fails(AuthErrors.NotAuthenticated);
                 Exception e = new Exception();
 
                 //Act

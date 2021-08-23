@@ -6,7 +6,9 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers
     public class VoidAuthenticatedCommandHandlerMockBuilder<TCommand, TUser> 
         : VoidAuthenticatedCommandHandlerMockBuilder<
             VoidAuthenticatedCommandHandlerMockBuilder<TCommand, TUser>, 
-        IVoidAuthenticatedCommandHandler<TCommand, TUser>, TCommand, TUser> where TCommand : notnull
+        IVoidAuthenticatedCommandHandler<TCommand, TUser>, TCommand, TUser> 
+        where TCommand : notnull
+        where TUser : notnull
     {
         
     }

@@ -12,13 +12,15 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base
 {
     public class CommandHandlerMockBuilder<TMock, TPayload, TCommand> 
         : CommandHandlerMockBuilder<CommandHandlerMockBuilder<TMock, TPayload, TCommand>, TMock, TPayload, TCommand>
-        where TMock : class, ICommandHandler<TPayload, TCommand>
+        where TMock : class, ICommandHandler<TPayload, TCommand>        
+        where TCommand : notnull
     {
     }
 
     public class CommandHandlerMockBuilder<TBuilder, TMock, TPayload, TCommand> : BaseMockBuilder<TBuilder, TMock>
         where TMock : class, ICommandHandler<TPayload, TCommand> 
-        where TBuilder : BaseMockBuilder<TBuilder, TMock>
+        where TBuilder : CommandHandlerMockBuilder<TBuilder, TMock, TPayload, TCommand>  
+        where TCommand : notnull
     {
          
         private readonly List<TCommand> _serializedCommands = new List<TCommand>();
@@ -32,7 +34,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base
                     //we need to serialilze the values because SyncCommand changes state during execution
                     _serializedCommands.Add(JsonConvert.DeserializeObject<TCommand>(JsonConvert.SerializeObject(command)));
                 }); ;
-            return this as TBuilder;
+            return (TBuilder)this;
         }
 
         public TBuilder Where_HandleAsync_returns(List<TPayload> payloads)
@@ -49,22 +51,42 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base
                     //we need to serialilze the values because SyncCommand changes state during execution
                     _serializedCommands.Add(JsonConvert.DeserializeObject<TCommand>(JsonConvert.SerializeObject(command)));
                 }); ;
-            return this as TBuilder;
+            return (TBuilder)this;
         }
 
         public TBuilder Where_HandleAsync_returns_result(Response<TPayload> payload)
         {
             Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>()))
                 .ReturnsAsync(payload);
-            return this as TBuilder;
+            return (TBuilder)this;
         }
          
+        public TBuilder Where_HandleAsync_succeds(TPayload payload)
+        {
+            Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>()))
+                .ReturnsAsync(Response.Success(payload));
+            return (TBuilder)this;
+        }
+
+        public TBuilder Where_HandleAsync_succeds(Func<TPayload> payload)
+        {
+            Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>()))
+                .ReturnsAsync(()=> Response.Success(payload.Invoke()));
+            return (TBuilder)this;
+        }
         
-        public TBuilder Where_HandleAsync_returns_fail(Error error)
+        public TBuilder Where_HandleAsync_fails(Error error)
         {
             Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>()))
                 .ReturnsAsync(Response.Failure<TPayload>(error));
-            return this as TBuilder;
+            return (TBuilder)this;
+        }
+        public TBuilder Where_HandleAsync_fails()
+        {
+            var error = Error.Create(Guid.NewGuid().ToString());
+            Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>()))
+                .ReturnsAsync(Response.Failure<TPayload>(error));
+            return (TBuilder)this;
         }
 
 
@@ -72,7 +94,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base
         {
             Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>()))
                 .ThrowsAsync(exception);
-            return this as TBuilder;
+            return (TBuilder)this;
         }
         
         public void Verify_HandleAsync_called_in_sequence(int callIndex, Func<TCommand, bool> predicate)
