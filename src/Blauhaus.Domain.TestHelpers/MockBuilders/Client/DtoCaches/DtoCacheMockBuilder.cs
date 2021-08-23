@@ -66,6 +66,11 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoCaches
         {
             Mock.Setup(x => x.GetAllAsync()).ReturnsAsync(() => new List<TDto>{dto.Invoke()});
             return (TBuilder) this;
+        }        
+        public TBuilder Where_GetAllAsync_returns(Func<IEnumerable<TDto>> dto)
+        {
+            Mock.Setup(x => x.GetAllAsync()).ReturnsAsync(() => dto.Invoke().ToArray());
+            return (TBuilder) this;
         } 
         public TBuilder Where_GetAllAsync_returns(IEnumerable<TDto> dtos)
         {
