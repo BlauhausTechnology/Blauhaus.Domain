@@ -6,7 +6,7 @@ using SQLite;
 
 namespace Blauhaus.Domain.Client.Sqlite.DtoCaches
 {
-    public class CachedDtoEntity<TId> : ClientEntity<TId>, ICachedDtoEntity<TId>
+    public class CachedDtoEntity<TId> : ClientEntity<TId>, ISyncClientEntity<TId>
     {
          
         [Indexed]

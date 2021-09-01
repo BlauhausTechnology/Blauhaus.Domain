@@ -7,5 +7,7 @@ namespace Blauhaus.Domain.Client.Sqlite.Entities
     {
         [Indexed]
         public SyncState SyncState { get; set; }
+
+        public string SerializedDto { get; set; } = string.Empty;
     }
 }
