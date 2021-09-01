@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Service;
+using Blauhaus.Common.Utils.Disposables;
 using Blauhaus.Domain.Abstractions.DtoCaches;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Errors;
@@ -13,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Blauhaus.Domain.Server.EFCore.Repositories
 {
-    public abstract class BaseServerDtoLoader<TDbContext, TDto, TEntity, TId> : IDtoCache<TDto, TId> 
+    public abstract class BaseServerDtoLoader<TDbContext, TDto, TEntity, TId> : BasePublisher, IDtoCache<TDto, TId> 
         where TDbContext : DbContext
         where TDto : class, IClientEntity<TId>
         where TEntity : class, IServerEntity<TId>
@@ -85,8 +86,6 @@ namespace Blauhaus.Domain.Server.EFCore.Repositories
 
             return tasks.Select(x => x.Result).ToArray();
         }
-
-        
         
         public virtual Task HandleAsync(TDto dto)
         {
@@ -96,7 +95,7 @@ namespace Blauhaus.Domain.Server.EFCore.Repositories
 
         public virtual Task<IDisposable> SubscribeAsync(Func<TDto, Task> handler, Func<TDto, bool>? filter = null)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(base.AddSubscriber(handler, filter));
         }
 
          
