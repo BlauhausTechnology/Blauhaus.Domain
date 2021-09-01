@@ -1,4 +1,4 @@
-﻿using Blauhaus.Domain.Server.EFCore.Entities;
+﻿using Blauhaus.Domain.Server.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Blauhaus.Domain.Server.EFCore.DbMappings

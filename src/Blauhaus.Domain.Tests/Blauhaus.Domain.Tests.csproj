@@ -9,10 +9,13 @@
 
   <ItemGroup>
     <Compile Include=".Base\BaseDomainTest.cs" />
+    <Compile Include=".Base\BaseEfCoreTest.cs" />
     <Compile Include="ClientTests\InMemoryDtoCacheTests\.Base\BaseInMemoryDtoCacheTest.cs" />
     <Compile Include="ClientTests\InMemoryDtoCacheTests\.Base\TestInMemoryDtoCache.cs" />
     <Compile Include="ClientTests\SqliteTests\SyncDtoCacheTests\.Base\BaseSyncDtoCacheTest.cs" />
     <Compile Include="ClientTests\SqliteTests\SyncDtoCacheTests\.Base\TestSyncDtoCache.cs" />
+    <Compile Include="ServerTests\MyServerDtoRepositoryTests\.Base\BaseMyServerRepositoryDtoTest.cs" />
+    <Compile Include="ServerTests\MyServerDtoRepositoryTests\.Base\MyServerDtoRepository.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,7 +29,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Blauhaus.Domain.Client.Sqlite\Blauhaus.Domain.Client.Sqlite.csproj" />
     <ProjectReference Include="..\Blauhaus.Domain.Client\Blauhaus.Domain.Client.csproj" />
+    <ProjectReference Include="..\Blauhaus.Domain.Server.EFCore\Blauhaus.Domain.Server.EFCore.csproj" />
     <ProjectReference Include="..\Blauhaus.Domain.Server\Blauhaus.Domain.Server.csproj" />
+    <ProjectReference Include="..\Blauhaus.Domain.TestHelpers.EFCore\Blauhaus.Domain.TestHelpers.EFCore.csproj" />
     <ProjectReference Include="..\Blauhaus.Domain.TestHelpers\Blauhaus.Domain.TestHelpers.csproj" />
   </ItemGroup>
 

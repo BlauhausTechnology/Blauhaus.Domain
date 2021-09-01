@@ -9,6 +9,5 @@ namespace Blauhaus.Domain.Abstractions.Entities
     
     public interface IClientEntity : IClientEntity<Guid>
     {
-        long ModifiedAtTicks { get; }
     }
 }
