@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Blauhaus.Domain.Abstractions.Entities;
 
-namespace Blauhaus.Domain.Tests.ClientTests.TestObjects
+namespace Blauhaus.Domain.Tests.TestObjects.Client
 {
-    public class TestModel : IClientEntity
+    public class TestModel : IClientEntity<Guid>
     {
         public TestModel(Guid id, EntityState entityState, long modifiedAtTicks, string name)
         {

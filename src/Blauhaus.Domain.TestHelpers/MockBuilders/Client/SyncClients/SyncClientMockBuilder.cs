@@ -10,7 +10,7 @@ using Moq;
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients
 {
     public class SyncClientMockBuilder<TModel, TSyncCommand> : BaseSyncClientMockBuilder<SyncClientMockBuilder<TModel, TSyncCommand>, ISyncClient<TModel, TSyncCommand>, TModel, TSyncCommand> 
-        where TModel : IClientEntity 
+        where TModel : IClientEntity <Guid>
         where TSyncCommand : SyncCommand
     {
         
@@ -18,7 +18,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients
 
     public abstract class BaseSyncClientMockBuilder<TBuilder, TMock, TModel, TSyncCommand> : BaseMockBuilder<TBuilder, TMock>
         where TMock : class, ISyncClient<TModel, TSyncCommand> 
-        where TModel : IClientEntity 
+        where TModel : IClientEntity <Guid>
         where TSyncCommand : SyncCommand
         where TBuilder : BaseSyncClientMockBuilder<TBuilder, TMock, TModel, TSyncCommand>
     {

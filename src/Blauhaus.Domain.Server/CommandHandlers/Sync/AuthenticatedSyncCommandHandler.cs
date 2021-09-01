@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
@@ -12,7 +13,7 @@ using Blauhaus.Responses;
 namespace Blauhaus.Domain.Server.CommandHandlers.Sync
 {
     public class AuthenticatedSyncCommandHandler<TEntity, TSyncCommand, TUser> : IAuthenticatedCommandHandler<SyncResult<TEntity>, TSyncCommand, TUser>
-        where TEntity : IServerEntity
+        where TEntity : IServerEntity<Guid>
         where TSyncCommand : SyncCommand
         where TUser : notnull
     {

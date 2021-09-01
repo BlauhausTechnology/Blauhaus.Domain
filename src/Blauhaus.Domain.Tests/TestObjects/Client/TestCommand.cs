@@ -1,4 +1,4 @@
-﻿namespace Blauhaus.Domain.Tests.ClientTests.TestObjects
+﻿namespace Blauhaus.Domain.Tests.TestObjects.Client
 {
     public class TestCommand
     {

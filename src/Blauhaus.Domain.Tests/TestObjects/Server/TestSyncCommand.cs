@@ -1,6 +1,6 @@
 ﻿using Blauhaus.Domain.Abstractions.Sync;
 
-namespace Blauhaus.Domain.Tests.ServerTests.TestObjects
+namespace Blauhaus.Domain.Tests.TestObjects.Server
 {
     public class TestSyncCommand : SyncCommand
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Blauhaus.Domain.Tests.ServerTests.TestObjects
+namespace Blauhaus.Domain.Tests.TestObjects.Server
 {
     public class TestAuthenticatedUser
     {

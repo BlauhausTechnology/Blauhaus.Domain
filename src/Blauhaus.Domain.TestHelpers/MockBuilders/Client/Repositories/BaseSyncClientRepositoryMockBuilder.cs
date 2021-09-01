@@ -11,7 +11,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories
 {
     public class SyncClientRepositoryMockBuilder<TModel, TDto, TSyncCommand> 
         : BaseSyncClientRepositoryMockBuilder<SyncClientRepositoryMockBuilder<TModel, TDto, TSyncCommand>,  ISyncClientRepository<TModel, TDto, TSyncCommand> , TModel, TDto, TSyncCommand>
-        where TModel : class, IClientEntity
+        where TModel : class, IClientEntity<Guid>
         where TSyncCommand : SyncCommand
     {
     }
@@ -20,7 +20,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories
     public abstract class BaseSyncClientRepositoryMockBuilder<TBuilder, TMock, TModel, TDto, TSyncCommand> : BaseClientRepositoryMockBuilder<TBuilder, TMock, TModel, TDto> 
         where TBuilder : BaseSyncClientRepositoryMockBuilder<TBuilder, TMock, TModel, TDto, TSyncCommand>
         where TMock : class, ISyncClientRepository<TModel, TDto, TSyncCommand>
-        where TModel : class, IClientEntity
+        where TModel : class, IClientEntity<Guid>
         where TSyncCommand : SyncCommand
     {
         

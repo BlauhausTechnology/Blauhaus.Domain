@@ -9,7 +9,7 @@ namespace Blauhaus.Domain.TestHelpers.Extensions
     {
         
         public static TEntity VerifyDeletedServerEntity<TEntity>(this TEntity entity, DateTime createdAt, DateTime modifiedAt) 
-            where TEntity : IServerEntity
+            where TEntity : IServerEntity<Guid>
         {
             Assert.That(entity, Is.Not.Null);
             
@@ -23,7 +23,7 @@ namespace Blauhaus.Domain.TestHelpers.Extensions
 
 
         public static TEntity VerifyModifiedServerEntity<TEntity>(this TEntity entity, DateTime createdAt, DateTime modifiedAt) 
-            where TEntity : IServerEntity
+            where TEntity : IServerEntity<Guid>
         {
             Assert.That(entity, Is.Not.Null);
             
@@ -36,7 +36,7 @@ namespace Blauhaus.Domain.TestHelpers.Extensions
         }
         
         public static TEntity VerifyNewDraftServerEntity<TEntity>(this TEntity entity, DateTime runTime) 
-            where TEntity : IServerEntity
+            where TEntity : IServerEntity<Guid>
         {
             Assert.That(entity, Is.Not.Null);
             
@@ -50,7 +50,7 @@ namespace Blauhaus.Domain.TestHelpers.Extensions
 
         
         public static TEntity VerifyNewServerEntity<TEntity>(this TEntity entity, DateTime runTime) 
-            where TEntity : IServerEntity
+            where TEntity : IServerEntity<Guid>
         {
             Assert.That(entity, Is.Not.Null);
             
@@ -63,7 +63,7 @@ namespace Blauhaus.Domain.TestHelpers.Extensions
         }
         
         public static TEntity VerifyNewServerUserEntity<TEntity>(this TEntity entity, DateTime createdAt, Guid userId) 
-            where TEntity : IServerEntity, IHasUserId
+            where TEntity : IServerEntity<Guid>, IHasUserId
         {
             entity = entity.VerifyNewServerEntity(createdAt);
             Assert.That(entity.UserId, Is.EqualTo(userId));
@@ -72,7 +72,7 @@ namespace Blauhaus.Domain.TestHelpers.Extensions
         }
         
         public static TEntity VerifyModifiedServerUserEntity<TEntity>(this TEntity entity, DateTime createdAt, DateTime modifiedAt, Guid userId) 
-            where TEntity : IServerEntity, IHasUserId
+            where TEntity : IServerEntity<Guid>, IHasUserId
         {
             entity = entity.VerifyModifiedServerEntity(createdAt, modifiedAt);
             Assert.That(entity.UserId, Is.EqualTo(userId));

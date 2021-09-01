@@ -3,21 +3,23 @@ using Blauhaus.Domain.Abstractions.Entities;
 
 namespace Blauhaus.Domain.Server.Entities
 { 
-    public abstract class BaseServerEntity : IServerEntity
+    public abstract class BaseServerEntity<TId> : IServerEntity<TId>
     {
         protected BaseServerEntity()
         {
         }
          
-        protected BaseServerEntity(DateTime createdAt, Guid id = default, EntityState entityState = EntityState.Active)
+        protected BaseServerEntity(DateTime createdAt, TId id, EntityState entityState = EntityState.Active)
         {
-            Id = id == default ? Guid.NewGuid() : id;
+            Id = id;
             EntityState = entityState;
             CreatedAt = DateTime.SpecifyKind(createdAt, DateTimeKind.Utc);
             ModifiedAt = createdAt;
         }
 
-        public Guid Id { get; private set; }
+        protected abstract TId GenerateId();
+
+        public TId Id { get; private set; }
         public EntityState EntityState { get; private set; }
         public DateTime CreatedAt { get; private set;}
         public DateTime ModifiedAt { get; private set;}

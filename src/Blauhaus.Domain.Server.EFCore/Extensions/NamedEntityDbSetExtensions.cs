@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Blauhaus.Common.Abstractions;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Errors;
@@ -11,7 +12,7 @@ namespace Blauhaus.Domain.Server.EFCore.Extensions
     public static class NamedEntityDbSetExtensions
     {
         public static Response<string> ValidateNamedEntityCreateCommand<TEntity>(this DbSet<TEntity> dbSet, IHasName command, int minimumLength = 4) 
-            where TEntity : class, IHasName, IServerEntity
+            where TEntity : class, IHasName, IServerEntity<Guid>
         {
 
             if (string.IsNullOrWhiteSpace(command.Name))

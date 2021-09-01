@@ -9,6 +9,7 @@ using Blauhaus.ClientDatabase.Sqlite.Service;
 using Blauhaus.Domain.Abstractions.DtoCaches;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Errors;
+using Blauhaus.Domain.Client.Sqlite.Entities;
 using Blauhaus.Errors;
 using Newtonsoft.Json;
 
@@ -16,7 +17,7 @@ namespace Blauhaus.Domain.Client.Sqlite.DtoCaches
 {
     public class SyncDtoCache<TDto, TEntity, TId> : BaseActor, ISyncDtoCache<TDto, TId> 
         where TDto : class, IClientEntity<TId>
-        where TEntity : CachedDtoEntity<TId>, new()
+        where TEntity : SyncClientEntity<TId>, new()
         where TId : IEquatable<TId>
     {
         private readonly IAnalyticsService _analyticsService;

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Blauhaus.Domain.Tests.ClientTests.InMemoryDtoCacheTests._.Base;
-using Blauhaus.Domain.Tests.ClientTests.TestObjects;
+using Blauhaus.Domain.Tests.ClientTests.InMemoryDtoCacheTests.Base;
+using Blauhaus.Domain.Tests.TestObjects.Common;
 using NUnit.Framework;
 
 namespace Blauhaus.Domain.Tests.ClientTests.InMemoryDtoCacheTests

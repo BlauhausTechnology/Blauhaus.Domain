@@ -10,7 +10,7 @@ namespace Blauhaus.Domain.Abstractions.Entities
     
     public interface IEntity: IEntity<Guid>
     {
-
+        
     }
     
 }

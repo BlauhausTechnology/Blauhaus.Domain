@@ -4,7 +4,7 @@ using Blauhaus.Domain.Abstractions.Entities;
 namespace Blauhaus.Domain.Abstractions.Sync
 {
     public interface ISyncClient<TModel, TSyncCommand> 
-        where TModel : IClientEntity
+        where TModel : IClientEntity<Guid>
         where TSyncCommand : SyncCommand
     {
         

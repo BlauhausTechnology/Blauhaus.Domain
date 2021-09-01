@@ -3,7 +3,7 @@ using Blauhaus.Domain.Abstractions.Entities;
 
 namespace Blauhaus.Domain.Client.Sync.Model
 {
-    public interface ISyncModel<TModel> where TModel : IClientEntity
+    public interface ISyncModel<TModel> where TModel : IClientEntity<Guid>
     {
         IObservable<TModel> Connect(Guid id);
         void LoadNewFromServer();

@@ -1,9 +1,9 @@
 ﻿using NUnit.Framework;
 using System.Threading.Tasks;
-using Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncDtoCacheTests._.Base;
-using Blauhaus.Domain.Tests.ClientTests.TestObjects;
 using System.Collections.Generic;
 using System.Linq;
+using Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncDtoCacheTests.Base;
+using Blauhaus.Domain.Tests.TestObjects.Common;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncDtoCacheTests
 {

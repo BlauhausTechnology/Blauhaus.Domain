@@ -1,11 +1,20 @@
 ﻿using System;
+using System.Security.Cryptography;
 using Blauhaus.Domain.Server.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Blauhaus.Domain.Server.EFCore.DbMappings
 {
-    public abstract class BaseDbMapping<TEntity> : IEntityTypeConfiguration<TEntity> where TEntity : BaseServerEntity
+    //public abstract class BaseDbMapping<TEntity> : BaseDbMapping<TEntity, Guid> where TEntity : BaseServerEntity<Guid>
+    //{
+    //    protected BaseDbMapping(ModelBuilder modelBuilder) : base(modelBuilder)
+    //    {
+    //    }
+    //}
+
+
+    public abstract class BaseDbMapping<TEntity, TId> : IEntityTypeConfiguration<TEntity> where TEntity : BaseServerEntity<TId>
     {
         protected BaseDbMapping(ModelBuilder modelBuilder)
         {

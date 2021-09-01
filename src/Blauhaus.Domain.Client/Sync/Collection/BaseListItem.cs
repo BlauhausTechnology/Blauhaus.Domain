@@ -4,7 +4,7 @@ using Blauhaus.Domain.Abstractions.Entities;
 
 namespace Blauhaus.Domain.Client.Sync.Collection
 {
-    public abstract class BaseListItem<TModel> : BaseBindableObject, IListItem<TModel> where TModel : IClientEntity
+    public abstract class BaseListItem<TModel> : BaseBindableObject, IListItem<TModel> where TModel : IClientEntity<Guid>
     { 
 
         public Guid Id { get; set; }

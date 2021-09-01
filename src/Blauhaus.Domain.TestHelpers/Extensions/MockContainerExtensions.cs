@@ -33,23 +33,23 @@ namespace Blauhaus.Domain.TestHelpers.Extensions
             => mocks.AddMock<DtoHandlerMockBuilder<TDto, TId>, IDtoHandler<TDto>>();
 
         //Client entity converters
-        public static Func<ClientEntityConverterMockBuilder<TModel, TDto, TRootEntity>> AddMockClientEntityConverter<TModel, TDto, TRootEntity>(this MockContainer mocks) where TModel : class, IClientEntity where TRootEntity : ISyncClientEntity, new() 
+        public static Func<ClientEntityConverterMockBuilder<TModel, TDto, TRootEntity>> AddMockClientEntityConverter<TModel, TDto, TRootEntity>(this MockContainer mocks) where TModel : class, IClientEntity<Guid> where TRootEntity : ISyncClientEntity<Guid>, new() 
             => mocks.AddMock<ClientEntityConverterMockBuilder<TModel, TDto, TRootEntity>, IClientEntityConverter<TModel, TDto, TRootEntity>>();
 
 
         //Repositories
-        public static Func<ClientRepositoryMockBuilder<TModel, TDto>> AddMockClientRepository<TModel, TDto>(this MockContainer mocks) where TModel : class, IClientEntity
+        public static Func<ClientRepositoryMockBuilder<TModel, TDto>> AddMockClientRepository<TModel, TDto>(this MockContainer mocks) where TModel : class, IClientEntity<Guid>
             => mocks.AddMock<ClientRepositoryMockBuilder<TModel, TDto>, IClientRepository<TModel, TDto>>();
 
-        public static Func<SyncClientRepositoryMockBuilder<TModel, TDto, TSyncCommand>> AddMockSyncClientRepository<TModel, TDto, TSyncCommand>(this MockContainer mocks) where TModel : class, IClientEntity where TSyncCommand : SyncCommand
+        public static Func<SyncClientRepositoryMockBuilder<TModel, TDto, TSyncCommand>> AddMockSyncClientRepository<TModel, TDto, TSyncCommand>(this MockContainer mocks) where TModel : class, IClientEntity<Guid> where TSyncCommand : SyncCommand
             => mocks.AddMock<SyncClientRepositoryMockBuilder<TModel, TDto, TSyncCommand>, ISyncClientRepository<TModel, TDto, TSyncCommand>>();
         
 
         //Sync clients
-        public static Func<SyncClientMockBuilder<TModel, SyncCommand>> AddMockSyncClient<TModel>(this MockContainer mocks) where TModel : class, IClientEntity 
+        public static Func<SyncClientMockBuilder<TModel, SyncCommand>> AddMockSyncClient<TModel>(this MockContainer mocks) where TModel : class, IClientEntity <Guid>
           => mocks.AddMockSyncClient<TModel, SyncCommand>();
         
-        public static Func<SyncClientMockBuilder<TModel, TSyncCommand>> AddMockSyncClient<TModel, TSyncCommand>(this MockContainer mocks) where TModel : class, IClientEntity where TSyncCommand : SyncCommand
+        public static Func<SyncClientMockBuilder<TModel, TSyncCommand>> AddMockSyncClient<TModel, TSyncCommand>(this MockContainer mocks) where TModel : class, IClientEntity<Guid> where TSyncCommand : SyncCommand
              => mocks.AddMock<SyncClientMockBuilder<TModel, TSyncCommand>, ISyncClient<TModel, TSyncCommand>>();
 
 
@@ -72,15 +72,15 @@ namespace Blauhaus.Domain.TestHelpers.Extensions
 
 
         //Sync collections
-        public static Func<SyncCollectionMockBuilder<TModel, TListItem>> AddMockSyncCollection<TModel, TListItem>(this MockContainer mocks) where TModel : IClientEntity where TListItem : IListItem<TModel> 
+        public static Func<SyncCollectionMockBuilder<TModel, TListItem>> AddMockSyncCollection<TModel, TListItem>(this MockContainer mocks) where TModel : IClientEntity<Guid> where TListItem : IListItem<TModel> 
             => mocks.AddMock<SyncCollectionMockBuilder<TModel, TListItem>, ISyncCollection<TModel, TListItem, SyncCommand>>();
 
-        public static Func<SyncCollectionMockBuilder<TModel, TListItem, TCommand>> AddMockSyncCollection<TModel, TListItem, TCommand>(this MockContainer mocks) where TCommand : SyncCommand, new() where TModel : IClientEntity where TListItem : IListItem<TModel> 
+        public static Func<SyncCollectionMockBuilder<TModel, TListItem, TCommand>> AddMockSyncCollection<TModel, TListItem, TCommand>(this MockContainer mocks) where TCommand : SyncCommand, new() where TModel : IClientEntity<Guid> where TListItem : IListItem<TModel> 
             => mocks.AddMock<SyncCollectionMockBuilder<TModel, TListItem, TCommand>, ISyncCollection<TModel, TListItem, TCommand>>();
 
 
         //Sync models
-        public static Func<SyncModelMockBuilder<TModel>> AddMockSyncModel<TModel>(this MockContainer mocks) where TModel : IClientEntity 
+        public static Func<SyncModelMockBuilder<TModel>> AddMockSyncModel<TModel>(this MockContainer mocks) where TModel : IClientEntity <Guid>
             => mocks.AddMock<SyncModelMockBuilder<TModel>, ISyncModel<TModel>>();
 
     }

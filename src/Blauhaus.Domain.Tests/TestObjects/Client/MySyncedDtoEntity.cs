@@ -1,20 +1,22 @@
 ﻿using System;
 using Blauhaus.Domain.Client.Sqlite.DtoCaches;
+using Blauhaus.Domain.Client.Sqlite.Entities;
+using Blauhaus.Domain.Tests.TestObjects.Common;
 using Newtonsoft.Json;
 using SQLite;
 
-namespace Blauhaus.Domain.Tests.ClientTests.TestObjects
+namespace Blauhaus.Domain.Tests.TestObjects.Client
 {
-    public class MyCachedDtoEntity : CachedDtoEntity<Guid>
+    public class MySyncedDtoEntity : SyncClientEntity<Guid>
     {
 
-        public MyCachedDtoEntity()
+        public MySyncedDtoEntity()
         {
             
         }
 
         //for tests
-        public MyCachedDtoEntity(MyDto dto)
+        public MySyncedDtoEntity(MyDto dto)
         {
             Id = dto.Id;
             ModifiedAtTicks = dto.ModifiedAtTicks;

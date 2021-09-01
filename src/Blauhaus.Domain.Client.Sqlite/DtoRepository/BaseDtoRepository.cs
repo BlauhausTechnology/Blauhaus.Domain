@@ -10,8 +10,8 @@ using Blauhaus.Domain.Client.Sqlite.Repository;
 namespace Blauhaus.Domain.Client.Sqlite.DtoRepository
 {
     public abstract class BaseDtoRepository<TDto, TRootEntity> : BasePublisher, IDtoRepository<TDto> 
-        where TDto : class, IClientEntity
-        where TRootEntity : class, ISyncClientEntity
+        where TDto : class, IClientEntity<Guid>
+        where TRootEntity : class, ISyncClientEntity<Guid>
     {
         private readonly IAnalyticsService _analyticsService;
         private readonly ISqliteDatabaseService _databaseService;

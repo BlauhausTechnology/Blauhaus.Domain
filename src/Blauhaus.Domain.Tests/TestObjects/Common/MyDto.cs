@@ -1,8 +1,8 @@
-﻿using Blauhaus.Domain.Abstractions.Entities;
-using System;
+﻿using System;
+using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Client.Sqlite.Entities;
 
-namespace Blauhaus.Domain.Tests.ClientTests.TestObjects
+namespace Blauhaus.Domain.Tests.TestObjects.Common
 {
     public class MyDto : ClientEntity<Guid>
     {

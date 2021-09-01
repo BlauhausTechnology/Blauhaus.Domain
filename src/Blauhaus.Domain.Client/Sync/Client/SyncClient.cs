@@ -39,7 +39,7 @@ namespace Blauhaus.Domain.Client.Sync.Client
         // ... however perhaps they could share some infrastructure?
 
     public class SyncClient<TModel, TDto, TSyncCommand> : ISyncClient<TModel, TSyncCommand> 
-        where TModel : class, IClientEntity
+        where TModel : class, IClientEntity<Guid>
         where TSyncCommand : SyncCommand 
     {
         private readonly IAnalyticsService _analyticsService;

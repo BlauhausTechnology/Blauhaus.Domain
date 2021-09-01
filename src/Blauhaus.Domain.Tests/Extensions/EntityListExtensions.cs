@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Blauhaus.Domain.Abstractions.Entities;
 using NUnit.Framework;
 
@@ -6,7 +7,7 @@ namespace Blauhaus.Domain.Tests.Extensions
 {
     public static class EntityListExtensions
     {
-        public static bool VerifyEntities<TEntity>(this List<TEntity> expected, List<TEntity> actual) where TEntity : IServerEntity
+        public static bool VerifyEntities<TEntity>(this List<TEntity> expected, List<TEntity> actual) where TEntity : IServerEntity<Guid>
         {
             Assert.AreEqual(expected.Count, actual.Count);
             for (var i = 0; i < expected.Count; i++)

@@ -11,7 +11,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.ClientEntityConverters
 
     public class SyncClientSqlQueryGeneratorMockBuilder<TMock, TRootEntity, TSyncCommand> 
         : BaseSyncClientSqlQueryGeneratorMockBuilder<SyncClientSqlQueryGeneratorMockBuilder<TMock, TRootEntity, TSyncCommand>, ISyncClientSqlQueryGenerator<TSyncCommand, TRootEntity>,TRootEntity,  TSyncCommand>
-        where TRootEntity : ISyncClientEntity 
+        where TRootEntity : ISyncClientEntity <Guid>
         where TSyncCommand : SyncCommand
     {
 
@@ -21,7 +21,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.ClientEntityConverters
     public abstract class BaseSyncClientSqlQueryGeneratorMockBuilder<TBuilder, TMock, TRootEntity, TSyncCommand> : BaseMockBuilder<TBuilder, TMock>
         where TMock : class, ISyncClientSqlQueryGenerator<TSyncCommand, TRootEntity> 
         where TBuilder : BaseSyncClientSqlQueryGeneratorMockBuilder<TBuilder, TMock, TRootEntity, TSyncCommand>
-        where TRootEntity : ISyncClientEntity
+        where TRootEntity : ISyncClientEntity<Guid>
         where TSyncCommand : SyncCommand
     {
  

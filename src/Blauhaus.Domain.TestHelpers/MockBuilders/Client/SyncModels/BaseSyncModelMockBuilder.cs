@@ -12,7 +12,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncModels
 
     public abstract class BaseSyncModelMockBuilder<TBuilder, TSyncModel, TModel> : BaseMockBuilder<TBuilder, TSyncModel>
         where TSyncModel : class, ISyncModel<TModel> 
-        where TModel : IClientEntity 
+        where TModel : IClientEntity <Guid>
         where TBuilder : BaseSyncModelMockBuilder<TBuilder, TSyncModel, TModel>
     {
         protected BaseSyncModelMockBuilder()

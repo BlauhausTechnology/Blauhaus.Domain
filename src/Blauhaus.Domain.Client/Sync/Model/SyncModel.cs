@@ -12,7 +12,7 @@ using Blauhaus.Errors;
 namespace Blauhaus.Domain.Client.Sync.Model
 {
     public class SyncModel<TModel, TSyncCommand> : ISyncModel<TModel> 
-        where TModel : IClientEntity 
+        where TModel : IClientEntity <Guid>
         where TSyncCommand : SyncCommand, new()
     {
         private readonly ISyncClient<TModel, TSyncCommand> _syncClient;

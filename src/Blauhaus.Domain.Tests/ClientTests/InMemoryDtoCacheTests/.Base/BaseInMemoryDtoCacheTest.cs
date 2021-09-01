@@ -1,9 +1,9 @@
 ﻿using AutoFixture;
 using Blauhaus.Common.Utils.Extensions;
-using Blauhaus.Domain.Tests._.Base;
-using Blauhaus.Domain.Tests.ClientTests.TestObjects;
+using Blauhaus.Domain.Tests.Base;
+using Blauhaus.Domain.Tests.TestObjects.Common;
 
-namespace Blauhaus.Domain.Tests.ClientTests.InMemoryDtoCacheTests._.Base
+namespace Blauhaus.Domain.Tests.ClientTests.InMemoryDtoCacheTests.Base
 {
     public class BaseInMemoryDtoCacheTest : BaseDomainTest<TestInMemoryDtoCache>
     {

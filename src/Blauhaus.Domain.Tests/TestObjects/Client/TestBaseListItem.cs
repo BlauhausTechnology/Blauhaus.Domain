@@ -1,6 +1,6 @@
 ﻿using Blauhaus.Domain.Client.Sync.Collection;
 
-namespace Blauhaus.Domain.Tests.ClientTests.TestObjects
+namespace Blauhaus.Domain.Tests.TestObjects.Client
 {
     public class TestBaseListItem : BaseListItem<TestModel>, ITestListItem
     { 

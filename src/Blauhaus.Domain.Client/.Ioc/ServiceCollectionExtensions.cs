@@ -35,7 +35,7 @@ namespace Blauhaus.Domain.Client.Ioc
         }
 
         public static IServiceCollection AddEntityCommandClientHandler<TModel, TModelDto, TCommandDto, TCommand, TCommandConverter, TDtoCommandHandler>(this IServiceCollection services)
-            where TModel : class, IClientEntity
+            where TModel : class, IClientEntity<Guid>
             where TCommandConverter : class, ICommandConverter<TCommandDto, TCommand>
             where TDtoCommandHandler : class, ICommandHandler<TModelDto, TCommandDto>
             where TCommand : notnull
@@ -74,7 +74,7 @@ namespace Blauhaus.Domain.Client.Ioc
          
         
         public static IServiceCollection AddSyncCollection<TModel, TListItem, TSyncCommand>(this IServiceCollection services) 
-            where TModel : class, IClientEntity 
+            where TModel : class, IClientEntity <Guid>
             where TListItem : class, IListItem<TModel>
             where TSyncCommand : SyncCommand, new()
         {
@@ -86,7 +86,7 @@ namespace Blauhaus.Domain.Client.Ioc
         }
          
         public static IServiceCollection AddSyncModel<TModel, TSyncCommand>(this IServiceCollection services) 
-            where TModel : class, IClientEntity 
+            where TModel : class, IClientEntity <Guid>
             where TSyncCommand : SyncCommand, new()
         {
             services.TryAddTransient<ISyncStatusHandler, SyncStatusHandler>();

@@ -1,6 +1,6 @@
-﻿using Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncDtoCacheTests._.Base;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System.Threading.Tasks;
+using Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncDtoCacheTests.Base;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncDtoCacheTests
 {
@@ -10,8 +10,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncDtoCacheTests
         public async Task IF_Dtos_exist_SHOULD_return_all()
         {
             //Arrange
-            await Connection.InsertAsync(CachedDtoOne);
-            await Connection.InsertAsync(CachedDtoThree);
+            await Connection.InsertAsync(SyncedDtoOne);
+            await Connection.InsertAsync(SyncedDtoThree);
             
             //Act
             var result = await Sut.GetAllAsync();

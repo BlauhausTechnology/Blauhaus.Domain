@@ -1,9 +1,9 @@
 ﻿using Blauhaus.Analytics.Abstractions.Service;
+using Blauhaus.Domain.Abstractions.CommandHandlers;
 using Blauhaus.Domain.Abstractions.Repositories;
 using Blauhaus.Domain.Client.CommandHandlers;
-using Blauhaus.Domain.Abstractions.CommandHandlers;
 
-namespace Blauhaus.Domain.Tests.ClientTests.TestObjects
+namespace Blauhaus.Domain.Tests.TestObjects.Client
 {
     public class TestClientEntityCommandHandler : EntityCommandClientHandler<TestModel, TestModelDto, TestCommandDto, TestCommand>
     {

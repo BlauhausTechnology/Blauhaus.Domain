@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Blauhaus.Domain.Abstractions.Entities;
 
-namespace Blauhaus.Domain.Tests.ServerTests.TestObjects
+namespace Blauhaus.Domain.Tests.TestObjects.Server
 {
-    public class TestServerEntity : IServerEntity
+    public class TestServerEntity : IServerEntity<Guid>
     {
         public TestServerEntity(Guid id, EntityState entityState, DateTime createdAt, DateTime modifiedAt)
         {

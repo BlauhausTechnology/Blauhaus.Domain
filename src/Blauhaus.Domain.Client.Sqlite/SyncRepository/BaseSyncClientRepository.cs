@@ -9,12 +9,13 @@ using Blauhaus.Domain.Client.Sqlite.Repository;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Sync;
 using SqlKata;
+using System;
 
 namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
 {
     public class BaseSyncClientRepository<TModel, TDto, TSyncCommand, TRootEntity> : BaseClientRepository<TModel,TDto,TRootEntity>, ISyncClientRepository<TModel,TDto, TSyncCommand> 
-        where TRootEntity : ISyncClientEntity, new() 
-        where TModel : class, IClientEntity 
+        where TRootEntity : ISyncClientEntity<Guid>, new() 
+        where TModel : class, IClientEntity<Guid> 
         where TSyncCommand : SyncCommand
     {
         private readonly IAnalyticsService _analyticsService;

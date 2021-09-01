@@ -1,6 +1,6 @@
 ﻿using Blauhaus.Domain.Client.CommandHandlers;
 
-namespace Blauhaus.Domain.Tests.ClientTests.TestObjects
+namespace Blauhaus.Domain.Tests.TestObjects.Client
 {
     public class TestCommandConverter : ICommandConverter<TestCommandDto, TestCommand>
     {

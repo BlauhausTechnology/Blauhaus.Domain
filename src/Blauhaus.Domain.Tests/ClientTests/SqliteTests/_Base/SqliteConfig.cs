@@ -4,7 +4,7 @@ using System.IO;
 using Blauhaus.ClientDatabase.Sqlite.Config;
 using Blauhaus.DeviceServices.Abstractions.DeviceInfo;
 using Blauhaus.Domain.Tests.ClientTests.SqliteTests._TestObjects;
-using Blauhaus.Domain.Tests.ClientTests.TestObjects;
+using Blauhaus.Domain.Tests.TestObjects.Client;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests._Base
 {
@@ -19,7 +19,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests._Base
                 typeof(SqliteTestRootEntity),
                 typeof(SqliteTestChildEntity),
                 typeof(SqliteTestGrandChildEntity),
-                typeof(MyCachedDtoEntity),
+                typeof(MySyncedDtoEntity),
             };
         }
 

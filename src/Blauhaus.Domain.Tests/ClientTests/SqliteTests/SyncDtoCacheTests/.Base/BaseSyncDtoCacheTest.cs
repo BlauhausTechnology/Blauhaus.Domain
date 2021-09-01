@@ -1,13 +1,10 @@
-﻿using System;
-using AutoFixture;
+﻿using AutoFixture;
 using Blauhaus.Common.Utils.Extensions;
-using Blauhaus.Domain.Client.Sqlite.DtoCaches;
-using Blauhaus.Domain.Client.Sqlite.Repository;
 using Blauhaus.Domain.Tests.ClientTests.SqliteTests._Base;
-using Blauhaus.Domain.Tests.ClientTests.TestObjects;
-using Microsoft.Extensions.DependencyInjection;
+using Blauhaus.Domain.Tests.TestObjects.Client;
+using Blauhaus.Domain.Tests.TestObjects.Common;
 
-namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncDtoCacheTests._.Base
+namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncDtoCacheTests.Base
 {
     public abstract class BaseSyncDtoCacheTest : BaseSqliteTest<TestSyncDtoCache>
     {
@@ -15,9 +12,9 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncDtoCacheTests._.Base
         protected MyDto DtoTwo = null!;
         protected MyDto DtoThree = null!;
 
-        protected MyCachedDtoEntity CachedDtoOne = null!;
-        protected MyCachedDtoEntity CachedDtoTwo = null!;
-        protected MyCachedDtoEntity CachedDtoThree = null!;
+        protected MySyncedDtoEntity SyncedDtoOne = null!;
+        protected MySyncedDtoEntity SyncedDtoTwo = null!;
+        protected MySyncedDtoEntity SyncedDtoThree = null!;
 
         public override void Setup()
         {
@@ -27,9 +24,9 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncDtoCacheTests._.Base
             DtoTwo = MyFixture.Create<MyDto>().With(x => x.Name, "Frank").With(x => x.ModifiedAtTicks, 3000);
             DtoThree = MyFixture.Create<MyDto>().With(x => x.Name, "Bill").With(x => x.ModifiedAtTicks, 2000);
 
-            CachedDtoOne = new MyCachedDtoEntity(DtoOne);
-            CachedDtoTwo = new MyCachedDtoEntity(DtoTwo);
-            CachedDtoThree = new MyCachedDtoEntity(DtoThree);
+            SyncedDtoOne = new MySyncedDtoEntity(DtoOne);
+            SyncedDtoTwo = new MySyncedDtoEntity(DtoTwo);
+            SyncedDtoThree = new MySyncedDtoEntity(DtoThree);
 
             
         }

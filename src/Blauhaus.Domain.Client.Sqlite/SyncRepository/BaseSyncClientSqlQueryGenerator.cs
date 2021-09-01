@@ -1,11 +1,13 @@
 ﻿using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Sync;
 using SqlKata;
+using System;
 
 namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
 {
     public abstract class BaseSyncClientSqlQueryGenerator<TSyncCommand, TRootEntity> : ISyncClientSqlQueryGenerator<TSyncCommand, TRootEntity>
-        where TRootEntity : ISyncClientEntity where TSyncCommand : SyncCommand
+        where TRootEntity : ISyncClientEntity<Guid>
+        where TSyncCommand : SyncCommand
     {
         public Query GenerateQuery(TSyncCommand syncCommand)
         {

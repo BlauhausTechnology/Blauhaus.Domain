@@ -1,7 +1,7 @@
 ﻿using System;
 using Blauhaus.Domain.Abstractions.Entities;
 
-namespace Blauhaus.Domain.Tests.ClientTests.TestObjects
+namespace Blauhaus.Domain.Tests.TestObjects.Client
 {
     public class TestModelDto
     {

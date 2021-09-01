@@ -4,7 +4,7 @@ using Blauhaus.Domain.Abstractions.Entities;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests._TestObjects
 {
-    public class SqliteTestRootEntity : SyncClientEntity
+    public class SqliteTestRootEntity : SyncClientEntity<Guid>
     {
 
         public SqliteTestRootEntity()

@@ -1,4 +1,5 @@
-﻿using Blauhaus.Auth.Abstractions.User;
+﻿using System;
+using Blauhaus.Auth.Abstractions.User;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Sync;
@@ -73,7 +74,7 @@ namespace Blauhaus.Domain.Server.Ioc
         //}
 
         public static IServiceCollection AddAuthenticatedSyncCommandHandler<TEntity, TSyncCommand, TQueryLoader, TUser>(this IServiceCollection services) 
-            where TEntity : IServerEntity 
+            where TEntity : IServerEntity<Guid> 
             where TUser : class
             where TQueryLoader : class, IAuthenticatedSyncQueryLoader<TEntity, TSyncCommand, TUser>
             where TSyncCommand : SyncCommand
@@ -84,7 +85,7 @@ namespace Blauhaus.Domain.Server.Ioc
         }
         
         public static IServiceCollection AddAuthenticatedUserSyncCommandHandler<TEntity, TSyncQuery, TQueryLoader>(this IServiceCollection services) 
-            where TEntity : IServerEntity 
+            where TEntity : IServerEntity<Guid> 
             where TQueryLoader : class, IAuthenticatedSyncQueryLoader<TEntity, TSyncQuery, IAuthenticatedUser>
             where TSyncQuery : SyncCommand
         {
@@ -92,7 +93,7 @@ namespace Blauhaus.Domain.Server.Ioc
         }
          
         public static IServiceCollection AddAuthenticatedUserSyncCommandHandler<TEntity, TQueryLoader>(this IServiceCollection services) 
-            where TEntity : IServerEntity 
+            where TEntity : IServerEntity<Guid>
             where TQueryLoader : class, IAuthenticatedSyncQueryLoader<TEntity, SyncCommand, IAuthenticatedUser>
         {
             return services.AddAuthenticatedSyncCommandHandler<TEntity, SyncCommand, TQueryLoader, IAuthenticatedUser>();

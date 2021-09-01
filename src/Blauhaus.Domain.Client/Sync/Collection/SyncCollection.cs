@@ -13,7 +13,7 @@ using Blauhaus.Ioc.Abstractions;
 namespace Blauhaus.Domain.Client.Sync.Collection
 {
     public class SyncCollection<TModel, TListItem, TSyncCommand> : BaseBindableObject, ISyncCollection<TModel, TListItem, TSyncCommand>
-        where TModel : class, IClientEntity
+        where TModel : class, IClientEntity<Guid>
         where TListItem : class, IListItem<TModel>
         where TSyncCommand : SyncCommand, new()
     {

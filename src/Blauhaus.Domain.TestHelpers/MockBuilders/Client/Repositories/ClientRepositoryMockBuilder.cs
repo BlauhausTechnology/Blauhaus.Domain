@@ -8,7 +8,7 @@ using Moq;
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories
 { 
     public class ClientRepositoryMockBuilder<TModel, TDto> : BaseClientRepositoryMockBuilder<ClientRepositoryMockBuilder<TModel, TDto>, IClientRepository<TModel, TDto>, TModel, TDto>
-        where TModel : class, IClientEntity
+        where TModel : class, IClientEntity<Guid>
     {
 
     }
@@ -17,7 +17,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories
     public abstract class BaseClientRepositoryMockBuilder<TBuilder, TMock, TModel, TDto> : BaseMockBuilder<TBuilder, TMock> 
         where TBuilder : BaseClientRepositoryMockBuilder<TBuilder, TMock, TModel, TDto>
         where TMock : class, IClientRepository<TModel, TDto>
-        where TModel : class, IClientEntity
+        where TModel : class, IClientEntity<Guid>
     {
         
         public TBuilder Where_LoadByIdAsync_returns(TModel model, Guid id)
