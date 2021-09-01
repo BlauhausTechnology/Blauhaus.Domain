@@ -17,6 +17,5 @@ namespace Blauhaus.Domain.Tests.TestObjects.Common
 
         public string Name { get; set; }
         
-        public SyncState SyncState { get; set; }
     }
 }

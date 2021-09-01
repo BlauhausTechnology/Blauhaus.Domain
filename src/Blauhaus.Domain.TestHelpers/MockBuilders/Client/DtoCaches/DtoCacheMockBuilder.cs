@@ -10,7 +10,7 @@ using System.Linq.Expressions;
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoCaches
 {
     public class DtoCacheMockBuilder<TDto, TId> : BaseDtoCacheMockBuilder<DtoCacheMockBuilder<TDto, TId>, IDtoCache<TDto, TId>, TDto, TId> 
-        where TDto : class, IHasId<TId>
+        where TDto : class, IHasId<TId> where TId : IEquatable<TId>
     {
 
     }
@@ -19,6 +19,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoCaches
         where TBuilder : BaseDtoCacheMockBuilder<TBuilder, TMock, TDto, TId> 
         where TMock : class, IDtoCache<TDto, TId>
         where TDto : class, IHasId<TId>
+        where TId : IEquatable<TId>
     {
         public void VerifySaveAsync(TDto dto, int times = 1)
         {

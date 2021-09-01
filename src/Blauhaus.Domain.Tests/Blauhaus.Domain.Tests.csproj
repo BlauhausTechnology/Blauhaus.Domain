@@ -15,7 +15,7 @@
     <Compile Include="ClientTests\SqliteTests\SyncDtoCacheTests\.Base\BaseSyncDtoCacheTest.cs" />
     <Compile Include="ClientTests\SqliteTests\SyncDtoCacheTests\.Base\TestSyncDtoCache.cs" />
     <Compile Include="ServerTests\MyServerDtoRepositoryTests\.Base\BaseMyServerRepositoryDtoTest.cs" />
-    <Compile Include="ServerTests\MyServerDtoRepositoryTests\.Base\MyServerDtoRepository.cs" />
+    <Compile Include="ServerTests\MyServerDtoRepositoryTests\.Base\MyServerDtoLoader.cs" />
   </ItemGroup>
 
   <ItemGroup>

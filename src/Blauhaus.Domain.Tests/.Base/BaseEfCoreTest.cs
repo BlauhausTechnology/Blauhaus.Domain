@@ -14,6 +14,8 @@ namespace Blauhaus.Domain.Tests.Base
 
         public override void Setup()
         {
+            base.Setup();
+            
             _dbContextBuilder = new InMemoryDbContextBuilder<TDbContext>();
 
             TDbContext FactoryFunc() => _dbContextBuilder.NewContext;
@@ -28,8 +30,8 @@ namespace Blauhaus.Domain.Tests.Base
 
             //and a different one for test assertions
             PostDbContext = _dbContextBuilder.NewContext;
-        } 
-
+        }
+         
         protected abstract void SetupDbContext(TDbContext setupContext);
         
         protected TDbContext PostDbContext = null!;

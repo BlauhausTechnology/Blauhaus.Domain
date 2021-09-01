@@ -1,8 +1,28 @@
 ﻿using System;
+using System.Security.Cryptography;
 using Blauhaus.Domain.Abstractions.Entities;
 
 namespace Blauhaus.Domain.Server.Entities
-{ 
+{
+
+    public abstract class BaseServerEntity : BaseServerEntity<Guid>
+    {
+        protected BaseServerEntity()
+        {
+        }
+         
+        protected BaseServerEntity(DateTime createdAt, Guid id, EntityState entityState = EntityState.Active) 
+            : base(createdAt, id, entityState)
+        {
+        }
+
+        protected override Guid GenerateId()
+        {
+            return Guid.NewGuid();
+        }
+    }
+
+
     public abstract class BaseServerEntity<TId> : IServerEntity<TId>
     {
         protected BaseServerEntity()

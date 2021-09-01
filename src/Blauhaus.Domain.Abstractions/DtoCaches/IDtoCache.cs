@@ -9,6 +9,7 @@ namespace Blauhaus.Domain.Abstractions.DtoCaches
 {
     public interface IDtoCache<TDto, in TId> : IAsyncPublisher<TDto>, IDtoHandler<TDto>
         where TDto : class, IHasId<TId>
+        where TId : IEquatable<TId>
     {
         Task<TDto> GetOneAsync(TId id);
         Task<TDto?> TryGetOneAsync(TId id);

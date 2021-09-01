@@ -11,7 +11,7 @@ using Blauhaus.Errors;
 namespace Blauhaus.Domain.Client.DtoCaches
 {
     public class InMemoryDtoCache<TDto, TId> : BaseActor, IDtoCache<TDto, TId> 
-        where TDto : class, IHasId<TId>
+        where TDto : class, IHasId<TId> where TId : IEquatable<TId>
     {
 
         protected Dictionary<TId, TDto> CachedDtos = new Dictionary<TId, TDto>();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Domain.Server.EFCore.Repositories;
 using Blauhaus.Domain.Tests.TestObjects.Common;
@@ -7,14 +8,25 @@ using Blauhaus.Time.Abstractions;
 
 namespace Blauhaus.Domain.Tests.ServerTests.MyServerDtoRepositoryTests.Base
 {
-    public class MyServerDtoRepository : BaseServerDtoRepository<MyDbContext, MyDto, Guid>
+    public class MyServerDtoLoader : BaseServerDtoLoader<MyDbContext, MyDto, MyServerEntity>
     {
-        public MyServerDtoRepository(
+        public MyServerDtoLoader(
             Func<MyDbContext> dbContextFactory, 
             IAnalyticsService analyticsService, 
             ITimeService timeService) 
                 : base(dbContextFactory, analyticsService, timeService)
         {
+        }
+         
+        protected override Task<MyDto> PopulateDtoAsync(MyServerEntity entity)
+        {
+            return Task.FromResult(new MyDto
+            {
+                EntityState = entity.EntityState,
+                Id = entity.Id,
+                ModifiedAtTicks = entity.ModifiedAt.Ticks,
+                Name = entity.Name
+            });
         }
     }
 }
