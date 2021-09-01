@@ -13,10 +13,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Blauhaus.Domain.Server.EFCore.Repositories
 {
-    public abstract class BaseServerDtoLoader<TDbContext, TDto, TEntity> : IDtoCache<TDto, Guid> 
+    public abstract class BaseServerDtoLoader<TDbContext, TDto, TEntity, TId> : IDtoCache<TDto, TId> 
         where TDbContext : DbContext
-        where TDto : class, IClientEntity<Guid>
-        where TEntity : class, IServerEntity<Guid>  
+        where TDto : class, IClientEntity<TId>
+        where TEntity : class, IServerEntity<TId>
+        where TId : IEquatable<TId>
     {
         private readonly Func<TDbContext> _dbContextFactory;
         protected readonly IAnalyticsService AnalyticsService;
@@ -35,12 +36,12 @@ namespace Blauhaus.Domain.Server.EFCore.Repositories
             TimeService = timeService;
         }
          
-        public async Task<TDto> GetOneAsync(Guid id)
+        public async Task<TDto> GetOneAsync(TId id)
         {
             using var db = GetDbContext();
 
             var all = await db.Set<TEntity>().ToListAsync();
-            var entity = await db.Set<TEntity>().FirstOrDefaultAsync(x => x.Id == id);
+            var entity = await db.Set<TEntity>().FirstOrDefaultAsync(x => x.Id.Equals(id));
             if (entity == null)
             {
                 throw new ErrorException(DomainErrors.NotFound<TDto>());
@@ -49,7 +50,7 @@ namespace Blauhaus.Domain.Server.EFCore.Repositories
             return await PopulateDtoAsync(entity);
         }
 
-        public async Task<TDto?> TryGetOneAsync(Guid id)
+        public async Task<TDto?> TryGetOneAsync(TId id)
         {
             using var db = GetDbContext();
 
