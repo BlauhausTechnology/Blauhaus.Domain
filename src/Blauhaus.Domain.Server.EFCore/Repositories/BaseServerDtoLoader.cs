@@ -18,7 +18,7 @@ namespace Blauhaus.Domain.Server.EFCore.Repositories
         where TDbContext : DbContext
         where TDto : class, IClientEntity<TDtoId>
         where TEntity : class, IServerEntity<TEntityId> 
-        where TEntityId : IEquatable<TDtoId>
+        where TEntityId : IEquatable<TEntityId>
         where TDtoId : IEquatable<TDtoId>
     {
         private readonly Func<TDbContext> _dbContextFactory;
