@@ -8,7 +8,7 @@ using Blauhaus.Time.Abstractions;
 
 namespace Blauhaus.Domain.Tests.ServerTests.MyServerDtoRepositoryTests.Base
 {
-    public class MyServerDtoLoader : BaseServerDtoLoader<MyDbContext, MyDto, MyServerEntity, Guid>
+    public class MyServerDtoLoader : BaseServerDtoLoader<MyDbContext, MyDto, MyServerEntity, Guid, Guid>
     {
         public MyServerDtoLoader(
             Func<MyDbContext> dbContextFactory, 
