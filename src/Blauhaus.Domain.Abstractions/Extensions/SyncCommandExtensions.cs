@@ -9,7 +9,8 @@ namespace Blauhaus.Domain.Abstractions.Extensions
         {
             return syncCommand.NewerThan == null && syncCommand.OlderThan == null;
         }
-         
+        
+        
         public static bool IsForNewerEntities(this SyncCommand syncCommand)
         {
             return syncCommand.NewerThan != null;
