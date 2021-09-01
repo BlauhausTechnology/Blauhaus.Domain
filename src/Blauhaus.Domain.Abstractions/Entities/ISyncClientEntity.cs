@@ -3,7 +3,7 @@
 namespace Blauhaus.Domain.Abstractions.Entities
 {
     
-    public interface ISyncClientEntity<out TId> : IClientEntity<TId>, ISerializedDto
+    public interface ISyncClientEntity<out TId> : IClientEntity<TId>
     {
         SyncState SyncState { get; set; }
     }
