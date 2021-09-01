@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Blauhaus.Domain.Tests.TestObjects.Server
 {
-    public class MyDbMapping : BaseDbMapping<MyServerEntity, Guid>
+    public class MyDbMapping : BaseDbMapping<MyServerEntity>
     {
         public MyDbMapping(ModelBuilder modelBuilder) : base(modelBuilder)
         {

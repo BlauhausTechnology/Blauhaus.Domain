@@ -6,15 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Blauhaus.Domain.Server.EFCore.DbMappings
 {
-    //public abstract class BaseDbMapping<TEntity> : BaseDbMapping<TEntity, Guid> where TEntity : BaseServerEntity<Guid>
-    //{
-    //    protected BaseDbMapping(ModelBuilder modelBuilder) : base(modelBuilder)
-    //    {
-    //    }
-    //}
-
-
-    public abstract class BaseDbMapping<TEntity, TId> : IEntityTypeConfiguration<TEntity> where TEntity : BaseServerEntity<TId>
+    public abstract class BaseDbMapping<TEntity> : IEntityTypeConfiguration<TEntity> where TEntity : BaseServerEntity
     {
         protected BaseDbMapping(ModelBuilder modelBuilder)
         {

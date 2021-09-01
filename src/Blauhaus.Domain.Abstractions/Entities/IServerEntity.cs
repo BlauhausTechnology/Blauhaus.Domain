@@ -2,7 +2,7 @@
 
 namespace Blauhaus.Domain.Abstractions.Entities
 {
-    public interface IServerEntity<out TId> : IEntity<TId>
+    public interface IServerEntity : IEntity<Guid>
     {
         DateTime CreatedAt { get; }
         DateTime ModifiedAt { get; }

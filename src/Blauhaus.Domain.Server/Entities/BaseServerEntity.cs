@@ -4,32 +4,14 @@ using Blauhaus.Domain.Abstractions.Entities;
 
 namespace Blauhaus.Domain.Server.Entities
 {
-
-    public abstract class BaseServerEntity : BaseServerEntity<Guid>
+     
+    public abstract class BaseServerEntity : IServerEntity
     {
         protected BaseServerEntity()
         {
         }
          
-        protected BaseServerEntity(DateTime createdAt, Guid id, EntityState entityState = EntityState.Active) 
-            : base(createdAt, id, entityState)
-        {
-        }
-
-        protected override Guid GenerateId()
-        {
-            return Guid.NewGuid();
-        }
-    }
-
-
-    public abstract class BaseServerEntity<TId> : IServerEntity<TId>
-    {
-        protected BaseServerEntity()
-        {
-        }
-         
-        protected BaseServerEntity(DateTime createdAt, TId id, EntityState entityState = EntityState.Active)
+        protected BaseServerEntity(DateTime createdAt, Guid id, EntityState entityState = EntityState.Active)
         {
             Id = id;
             EntityState = entityState;
@@ -37,9 +19,8 @@ namespace Blauhaus.Domain.Server.Entities
             ModifiedAt = createdAt;
         }
 
-        protected abstract TId GenerateId();
 
-        public TId Id { get; private set; }
+        public Guid Id { get; private set; }
         public EntityState EntityState { get; private set; }
         public DateTime CreatedAt { get; private set;}
         public DateTime ModifiedAt { get; private set;}

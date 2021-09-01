@@ -11,27 +11,27 @@ namespace Blauhaus.Domain.Server.EFCore.Extensions
     public static class UserDbSetExtensions
     {
         
-        public static async Task<TEntity?> LoadOneByUserIdAsync<TEntity>(this DbSet<TEntity> dbSet, Guid userId) where TEntity : class, IServerEntity<Guid>, IHasUserId
+        public static async Task<TEntity?> LoadOneByUserIdAsync<TEntity>(this DbSet<TEntity> dbSet, Guid userId) where TEntity : class, IServerEntity, IHasUserId
         {
             return await dbSet.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == userId && x.EntityState != Abstractions.Entities.EntityState.Deleted);
         }
         
-        public static TEntity? LoadOneByUserId<TEntity>(this DbSet<TEntity> dbSet, Guid userId) where TEntity : class, IServerEntity<Guid>, IHasUserId
+        public static TEntity? LoadOneByUserId<TEntity>(this DbSet<TEntity> dbSet, Guid userId) where TEntity : class, IServerEntity, IHasUserId
         {
             return dbSet.AsNoTracking().FirstOrDefault(x => x.UserId == userId && x.EntityState != Abstractions.Entities.EntityState.Deleted);
         }
             
-        public static async Task<List<TEntity>> LoadByUserIdAsync<TEntity>(this DbSet<TEntity> dbSet, Guid userId) where TEntity : class, IServerEntity<Guid>, IHasUserId
+        public static async Task<List<TEntity>> LoadByUserIdAsync<TEntity>(this DbSet<TEntity> dbSet, Guid userId) where TEntity : class, IServerEntity, IHasUserId
         {
             return await dbSet.AsNoTracking().Where(x => x.UserId == userId && x.EntityState!= Abstractions.Entities.EntityState.Deleted).ToListAsync();
         }
         
-        public static List<TEntity> LoadByUserId<TEntity>(this DbSet<TEntity> dbSet, Guid userId) where TEntity : class, IServerEntity<Guid>, IHasUserId
+        public static List<TEntity> LoadByUserId<TEntity>(this DbSet<TEntity> dbSet, Guid userId) where TEntity : class, IServerEntity, IHasUserId
         {
             return dbSet.AsNoTracking().Where(x => x.UserId == userId && x.EntityState!= Abstractions.Entities.EntityState.Deleted).ToList();
         }
         
-        public static async Task<List<Guid>> LoadIdsByUserIdAsync<TEntity>(this DbSet<TEntity> dbSet, Guid userId) where TEntity : class, IServerEntity<Guid>, IHasUserId
+        public static async Task<List<Guid>> LoadIdsByUserIdAsync<TEntity>(this DbSet<TEntity> dbSet, Guid userId) where TEntity : class, IServerEntity, IHasUserId
         {
             return await dbSet.AsNoTracking()
                 .Where(x => x.UserId == userId && x.EntityState != Abstractions.Entities.EntityState.Deleted)

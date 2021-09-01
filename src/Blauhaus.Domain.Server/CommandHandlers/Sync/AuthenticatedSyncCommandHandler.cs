@@ -13,7 +13,7 @@ using Blauhaus.Responses;
 namespace Blauhaus.Domain.Server.CommandHandlers.Sync
 {
     public class AuthenticatedSyncCommandHandler<TEntity, TSyncCommand, TUser> : IAuthenticatedCommandHandler<SyncResult<TEntity>, TSyncCommand, TUser>
-        where TEntity : IServerEntity<Guid>
+        where TEntity : IServerEntity
         where TSyncCommand : SyncCommand
         where TUser : notnull
     {

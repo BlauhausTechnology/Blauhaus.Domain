@@ -14,11 +14,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Blauhaus.Domain.Server.EFCore.Repositories
 {
-    public abstract class BaseServerDtoLoader<TDbContext, TDto, TEntity, TDtoId, TEntityId> : BasePublisher, IDtoCache<TDto, TDtoId> 
+    //this is temporary to accomodate moonbase with Guid ids and string dto ids
+    public abstract class BaseServerDtoLoader<TDbContext, TDto, TEntity, TDtoId> : BasePublisher, IDtoCache<TDto, TDtoId> 
         where TDbContext : DbContext
         where TDto : class, IClientEntity<TDtoId>
-        where TEntity : class, IServerEntity<TEntityId> 
-        where TEntityId : IEquatable<TEntityId>
+        where TEntity : class, IServerEntity 
         where TDtoId : IEquatable<TDtoId>
     {
         private readonly Func<TDbContext> _dbContextFactory;

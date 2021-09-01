@@ -15,7 +15,7 @@ namespace Blauhaus.Domain.Server.CommandHandlers.Sync
 
     public interface IAuthenticatedSyncQueryLoader<TEntity, in TUser> : IAuthenticatedSyncQueryLoader<TEntity, SyncCommand, TUser>
         where TUser : notnull 
-        where TEntity : IServerEntity<Guid>
+        where TEntity : IServerEntity
     {
     }
 }

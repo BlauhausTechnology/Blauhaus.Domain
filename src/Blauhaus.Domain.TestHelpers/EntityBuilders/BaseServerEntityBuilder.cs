@@ -6,7 +6,7 @@ namespace Blauhaus.Domain.TestHelpers.EntityBuilders
 {
 
     public abstract class BaseServerEntityBuilder<TBuilder, TEntity> : BaseReadonlyFixtureBuilder<TBuilder, TEntity>
-        where TEntity : class, IServerEntity<Guid>
+        where TEntity : class, IServerEntity
         where TBuilder : BaseServerEntityBuilder<TBuilder, TEntity>
     {
 

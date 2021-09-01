@@ -5,7 +5,7 @@ using Blauhaus.Domain.Abstractions.Entities;
 
 namespace Blauhaus.Domain.Tests.TestObjects.Server
 {
-    public class TestServerEntity : IServerEntity<Guid>
+    public class TestServerEntity : IServerEntity
     {
         public TestServerEntity(Guid id, EntityState entityState, DateTime createdAt, DateTime modifiedAt)
         {

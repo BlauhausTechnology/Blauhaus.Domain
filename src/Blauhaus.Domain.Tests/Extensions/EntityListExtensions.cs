@@ -7,7 +7,7 @@ namespace Blauhaus.Domain.Tests.Extensions
 {
     public static class EntityListExtensions
     {
-        public static bool VerifyEntities<TEntity>(this List<TEntity> expected, List<TEntity> actual) where TEntity : IServerEntity<Guid>
+        public static bool VerifyEntities<TEntity>(this List<TEntity> expected, List<TEntity> actual) where TEntity : IServerEntity
         {
             Assert.AreEqual(expected.Count, actual.Count);
             for (var i = 0; i < expected.Count; i++)

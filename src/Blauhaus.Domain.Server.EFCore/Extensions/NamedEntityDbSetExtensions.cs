@@ -12,7 +12,7 @@ namespace Blauhaus.Domain.Server.EFCore.Extensions
     public static class NamedEntityDbSetExtensions
     {
         public static Response<string> ValidateNamedEntityCreateCommand<TEntity>(this DbSet<TEntity> dbSet, IHasName command, int minimumLength = 4) 
-            where TEntity : class, IHasName, IServerEntity<Guid>
+            where TEntity : class, IHasName, IServerEntity
         {
 
             if (string.IsNullOrWhiteSpace(command.Name))
