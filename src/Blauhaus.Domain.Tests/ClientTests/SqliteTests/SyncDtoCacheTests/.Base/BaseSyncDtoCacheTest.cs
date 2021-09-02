@@ -3,6 +3,7 @@ using Blauhaus.Common.Utils.Extensions;
 using Blauhaus.Domain.Tests.ClientTests.SqliteTests._Base;
 using Blauhaus.Domain.Tests.TestObjects.Client;
 using Blauhaus.Domain.Tests.TestObjects.Common;
+using Blauhaus.TestHelpers.Builders.Base;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncDtoCacheTests.Base
 {
@@ -20,9 +21,10 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncDtoCacheTests.Base
         {
             base.Setup();
 
-            DtoOne = MyFixture.Create<MyDto>().With(x => x.Name, "Bob").With(x => x.ModifiedAtTicks, 1000);
-            DtoTwo = MyFixture.Create<MyDto>().With(x => x.Name, "Frank").With(x => x.ModifiedAtTicks, 3000);
-            DtoThree = MyFixture.Create<MyDto>().With(x => x.Name, "Bill").With(x => x.ModifiedAtTicks, 2000);
+            DtoOne = MyFixture.Build<MyDto>().With(x => x.Name, "Bob").With(x => x.ModifiedAtTicks, 1000).Create();
+            DtoTwo = MyFixture.Build<MyDto>().With(x => x.Name, "Frank").With(x => x.ModifiedAtTicks, 3000).Create();
+            DtoThree = MyFixture.Build<MyDto>().With(x => x.Name, "Bill").With(x => x.ModifiedAtTicks, 2000).Create();
+
 
             SyncedDtoOne = new MySyncedDtoEntity(DtoOne);
             SyncedDtoTwo = new MySyncedDtoEntity(DtoTwo);
