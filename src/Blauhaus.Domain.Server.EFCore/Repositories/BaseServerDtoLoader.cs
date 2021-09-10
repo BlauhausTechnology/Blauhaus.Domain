@@ -15,7 +15,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Blauhaus.Domain.Server.EFCore.Repositories
 {
     //this is temporary to accomodate moonbase with Guid ids and string dto ids
-    public abstract class BaseServerDtoLoader<TDbContext, TDto, TEntity, TDtoId> : BasePublisher, IDtoCache<TDto, TDtoId> 
+    public abstract class BaseServerDtoLoader<TDbContext, TDto, TEntity, TDtoId> : BasePublisher, IDtoLoader<TDto, TDtoId> 
         where TDbContext : DbContext
         where TDto : class, IClientEntity<TDtoId>
         where TEntity : class, IServerEntity 

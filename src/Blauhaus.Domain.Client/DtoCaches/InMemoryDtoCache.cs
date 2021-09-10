@@ -5,12 +5,13 @@ using System.Threading.Tasks;
 using Blauhaus.ClientActors.Actors;
 using Blauhaus.Common.Abstractions;
 using Blauhaus.Domain.Abstractions.DtoCaches;
+using Blauhaus.Domain.Abstractions.DtoHandlers;
 using Blauhaus.Domain.Abstractions.Errors;
 using Blauhaus.Errors;
 
 namespace Blauhaus.Domain.Client.DtoCaches
 {
-    public class InMemoryDtoCache<TDto, TId> : BaseActor, IDtoCache<TDto, TId> 
+    public class InMemoryDtoCache<TDto, TId> : BaseActor, IDtoCache<TDto, TId>
         where TDto : class, IHasId<TId> where TId : IEquatable<TId>
     {
 
