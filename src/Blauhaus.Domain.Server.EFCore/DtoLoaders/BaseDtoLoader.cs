@@ -9,46 +9,84 @@
 //using Blauhaus.Domain.Abstractions.DtoCaches;
 //using Blauhaus.Domain.Abstractions.DtoHandlers;
 //using Blauhaus.Domain.Server.Entities;
+//using System.Linq.Expressions;
+//using System.Linq;
 
 //namespace Blauhaus.Domain.Server.EFCore.DtoLoaders
 //{
-//    public abstract class BaseDbDtoLoader<TDbContext, TEntity, TDto, TId> : BasePublisher, IDtoLoader<TDto, TId>
+//    public abstract class BaseDbDtoLoader<TDbContext, TEntity, TDto, TId, TDtoId> : BasePublisher, IDtoLoader<TDto, TDtoId>
 //        where TDbContext : DbContext
-//        where TDto : class, IClientEntity<TId>
-//        where TId : IEquatable<TId>
+//        where TDto : class, IClientEntity<TDtoId>
+//        where TId : IEquatable<TDtoId>
 //        where TEntity : BaseServerEntity, IDtoOwner<TDto>
 //    {
-        
+
 //        private readonly Func<TDbContext> _dbContextFactory;
-//        protected TDbContext GetDbContext() => 
+//        protected TDbContext GetDbContext() =>
 //            _dbContextFactory.Invoke();
 
 //        protected BaseDbDtoLoader(
-//            IAnalyticsService analyticsService, 
-//            ITimeService timeService,  
-//            Func<TDbContext> dbContextFactory)  
+//            IAnalyticsService analyticsService,
+//            ITimeService timeService,
+//            Func<TDbContext> dbContextFactory)
 //        {
 //            _dbContextFactory = dbContextFactory;
 //        }
 
 //        public Task<IDisposable> SubscribeAsync(Func<TDto, Task> handler, Func<TDto, bool>? filter = null)
 //        {
-//            return Task.FromResult(base.AddSubscriber(handler, filter));
+//            return Task.FromResult(AddSubscriber(handler, filter));
 //        }
 
-//        public Task<TDto> GetOneAsync(TId id)
+//        public virtual async Task<TDto> GetOneAsync(TDtoId id)
 //        {
-//            throw new NotImplementedException();
+//            using (var db = GetDbContext())
+//            {
+//                var entity = await db.Set<TEntity>()
+//                    .FirstAsync(x => x.Id == Guid.Parse(id));
+//                return await entity.GetDtoAsync();
+//            }
+//        }
+        
+//        public virtual async Task<TDto?> TryGetOneAsync(string id)
+//        {
+
+//            using (var db = GetDbContext())
+//            {
+//                var entity = await db.Set<TEntity>()
+//                    .FirstOrDefaultAsync(x => x.Id == Guid.Parse(id));
+//                if (entity == null) return null;
+//                return await entity.GetDtoAsync();
+//            }
 //        }
 
-//        public Task<TDto?> TryGetOneAsync(TId id)
+//        public virtual async Task<IReadOnlyList<TDto>> GetAllAsync()
 //        {
-//            throw new NotImplementedException();
+//            return await LoadDtosAsync(x => true);
 //        }
 
-//        public Task<IReadOnlyList<TDto>> GetAllAsync()
+//        protected virtual Task<IReadOnlyList<TDto>> LoadDtosAsync(Expression<Func<TEntity, bool>> filter)
 //        {
-//            throw new NotImplementedException();
+//            return LoadDtosFromDatabaseAsync(filter);
+//        }
+        
+//        protected async Task<IReadOnlyList<TDto>> LoadDtosFromDatabaseAsync(Expression<Func<TEntity, bool>> filter)
+//        {
+//            using var db = GetDbContext();
+
+//            var entities = await db.Set<TEntity>()
+//                .AsNoTracking()
+//                .Where(filter)
+//                .ToListAsync();
+
+//            var dtos = new TDto[entities.Count];
+
+//            for (var i = 0; i < entities.Count; i++)
+//            {
+//                dtos[i] = await entities[i].GetDtoAsync();
+//            }
+
+//            return dtos;
 //        }
 //    }
 //}
