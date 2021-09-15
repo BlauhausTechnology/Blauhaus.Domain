@@ -15,6 +15,7 @@ namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
             return ConfigureQuery(syncCommand, query);
         }
 
+
         protected abstract Query ConfigureQuery(TSyncCommand syncCommand, Query query);
     }
 }
