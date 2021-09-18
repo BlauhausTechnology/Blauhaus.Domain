@@ -2,12 +2,13 @@
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.CommandHandlers;
-using Blauhaus.Domain.Client.Sync.Client;
-using Blauhaus.Domain.Client.Sync.Collection;
-using Blauhaus.Domain.Client.Sync.Model;
-using Blauhaus.Domain.Client.Sync.Service;
 using Blauhaus.Ioc.Abstractions;
 using System;
+using Blauhaus.Domain.Abstractions.Sync.Old;
+using Blauhaus.Domain.Client.Sync.Old.Client;
+using Blauhaus.Domain.Client.Sync.Old.Collection;
+using Blauhaus.Domain.Client.Sync.Old.Model;
+using Blauhaus.Domain.Client.Sync.Old.Service;
 
 namespace Blauhaus.Domain.Client.Ioc
 {

@@ -4,14 +4,15 @@ using Blauhaus.Domain.Abstractions.DtoHandlers;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.CommandHandlers;
-using Blauhaus.Domain.Client.Sync.Client;
-using Blauhaus.Domain.Client.Sync.Collection;
-using Blauhaus.Domain.Client.Sync.Model;
-using Blauhaus.Domain.Client.Sync.Service;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Threading.Tasks;
 using System;
+using Blauhaus.Domain.Abstractions.Sync.Old;
+using Blauhaus.Domain.Client.Sync.Old.Client;
+using Blauhaus.Domain.Client.Sync.Old.Collection;
+using Blauhaus.Domain.Client.Sync.Old.Model;
+using Blauhaus.Domain.Client.Sync.Old.Service;
 
 namespace Blauhaus.Domain.Client.Ioc
 {

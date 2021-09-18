@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Blauhaus.Domain.Abstractions.Entities;
-using SyncCommand = Blauhaus.Domain.Abstractions.Sync.SyncCommand;
+using SyncCommand = Blauhaus.Domain.Abstractions.Sync.Old.SyncCommand;
 
 namespace Blauhaus.Domain.Abstractions.Repositories
 {

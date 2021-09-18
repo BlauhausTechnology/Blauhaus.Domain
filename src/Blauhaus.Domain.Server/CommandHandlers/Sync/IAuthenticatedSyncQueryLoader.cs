@@ -3,6 +3,7 @@ using System.Linq;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Sync;
+using Blauhaus.Domain.Abstractions.Sync.Old;
 
 namespace Blauhaus.Domain.Server.CommandHandlers.Sync
 {

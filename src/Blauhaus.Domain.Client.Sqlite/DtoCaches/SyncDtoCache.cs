@@ -30,6 +30,12 @@ namespace Blauhaus.Domain.Client.Sqlite.DtoCaches
             _analyticsService = analyticsService;
             _sqliteDatabaseService = sqliteDatabaseService;
         }
+        public Task<long> LoadLastModifiedAsync()
+        {
+            return InvokeLockedAsync(async () => await _sqliteDatabaseService.AsyncConnection
+                .ExecuteScalarAsync<long>($"SELECT ModifiedAtTicks FROM {typeof(TEntity).Name} ORDER BY ModifiedAtTicks DESC LIMIT 1"));
+        }
+
 
         public Task<IDisposable> SubscribeAsync(Func<TDto, Task> handler, Func<TDto, bool>? filter = null)
         {
@@ -74,12 +80,6 @@ namespace Blauhaus.Domain.Client.Sqlite.DtoCaches
             return InvokeAsync(async () => await LoadManyAsync(x => true));
         }
          
-        public Task<long> LoadLastModifiedAsync()
-        {
-            return InvokeLockedAsync(async () => await _sqliteDatabaseService.AsyncConnection
-                .ExecuteScalarAsync<long>($"SELECT ModifiedAtTicks FROM {typeof(TEntity).Name} ORDER BY ModifiedAtTicks DESC LIMIT 1"));
-        }
-
         protected async Task<IReadOnlyList<TDto>> LoadManyAsync(Expression<Func<TEntity, bool>>? search = null)
         {
             var entities = search == null 

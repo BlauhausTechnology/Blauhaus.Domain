@@ -3,6 +3,7 @@ using Blauhaus.Auth.Abstractions.User;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Sync;
+using Blauhaus.Domain.Abstractions.Sync.Old;
 using Blauhaus.Domain.Server.CommandHandlers.Sync;
 using Microsoft.Extensions.DependencyInjection;
 

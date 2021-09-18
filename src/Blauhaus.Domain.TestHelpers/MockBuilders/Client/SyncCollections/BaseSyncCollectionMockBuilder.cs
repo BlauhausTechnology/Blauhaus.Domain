@@ -1,9 +1,10 @@
-﻿using Blauhaus.Domain.Client.Sync.Collection;
-using Blauhaus.Domain.Abstractions.Entities;
+﻿using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients;
 using Blauhaus.TestHelpers.MockBuilders;
 using System;
+using Blauhaus.Domain.Abstractions.Sync.Old;
+using Blauhaus.Domain.Client.Sync.Old.Collection;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncCollections
 {

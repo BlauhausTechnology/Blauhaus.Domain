@@ -4,6 +4,7 @@ using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.Sqlite.Repository;
 using System;
+using Blauhaus.Domain.Abstractions.Sync.Old;
 
 namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
 {

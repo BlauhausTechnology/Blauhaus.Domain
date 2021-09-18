@@ -14,6 +14,7 @@
     <Compile Include="ClientTests\InMemoryDtoCacheTests\.Base\TestInMemoryDtoCache.cs" />
     <Compile Include="ClientTests\SqliteTests\SyncDtoCacheTests\.Base\BaseSyncDtoCacheTest.cs" />
     <Compile Include="ClientTests\SqliteTests\SyncDtoCacheTests\.Base\TestSyncDtoCache.cs" />
+    <Compile Include="ClientTests\Sync.Old\SyncClientTests\.Base\BaseSyncClientTest.cs" />
     <Compile Include="ServerTests\MyServerDtoRepositoryTests\.Base\BaseMyServerRepositoryDtoTest.cs" />
     <Compile Include="ServerTests\MyServerDtoRepositoryTests\.Base\MyServerDtoLoader.cs" />
   </ItemGroup>
@@ -36,6 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="ClientTests\SyncTests\" />
     <Folder Include="ClientTests\SqliteTests\_Seeds\" />
   </ItemGroup>
 

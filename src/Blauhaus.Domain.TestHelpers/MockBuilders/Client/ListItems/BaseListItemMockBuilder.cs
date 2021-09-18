@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Blauhaus.Domain.Client.Sync.Collection;
 using Blauhaus.Domain.Abstractions.Entities;
+using Blauhaus.Domain.Client.Sync.Old.Collection;
 using Blauhaus.TestHelpers.MockBuilders;
 using Moq;
 

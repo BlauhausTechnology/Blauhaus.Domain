@@ -8,6 +8,7 @@ using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Errors;
 using Blauhaus.Domain.Abstractions.Extensions;
 using Blauhaus.Domain.Abstractions.Sync;
+using Blauhaus.Domain.Abstractions.Sync.Old;
 using Blauhaus.Responses;
 
 namespace Blauhaus.Domain.Server.CommandHandlers.Sync

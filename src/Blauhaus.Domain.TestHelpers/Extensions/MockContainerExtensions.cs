@@ -1,8 +1,6 @@
 ﻿using System;
 using Blauhaus.Domain.Abstractions.Repositories;
 using Blauhaus.Domain.Client.Sqlite.Repository;
-using Blauhaus.Domain.Client.Sync.Collection;
-using Blauhaus.Domain.Client.Sync.Model;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Sync;
@@ -16,6 +14,9 @@ using Blauhaus.TestHelpers;
 using Blauhaus.Common.Abstractions;
 using Blauhaus.Domain.Abstractions.DtoCaches;
 using Blauhaus.Domain.Abstractions.DtoHandlers;
+using Blauhaus.Domain.Abstractions.Sync.Old;
+using Blauhaus.Domain.Client.Sync.Old.Collection;
+using Blauhaus.Domain.Client.Sync.Old.Model;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoCaches;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoHandlers;
 

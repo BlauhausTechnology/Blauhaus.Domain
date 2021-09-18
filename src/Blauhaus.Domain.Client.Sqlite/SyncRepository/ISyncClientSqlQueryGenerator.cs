@@ -2,6 +2,7 @@
 using Blauhaus.Domain.Abstractions.Sync;
 using SqlKata;
 using System;
+using Blauhaus.Domain.Abstractions.Sync.Old;
 
 namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
 {
