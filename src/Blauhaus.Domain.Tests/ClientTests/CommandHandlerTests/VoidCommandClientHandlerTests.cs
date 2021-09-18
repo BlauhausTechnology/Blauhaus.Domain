@@ -2,7 +2,7 @@
 using Blauhaus.Domain.Client.CommandHandlers;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
 using Blauhaus.Domain.Tests.Base;
-using Blauhaus.Domain.Tests.ClientTests.TestObjects;
+using Blauhaus.Domain.Tests.TestObjects.Client;
 using Blauhaus.Errors;
 using Blauhaus.Responses;
 using Blauhaus.TestHelpers.MockBuilders;

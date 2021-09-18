@@ -16,8 +16,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests._Base
 {
     public class BaseSqliteTest<TSut> : BaseServiceTest<TSut> where TSut : class
     {
-        protected ISqliteDatabaseService SqliteDatabaseService;
-        protected SQLiteAsyncConnection Connection;
+        protected ISqliteDatabaseService SqliteDatabaseService = null!;
+        protected SQLiteAsyncConnection Connection = null!;
 
         [SetUp]
         public virtual void Setup()

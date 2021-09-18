@@ -4,6 +4,7 @@ using System.Linq;
 using Blauhaus.Domain.Abstractions.Repositories;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Sync;
+using Blauhaus.Domain.Abstractions.Sync.Old;
 using Moq;
 using Newtonsoft.Json;
 
@@ -11,7 +12,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories
 {
     public class SyncClientRepositoryMockBuilder<TModel, TDto, TSyncCommand> 
         : BaseSyncClientRepositoryMockBuilder<SyncClientRepositoryMockBuilder<TModel, TDto, TSyncCommand>,  ISyncClientRepository<TModel, TDto, TSyncCommand> , TModel, TDto, TSyncCommand>
-        where TModel : class, IClientEntity
+        where TModel : class, IClientEntity<Guid>
         where TSyncCommand : SyncCommand
     {
     }
@@ -20,7 +21,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories
     public abstract class BaseSyncClientRepositoryMockBuilder<TBuilder, TMock, TModel, TDto, TSyncCommand> : BaseClientRepositoryMockBuilder<TBuilder, TMock, TModel, TDto> 
         where TBuilder : BaseSyncClientRepositoryMockBuilder<TBuilder, TMock, TModel, TDto, TSyncCommand>
         where TMock : class, ISyncClientRepository<TModel, TDto, TSyncCommand>
-        where TModel : class, IClientEntity
+        where TModel : class, IClientEntity<Guid>
         where TSyncCommand : SyncCommand
     {
         
@@ -38,7 +39,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories
             return (TBuilder) this;
         }
         
-        public List<TSyncCommand> Where_LoadModelsAsync_returns(List<List<TModel>> models)
+        public List<TSyncCommand> Where_LoadModelsAsync_returns_sequence(List<List<TModel>> models)
         {
             var invokedWithCommands = new List<TSyncCommand>();
             var queue = new Queue<List<TModel>>(models);
@@ -81,7 +82,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories
             return (TBuilder) this;
         }
 
-        public TBuilder Where_GetSyncStatusAsync_returns(List<ClientSyncStatus> values)
+        public TBuilder Where_GetSyncStatusAsync_returns_sequence(List<ClientSyncStatus> values)
         {
             var queue = new Queue<ClientSyncStatus>(values.ToList());
             Mock.Setup(x => x.GetSyncStatusAsync(It.IsAny<TSyncCommand>()))

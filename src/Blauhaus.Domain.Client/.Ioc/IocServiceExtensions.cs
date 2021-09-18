@@ -2,11 +2,13 @@
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.CommandHandlers;
-using Blauhaus.Domain.Client.Sync.Client;
-using Blauhaus.Domain.Client.Sync.Collection;
-using Blauhaus.Domain.Client.Sync.Model;
-using Blauhaus.Domain.Client.Sync.Service;
 using Blauhaus.Ioc.Abstractions;
+using System;
+using Blauhaus.Domain.Abstractions.Sync.Old;
+using Blauhaus.Domain.Client.Sync.Old.Client;
+using Blauhaus.Domain.Client.Sync.Old.Collection;
+using Blauhaus.Domain.Client.Sync.Old.Model;
+using Blauhaus.Domain.Client.Sync.Old.Service;
 
 namespace Blauhaus.Domain.Client.Ioc
 {
@@ -14,7 +16,7 @@ namespace Blauhaus.Domain.Client.Ioc
     {
 
         public static IIocService AddEntityClientCommandHandler<TModel, TModelDto, TCommandDto, TCommand, TCommandConverter, TDtoCommandHandler>(this IIocService iocService) 
-            where TModel : class, IClientEntity 
+            where TModel : class, IClientEntity <Guid>
             where TCommandConverter : class, ICommandConverter<TCommandDto, TCommand>
             where TDtoCommandHandler : class, ICommandHandler<TModelDto, TCommandDto>
             where TCommandDto : notnull
@@ -52,7 +54,7 @@ namespace Blauhaus.Domain.Client.Ioc
         }
 
         public static IIocService AddSyncCollection<TModel, TListItem, TSyncCommand>(this IIocService iocService) 
-            where TModel : class, IClientEntity 
+            where TModel : class, IClientEntity <Guid>
             where TListItem : class, IListItem<TModel>
             where TSyncCommand : SyncCommand, new()
         {
@@ -62,7 +64,7 @@ namespace Blauhaus.Domain.Client.Ioc
         }
          
         public static IIocService AddSyncModel<TModel, TSyncCommand>(this IIocService iocService) 
-            where TModel : class, IClientEntity 
+            where TModel : class, IClientEntity <Guid>
             where TSyncCommand : SyncCommand, new()
         {
             iocService.RegisterImplementation<ISyncStatusHandler, SyncStatusHandler>();

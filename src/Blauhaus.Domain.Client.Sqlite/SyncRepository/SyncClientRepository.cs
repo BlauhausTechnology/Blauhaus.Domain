@@ -3,12 +3,14 @@ using Blauhaus.ClientDatabase.Sqlite.Service;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.Sqlite.Repository;
+using System;
+using Blauhaus.Domain.Abstractions.Sync.Old;
 
 namespace Blauhaus.Domain.Client.Sqlite.SyncRepository
 {
     public class SyncClientRepository <TModel, TDto, TSyncCommand, TRootEntity> : BaseSyncClientRepository<TModel, TDto, TSyncCommand, TRootEntity>
-        where TRootEntity : ISyncClientEntity, new() 
-        where TModel : class, IClientEntity 
+        where TRootEntity : ISyncClientEntity<Guid>, new() 
+        where TModel : class, IClientEntity<Guid> 
         where TSyncCommand : SyncCommand
     {
         public SyncClientRepository(

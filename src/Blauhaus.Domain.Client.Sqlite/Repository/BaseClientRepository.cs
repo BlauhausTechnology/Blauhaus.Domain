@@ -13,8 +13,8 @@ using SqlKata.Compilers;
 namespace Blauhaus.Domain.Client.Sqlite.Repository
 {
     public abstract class BaseClientRepository<TModel, TDto, TRootEntity> : IClientRepository<TModel, TDto> 
-        where TModel : class, IClientEntity
-        where TRootEntity : ISyncClientEntity, new()
+        where TModel : class, IClientEntity<Guid>
+        where TRootEntity : ISyncClientEntity<Guid>, new()
     {
         protected readonly IAnalyticsService AnalyticsService;
         protected readonly ISqliteDatabaseService DatabaseService;

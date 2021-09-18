@@ -20,14 +20,20 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base
     {
          
 
-        public TBuilder Where_HandleAsync_returns(TPayload payload)
+        public TBuilder Where_HandleAsync_succeeds(TPayload payload)
         {
             Mock.Setup(x => x.HandleAsync())
                 .ReturnsAsync(Response.Success(payload));
             return (TBuilder) this;
         }
+        public TBuilder Where_HandleAsync_succeeds(Func<TPayload> payload)
+        {
+            Mock.Setup(x => x.HandleAsync())
+                .ReturnsAsync(()=> Response.Success(payload.Invoke()));
+            return (TBuilder) this;
+        }
 
-        public TBuilder Where_HandleAsync_returns(List<TPayload> payloads)
+        public TBuilder Where_HandleAsync_returns_sequence(List<TPayload> payloads)
         {
             var queue = new Queue<Response<TPayload>>();
             foreach (var payload in payloads)
@@ -48,8 +54,15 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base
         }
          
         
-        public TBuilder Where_HandleAsync_returns_fail(Error error)
+        public TBuilder Where_HandleAsync_fails(Error error)
         {
+            Mock.Setup(x => x.HandleAsync())
+                .ReturnsAsync(Response.Failure<TPayload>(error));
+            return (TBuilder) this;
+        }
+        public TBuilder Where_HandleAsync_fails()
+        {
+            var error = Error.Create(Guid.NewGuid().ToString());
             Mock.Setup(x => x.HandleAsync())
                 .ReturnsAsync(Response.Failure<TPayload>(error));
             return (TBuilder) this;
@@ -68,6 +81,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base
         {
             Mock.Verify(x => x.HandleAsync(), Times.Exactly(times));
         } 
+         
          
     }
 }

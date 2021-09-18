@@ -9,24 +9,35 @@
 
   <ItemGroup>
     <Compile Include=".Base\BaseDomainTest.cs" />
+    <Compile Include=".Base\BaseEfCoreTest.cs" />
+    <Compile Include="ClientTests\InMemoryDtoCacheTests\.Base\BaseInMemoryDtoCacheTest.cs" />
+    <Compile Include="ClientTests\InMemoryDtoCacheTests\.Base\TestInMemoryDtoCache.cs" />
+    <Compile Include="ClientTests\SqliteTests\SyncDtoCacheTests\.Base\BaseSyncDtoCacheTest.cs" />
+    <Compile Include="ClientTests\SqliteTests\SyncDtoCacheTests\.Base\TestSyncDtoCache.cs" />
+    <Compile Include="ClientTests\Sync.Old\SyncClientTests\.Base\BaseSyncClientTest.cs" />
+    <Compile Include="ServerTests\MyServerDtoRepositoryTests\.Base\BaseMyServerRepositoryDtoTest.cs" />
+    <Compile Include="ServerTests\MyServerDtoRepositoryTests\.Base\MyServerDtoLoader.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blauhaus.Analytics.TestHelpers" Version="1.6.15" />
+    <PackageReference Include="Blauhaus.Analytics.TestHelpers" Version="1.6.18" />
     <PackageReference Include="Blauhaus.DeviceServices.TestHelpers" Version="1.0.5" />
-    <PackageReference Include="Blauhaus.Ioc.TestHelpers" Version="1.3.2" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
+    <PackageReference Include="Blauhaus.Ioc.TestHelpers" Version="1.4.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Blauhaus.Domain.Client.Sqlite\Blauhaus.Domain.Client.Sqlite.csproj" />
     <ProjectReference Include="..\Blauhaus.Domain.Client\Blauhaus.Domain.Client.csproj" />
+    <ProjectReference Include="..\Blauhaus.Domain.Server.EFCore\Blauhaus.Domain.Server.EFCore.csproj" />
     <ProjectReference Include="..\Blauhaus.Domain.Server\Blauhaus.Domain.Server.csproj" />
+    <ProjectReference Include="..\Blauhaus.Domain.TestHelpers.EFCore\Blauhaus.Domain.TestHelpers.EFCore.csproj" />
     <ProjectReference Include="..\Blauhaus.Domain.TestHelpers\Blauhaus.Domain.TestHelpers.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="ClientTests\SyncTests\" />
     <Folder Include="ClientTests\SqliteTests\_Seeds\" />
   </ItemGroup>
 

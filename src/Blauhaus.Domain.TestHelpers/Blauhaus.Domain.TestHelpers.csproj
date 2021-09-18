@@ -7,12 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blauhaus.Analytics.TestHelpers" Version="1.6.15" />
+    <PackageReference Include="Blauhaus.Analytics.TestHelpers" Version="1.6.18" />
     <PackageReference Include="Blauhaus.DeviceServices.TestHelpers" Version="1.0.5" />
-    <PackageReference Include="Blauhaus.TestHelpers" Version="1.3.5" />
+    <PackageReference Include="Blauhaus.TestHelpers" Version="1.3.6" />
+    <PackageReference Include="Blauhaus.Time.TestHelpers" Version="0.1.5" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="MockBuilders\Common\DtoLoaders\" />
     <Folder Include="MockBuilders\Server\" />
   </ItemGroup>
 

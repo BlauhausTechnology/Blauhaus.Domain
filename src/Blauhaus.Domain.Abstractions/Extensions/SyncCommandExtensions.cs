@@ -1,5 +1,5 @@
 ﻿using System;
-using SyncCommand = Blauhaus.Domain.Abstractions.Sync.SyncCommand;
+using SyncCommand = Blauhaus.Domain.Abstractions.Sync.Old.SyncCommand;
 
 namespace Blauhaus.Domain.Abstractions.Extensions
 {
@@ -9,7 +9,8 @@ namespace Blauhaus.Domain.Abstractions.Extensions
         {
             return syncCommand.NewerThan == null && syncCommand.OlderThan == null;
         }
-         
+        
+        
         public static bool IsForNewerEntities(this SyncCommand syncCommand)
         {
             return syncCommand.NewerThan != null;

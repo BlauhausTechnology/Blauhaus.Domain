@@ -1,21 +1,24 @@
 ﻿using System;
+using System.Security.Cryptography;
 using Blauhaus.Domain.Abstractions.Entities;
 
 namespace Blauhaus.Domain.Server.Entities
-{ 
+{
+     
     public abstract class BaseServerEntity : IServerEntity
     {
         protected BaseServerEntity()
         {
         }
          
-        protected BaseServerEntity(DateTime createdAt, Guid id = default, EntityState entityState = EntityState.Active)
+        protected BaseServerEntity(DateTime createdAt, Guid id, EntityState entityState = EntityState.Active)
         {
-            Id = id == default ? Guid.NewGuid() : id;
+            Id = id;
             EntityState = entityState;
             CreatedAt = DateTime.SpecifyKind(createdAt, DateTimeKind.Utc);
             ModifiedAt = createdAt;
         }
+
 
         public Guid Id { get; private set; }
         public EntityState EntityState { get; private set; }

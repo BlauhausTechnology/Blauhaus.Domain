@@ -10,7 +10,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.Entities
 
     public abstract class BaseClientEntityMockBuilder<TBuilder, TMock> : BaseEntityMockBuilder<TBuilder, TMock> 
         where TBuilder : BaseClientEntityMockBuilder<TBuilder, TMock>
-        where TMock : class, IClientEntity
+        where TMock : class, IClientEntity<Guid>
     {
         protected BaseClientEntityMockBuilder()
         {

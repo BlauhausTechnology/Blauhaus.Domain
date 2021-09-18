@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Blauhaus.Domain.Client.Sync.Collection;
 using Blauhaus.Domain.Abstractions.Entities;
+using Blauhaus.Domain.Client.Sync.Old.Collection;
 using Blauhaus.TestHelpers.MockBuilders;
 using Moq;
 
@@ -9,7 +9,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.ListItems
 {
     public class BaseListItemMockBuilder<TBuilder, TListItem, TModel> : BaseMockBuilder<TBuilder, TListItem>
         where TListItem : class, IListItem<TModel> 
-        where TModel : IClientEntity
+        where TModel : IClientEntity<Guid>
         where TBuilder : BaseListItemMockBuilder<TBuilder, TListItem, TModel>
     {
 
