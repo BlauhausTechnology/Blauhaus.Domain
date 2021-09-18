@@ -7,13 +7,18 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.8" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.8" />
+		<PackageReference Include="Blauhaus.Time.Abstractions" Version="0.1.5" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.10" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.10" />
 	</ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Blauhaus.Domain.Abstractions\Blauhaus.Domain.Abstractions.csproj" />
     <ProjectReference Include="..\Blauhaus.Domain.Server\Blauhaus.Domain.Server.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DtoLoaders\" />
   </ItemGroup>
 
 </Project>

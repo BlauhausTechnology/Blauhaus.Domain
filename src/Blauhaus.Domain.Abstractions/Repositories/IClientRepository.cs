@@ -6,13 +6,13 @@ namespace Blauhaus.Domain.Abstractions.Repositories
 {
 
     public interface IClientRepository<TModel>
-        where TModel : class, IClientEntity
+        where TModel : class, IClientEntity<Guid>
     {
         Task<TModel?> LoadByIdAsync(Guid id); 
     }
 
     public interface IClientRepository<TModel, in TDto> : IClientRepository<TModel>
-        where TModel : class, IClientEntity
+        where TModel : class, IClientEntity<Guid>
     {
         Task<TModel> SaveDtoAsync(TDto dto); 
     }

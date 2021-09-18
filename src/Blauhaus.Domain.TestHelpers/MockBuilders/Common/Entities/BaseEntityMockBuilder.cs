@@ -5,12 +5,12 @@ using Blauhaus.TestHelpers.MockBuilders;
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.Entities
 {
 
-    public class EntityMockBuilder : BaseEntityMockBuilder<EntityMockBuilder, IEntity>
+    public class EntityMockBuilder : BaseEntityMockBuilder<EntityMockBuilder, IEntity<Guid>>
     {
     }
 
     public class BaseEntityMockBuilder<TBuilder, TMock> : BaseMockBuilder<TBuilder, TMock>
-        where TMock : class, IEntity
+        where TMock : class, IEntity<Guid>
         where TBuilder : BaseEntityMockBuilder<TBuilder, TMock>
     {
         public BaseEntityMockBuilder()

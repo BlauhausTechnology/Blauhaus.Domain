@@ -57,7 +57,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
             };
             await Connection.InsertAsync(bob);
             await Connection.InsertAsync(child);
-            MockClientEntityConverter.Where_ExtractEntitiesFromDto_returns(new SqliteTestRootEntity(), new List<ISyncClientEntity>
+            MockClientEntityConverter.Where_ExtractEntitiesFromDto_returns(new SqliteTestRootEntity(), new List<ISyncClientEntity<Guid>>
             {
                 new SqliteTestChildEntity()
                 {
@@ -114,7 +114,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
                 ChildName = "Pop"
             };
             await Connection.InsertAsync(bob);
-            MockClientEntityConverter.Where_ExtractEntitiesFromDto_returns(new SqliteTestRootEntity(), new List<ISyncClientEntity>
+            MockClientEntityConverter.Where_ExtractEntitiesFromDto_returns(new SqliteTestRootEntity(), new List<ISyncClientEntity<Guid>>
             {
                 new SqliteTestChildEntity()
                 {
@@ -144,8 +144,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
                 RootName = "Fred"
             };
             var boblet = new SqliteTestChildEntity{Id = Guid.NewGuid()};
-            MockClientEntityConverter.Where_ExtractEntitiesFromDto_returns(bob, new List<ISyncClientEntity>());
-            MockClientEntityConverter.Where_LoadChildEntities_returns(new List<ISyncClientEntity>{boblet});
+            MockClientEntityConverter.Where_ExtractEntitiesFromDto_returns(bob, new List<ISyncClientEntity<Guid>>());
+            MockClientEntityConverter.Where_LoadChildEntities_returns(new List<ISyncClientEntity<Guid>>{boblet});
             var model = new MockBuilder<ISqliteTestModel>().Object;
             MockClientEntityConverter.Where_ConstructModel_returns(model);
 
@@ -154,7 +154,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
             var result = await Sut.SaveDtoAsync(dto); 
 
             //Assert
-            MockClientEntityConverter.Mock.Verify(x => x.ConstructModel(bob, It.Is<List<ISyncClientEntity>>(y=> 
+            MockClientEntityConverter.Mock.Verify(x => x.ConstructModel(bob, It.Is<List<ISyncClientEntity<Guid>>>(y=> 
                 y[0] == boblet)));
             Assert.AreEqual(model, result);
         } 

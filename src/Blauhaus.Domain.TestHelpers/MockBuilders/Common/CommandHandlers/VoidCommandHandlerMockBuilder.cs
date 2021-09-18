@@ -5,6 +5,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers
 {
     public class VoidCommandHandlerMockBuilder<TCommand> : VoidCommandHandlerMockBuilder<VoidCommandHandlerMockBuilder<TCommand>, 
         IVoidCommandHandler<TCommand>, TCommand>
+        where TCommand : notnull
     {
         
     }

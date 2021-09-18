@@ -33,7 +33,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             };
 
             var connection = SqliteDatabaseService.AsyncConnection;
-            MockClientEntityConverter.Where_ExtractEntitiesFromDto_returns(new SqliteTestRootEntity(), new List<ISyncClientEntity>());
+            MockClientEntityConverter.Where_ExtractEntitiesFromDto_returns(new SqliteTestRootEntity(), new List<ISyncClientEntity<Guid>>());
             connection.InsertAllAsync(entities);
         }
 
@@ -82,7 +82,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             };
             await Connection.InsertAsync(bob);
             await Connection.InsertAsync(child);
-            MockClientEntityConverter.Where_ExtractEntitiesFromDto_returns(new SqliteTestRootEntity(), new List<ISyncClientEntity>
+            MockClientEntityConverter.Where_ExtractEntitiesFromDto_returns(new SqliteTestRootEntity(), new List<ISyncClientEntity<Guid>>
             {
                 new SqliteTestChildEntity()
                 {
@@ -142,7 +142,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
                 SyncState = SyncState.OutOfSync
             };
             await Connection.InsertAsync(bob);
-            MockClientEntityConverter.Where_ExtractEntitiesFromDto_returns(new SqliteTestRootEntity(), new List<ISyncClientEntity>
+            MockClientEntityConverter.Where_ExtractEntitiesFromDto_returns(new SqliteTestRootEntity(), new List<ISyncClientEntity<Guid>>
             {
                 new SqliteTestChildEntity()
                 {
@@ -174,7 +174,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             };
             var alreadyExistingChildEntity = new SqliteTestChildEntity{Id = Guid.NewGuid()};
             MockClientEntityConverter.Where_ExtractEntitiesFromDto_returns_root(bob);
-            MockClientEntityConverter.Where_LoadChildEntities_returns(new List<ISyncClientEntity>{alreadyExistingChildEntity});
+            MockClientEntityConverter.Where_LoadChildEntities_returns(new List<ISyncClientEntity<Guid>>{alreadyExistingChildEntity});
             var model = new MockBuilder<ISqliteTestModel>().Object;
             MockClientEntityConverter.Where_ConstructModel_returns(model);
 
@@ -183,7 +183,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncClientRepositoryTest
             var result =  await Sut.SaveSyncedDtosAsync(new List<ISqliteTestDto>{dto});
 
             //Assert
-            MockClientEntityConverter.Mock.Verify(x => x.ConstructModel(bob, It.Is<List<ISyncClientEntity>>(y => 
+            MockClientEntityConverter.Mock.Verify(x => x.ConstructModel(bob, It.Is<List<ISyncClientEntity<Guid>>>(y => 
                 y[0] == alreadyExistingChildEntity)));
             Assert.AreEqual(model, result[0]);
         } 

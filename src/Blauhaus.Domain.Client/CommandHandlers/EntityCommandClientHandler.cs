@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
@@ -11,7 +12,7 @@ namespace Blauhaus.Domain.Client.CommandHandlers
     public class EntityCommandClientHandler<TModel, TModelDto, TCommandDto, TCommand> : ICommandHandler<TModel, TCommand> 
         where TCommand: notnull
         where TCommandDto: notnull
-        where TModel : class, IClientEntity 
+        where TModel : class, IClientEntity <Guid>
     {
         private readonly IAnalyticsService _analyticsService;
         private readonly ICommandConverter<TCommandDto, TCommand> _converter;

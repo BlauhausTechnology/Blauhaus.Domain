@@ -43,7 +43,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
         public async Task SHOULD_construct_model_using_RootEntity_and_child_entities()
         {
             //Arrange
-            MockClientEntityConverter.Where_LoadChildEntities_returns(new List<ISyncClientEntity>
+            MockClientEntityConverter.Where_LoadChildEntities_returns(new List<ISyncClientEntity<Guid>>
             {
                 new SqliteTestChildEntity {ChildName = "Bobby", ModifiedAtTicks = 13}
             });
@@ -53,9 +53,9 @@ namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.ClientRepositoryTests
 
             //Assert
             MockClientEntityConverter.Mock.Verify(x => x.ConstructModel(
-                It.Is<SqliteTestRootEntity>(y => y.Id == _rootId2), It.IsAny<List<ISyncClientEntity>>()));
+                It.Is<SqliteTestRootEntity>(y => y.Id == _rootId2), It.IsAny<List<ISyncClientEntity<Guid>>>()));
             MockClientEntityConverter.Mock.Verify(x => x.ConstructModel(
-                It.IsAny<SqliteTestRootEntity>(), It.Is<List<ISyncClientEntity>>(y => y.First().ModifiedAtTicks == 13)));
+                It.IsAny<SqliteTestRootEntity>(), It.Is<List<ISyncClientEntity<Guid>>>(y => y.First().ModifiedAtTicks == 13)));
         }
 
         [Test]

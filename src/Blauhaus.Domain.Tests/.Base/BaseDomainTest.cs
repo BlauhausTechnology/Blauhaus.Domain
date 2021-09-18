@@ -3,12 +3,15 @@ using Blauhaus.Analytics.TestHelpers.MockBuilders;
 using Blauhaus.DeviceServices.Abstractions.Connectivity;
 using Blauhaus.DeviceServices.TestHelpers.MockBuilders;
 using Blauhaus.Domain.Abstractions.Sync;
+using Blauhaus.Domain.Abstractions.Sync.Old;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients;
 using Blauhaus.Errors.Handler;
 using Blauhaus.Ioc.Abstractions;
 using Blauhaus.Ioc.TestHelpers;
 using Blauhaus.TestHelpers.BaseTests;
 using Blauhaus.TestHelpers.MockBuilders;
+using Blauhaus.Time.Abstractions;
+using Blauhaus.Time.TestHelpers.MockBuilders;
 using NUnit.Framework;
 
 namespace Blauhaus.Domain.Tests.Base
@@ -25,6 +28,7 @@ namespace Blauhaus.Domain.Tests.Base
             AddService(x => MockConnectivityService.Object);
             AddService(x => MockServiceLocator.Object);
             AddService(x => MockSyncStatusHandler.Object);
+            AddService(x => MockTimeService.Object);
         }
 
         protected AnalyticsServiceMockBuilder MockAnalyticsService => AddMock<AnalyticsServiceMockBuilder, IAnalyticsService>().Invoke();
@@ -32,6 +36,7 @@ namespace Blauhaus.Domain.Tests.Base
         protected MockBuilder<IErrorHandler> MockErrorHandler => AddMock<IErrorHandler>().Invoke();
         protected ServiceLocatorMockBuilder MockServiceLocator => AddMock<ServiceLocatorMockBuilder, IServiceLocator>().Invoke();
         protected SyncStatusHandlerMockBuilder MockSyncStatusHandler => AddMock<SyncStatusHandlerMockBuilder, ISyncStatusHandler>().Invoke();
+        protected TimeServiceMockBuilder MockTimeService => AddMock<TimeServiceMockBuilder, ITimeService>().Invoke();
 
 
     }

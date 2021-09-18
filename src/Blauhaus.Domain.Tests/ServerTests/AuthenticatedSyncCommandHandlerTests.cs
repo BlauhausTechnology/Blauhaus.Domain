@@ -8,7 +8,7 @@ using Blauhaus.Domain.Abstractions.Errors;
 using Blauhaus.Domain.Server.CommandHandlers.Sync;
 using Blauhaus.Domain.Tests.Base;
 using Blauhaus.Domain.Tests.Extensions;
-using Blauhaus.Domain.Tests.ServerTests.TestObjects;
+using Blauhaus.Domain.Tests.TestObjects.Server;
 using Blauhaus.Errors;
 using Blauhaus.Responses;
 using Blauhaus.TestHelpers.MockBuilders;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Blauhaus.Domain.Abstractions.Entities;
-using Blauhaus.Domain.Client.Sync.Model;
+using Blauhaus.Domain.Client.Sync.Old.Model;
 using Blauhaus.TestHelpers.MockBuilders;
 using Moq;
 
@@ -12,7 +12,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncModels
 
     public abstract class BaseSyncModelMockBuilder<TBuilder, TSyncModel, TModel> : BaseMockBuilder<TBuilder, TSyncModel>
         where TSyncModel : class, ISyncModel<TModel> 
-        where TModel : IClientEntity 
+        where TModel : IClientEntity <Guid>
         where TBuilder : BaseSyncModelMockBuilder<TBuilder, TSyncModel, TModel>
     {
         protected BaseSyncModelMockBuilder()
