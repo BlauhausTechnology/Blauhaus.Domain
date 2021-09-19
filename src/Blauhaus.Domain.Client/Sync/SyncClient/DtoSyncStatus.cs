@@ -1,6 +1,5 @@
 ﻿using System;
 using Blauhaus.Domain.Abstractions.Sync;
-using Blauhaus.Domain.Client.Sync.DtoBatches;
 using Newtonsoft.Json;
 
 namespace Blauhaus.Domain.Client.Sync.SyncClient

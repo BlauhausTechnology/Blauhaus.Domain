@@ -1,6 +1,5 @@
 ﻿using System;
 using Blauhaus.Domain.Abstractions.Sync;
-using Blauhaus.Domain.Client.Sync.DtoBatches;
 using Blauhaus.Domain.Client.Sync.SyncClient;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoCaches;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Sync;

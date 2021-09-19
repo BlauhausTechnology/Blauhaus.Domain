@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Blauhaus.Common.TestHelpers.Extensions;
 using Blauhaus.Domain.Abstractions.Sync;
-using Blauhaus.Domain.Client.Sync.DtoBatches;
 using Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests.Base;
 using Blauhaus.Domain.Tests.TestObjects.Common;
 using Blauhaus.Responses;
