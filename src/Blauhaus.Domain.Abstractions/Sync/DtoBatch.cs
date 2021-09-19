@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Blauhaus.Domain.Abstractions.Entities;
-using Blauhaus.Domain.Abstractions.Sync;
 using Newtonsoft.Json;
 
-namespace Blauhaus.Domain.Client.Sync.DtoBatches
+namespace Blauhaus.Domain.Abstractions.Sync
 {
     public class DtoBatch<TDto, TId> : IDtoBatch<TDto> 
         where TDto :  IClientEntity<TId> 
