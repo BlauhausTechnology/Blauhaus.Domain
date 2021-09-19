@@ -7,7 +7,6 @@ using Blauhaus.Domain.Abstractions.CommandHandlers;
 using Blauhaus.Domain.Abstractions.DtoCaches;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Sync;
-using Blauhaus.Domain.Client.Sync.DtoBatches;
 using Blauhaus.Responses;
 
 namespace Blauhaus.Domain.Client.Sync.SyncClient

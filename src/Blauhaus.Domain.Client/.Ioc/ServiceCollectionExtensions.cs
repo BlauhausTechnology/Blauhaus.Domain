@@ -27,11 +27,11 @@ namespace Blauhaus.Domain.Client.Ioc
             return services;
         }
         
-        public static IServiceCollection AddDtoHandler<TDto, TId, TDtoHandler>(this IServiceCollection services, Func<IServiceProvider, TId, Task<IDtoHandler<TDto>>> resolver) 
+        public static IServiceCollection AddDtoHandler<TDto, TId, TDtoHandler>(this IServiceCollection services, Func<IServiceProvider, TId, Task<TDtoHandler>> resolver) 
             where TDto : class, IHasId<TId>
             where TDtoHandler : class, IDtoHandler<TDto>
         {
-            services.AddSingleton<Func<TId, Task<IDtoHandler<TDto>>>>(sp => id => resolver.Invoke(sp, id));
+            services.AddSingleton<Func<TId, Task<TDtoHandler>>>(sp => id => resolver.Invoke(sp, id));
             return services;
         }
 

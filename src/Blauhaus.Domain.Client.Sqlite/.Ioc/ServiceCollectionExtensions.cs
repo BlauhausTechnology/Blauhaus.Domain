@@ -19,19 +19,7 @@ namespace Blauhaus.Domain.Client.Sqlite.Ioc
 {
     public static class ServiceCollectionExtensions
     {
-
-
-        public static IServiceCollection AddSyncClient<TDto, TEntity, TId>(this IServiceCollection services)     
-            where TDto : class, IClientEntity<TId>, new()
-            where TEntity : class, ISyncClientEntity<TId>, new()
-            where TId : IEquatable<TId>
-        {
-            //todo do this in SignalR - register SignalRConnection as ICommandHandler<DtoBatch<TDto, TId>, DtoSyncCommand> 
-            //todo OR extend ISignalRDtoClient to handle the command so many can be invoked at once
-
-            return services;
-        }
-
+         
         public static IServiceCollection AddSyncDtoCache<TDto, TId, TEntity>(this IServiceCollection services)
             where TDto : ClientEntity<TId>, new()
             where TEntity : SyncClientEntity<TId>, new()
