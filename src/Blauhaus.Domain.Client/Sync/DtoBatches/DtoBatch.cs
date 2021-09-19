@@ -1,12 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Blauhaus.Domain.Abstractions.Entities;
+using Blauhaus.Domain.Abstractions.Sync;
 using Newtonsoft.Json;
 
 namespace Blauhaus.Domain.Client.Sync.DtoBatches
 {
-    public class DtoBatch<TDto, TId> : IDtoBatch 
-        where TDto :  IClientEntity<TId>
+    public class DtoBatch<TDto, TId> : IDtoBatch<TDto> 
+        where TDto :  IClientEntity<TId> 
+        where TId : IEquatable<TId>
     {
    
         [JsonConstructor]

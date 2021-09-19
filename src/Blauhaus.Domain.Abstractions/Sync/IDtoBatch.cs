@@ -1,5 +1,9 @@
-﻿namespace Blauhaus.Domain.Client.Sync.DtoBatches
+﻿namespace Blauhaus.Domain.Abstractions.Sync
 {
+    public interface IDtoBatch<TDto> : IDtoBatch
+    {
+    }
+
     public interface IDtoBatch
     {
         int CurrentDtoCount { get; } 

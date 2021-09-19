@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Blauhaus.Common.TestHelpers.Extensions;
+using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.Sync.DtoBatches;
 using Blauhaus.Domain.Client.Sync.Manager;
 using Blauhaus.Domain.Client.Sync.SyncClient;

@@ -13,7 +13,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests.Base
 {
     public class BaseDtoSyncClientTest : BaseDomainTest<DtoSyncClient<MyDto, Guid>>
     {
-        protected CommandHandlerMockBuilder<IDtoBatch, DtoSyncCommand> MockSyncCommandHandler = null!;
+        protected CommandHandlerMockBuilder<IDtoBatch<MyDto>, DtoSyncCommand> MockSyncCommandHandler = null!;
         protected SyncDtoCacheMockBuilder<MyDto, Guid> MockSyncDtoCache = null!;
         protected MockBuilder<IDtoSyncConfig> MockSyncDtoConfig = null!;
 
@@ -21,7 +21,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests.Base
         {
             base.Setup();
 
-            MockSyncCommandHandler = new CommandHandlerMockBuilder<IDtoBatch, DtoSyncCommand>();
+            MockSyncCommandHandler = new CommandHandlerMockBuilder<IDtoBatch<MyDto>, DtoSyncCommand>();
             AddService(MockSyncCommandHandler.Object);
 
             MockSyncDtoCache = new SyncDtoCacheMockBuilder<MyDto, Guid>();

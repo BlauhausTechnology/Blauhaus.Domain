@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Blauhaus.Common.TestHelpers.Extensions;
+using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.Sync.DtoBatches;
 using Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests.Base;
 using Blauhaus.Domain.Tests.TestObjects.Common;
@@ -62,7 +63,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests
         public async Task SHOULD_keep_downloading_and_notifying_until_all_completed()
         {
             //Arrange
-            MockSyncCommandHandler.Where_HandleAsync_returns_sequence(new List<IDtoBatch>
+            MockSyncCommandHandler.Where_HandleAsync_returns_sequence(new List<IDtoBatch<MyDto>>
             {
                 new DtoBatch<MyDto, Guid>(new []
                 {
@@ -123,9 +124,9 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests
         public async Task IF_sync_command_handler_fails_on_initial_sync_SHOULD_return_error()
         {
             //Arrange
-            MockSyncCommandHandler.Where_HandleAsync_returns_sequence(new List<Response<IDtoBatch>>
+            MockSyncCommandHandler.Where_HandleAsync_returns_sequence(new List<Response<IDtoBatch<MyDto>>>
             { 
-                Response.Failure<IDtoBatch>(Errors.Errors.InvalidValue("Bob"))
+                Response.Failure<IDtoBatch<MyDto>>(Errors.Errors.InvalidValue("Bob"))
             });
             
             //Act
@@ -139,14 +140,14 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests
         public async Task IF_sync_command_handler_fails_on_later_sync_SHOULD_return_error()
         {
             //Arrange
-            MockSyncCommandHandler.Where_HandleAsync_returns_sequence(new List<Response<IDtoBatch>>
+            MockSyncCommandHandler.Where_HandleAsync_returns_sequence(new List<Response<IDtoBatch<MyDto>>>
             {
-                Response.Success<IDtoBatch>(new DtoBatch<MyDto, Guid>(new []
+                Response.Success<IDtoBatch<MyDto>>(new DtoBatch<MyDto, Guid>(new []
                 {
                     new MyDto{ ModifiedAtTicks = 1 * _num },
                     new MyDto{ ModifiedAtTicks = 2 * _num },
                 }, 5)), 
-                Response.Failure<IDtoBatch>(Errors.Errors.InvalidValue("Fred"))
+                Response.Failure<IDtoBatch<MyDto>>(Errors.Errors.InvalidValue("Fred"))
             });
             
             //Act
