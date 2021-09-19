@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.ClientActors.Actors;
@@ -13,6 +14,7 @@ namespace Blauhaus.Domain.Client.Sync.Manager
     {
         private readonly IAnalyticsService _analyticsService;
         private readonly IEnumerable<IDtoSyncClient> _dtoSyncClients;
+        private OverallSyncStatus _overallStatus = null!;
 
         public SyncManager(
             IAnalyticsService analyticsService,
@@ -44,12 +46,47 @@ namespace Blauhaus.Domain.Client.Sync.Manager
             });
         }
 
-        public Task<Response> SyncAllAsync(Dictionary<string, long>? lastModifiedTicks)
+        public async Task<Response> SyncAllAsync(Dictionary<string, long>? lastModifiedTicks)
         {
-            throw new NotImplementedException();
+            return await InvokeAsync(async () =>
+            {
+                _overallStatus = new OverallSyncStatus();
+
+                var dtoSyncClientTasks = new List<Task<Response>>();
+                foreach (var dtoSyncClient in _dtoSyncClients)
+                {
+                    dtoSyncClientTasks.Add(SyncDtoAsync(dtoSyncClient, lastModifiedTicks));
+                }
+
+                var syncResults = await Task.WhenAll(dtoSyncClientTasks);
+                foreach (var syncResult in syncResults)
+                {
+                    if (syncResult.IsFailure) return Response.Failure(syncResult.Error);
+                }
+
+                return Response.Success();
+            });
         }
 
-        public Task<IDisposable> SubscribeAsync(Func<ISyncStatus, Task> handler, Func<ISyncStatus, bool>? filter = null)
+        private async Task<Response> SyncDtoAsync(IDtoSyncClient dtoSyncClient, Dictionary<string, long>? lastModifiedTicks = null)
+        {
+
+            var token = dtoSyncClient.SubscribeAsync(async dtoSyncStatus =>
+            {
+                _overallStatus = _overallStatus.Update(dtoSyncStatus);
+                await UpdateSubscribersAsync(_overallStatus);
+            });
+
+            var dtoSyncResult = await dtoSyncClient.SyncDtoAsync(lastModifiedTicks);
+
+            token?.Dispose();
+
+            return dtoSyncResult.IsFailure 
+                ? Response.Failure(dtoSyncResult.Error) 
+                : Response.Success();
+        }
+
+        public Task<IDisposable> SubscribeAsync(Func<IOverallSyncStatus, Task> handler, Func<IOverallSyncStatus, bool>? filter = null)
         {
             return Task.FromResult(AddSubscriber(handler, filter));
         }

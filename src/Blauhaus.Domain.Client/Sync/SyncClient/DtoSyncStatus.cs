@@ -1,11 +1,13 @@
 ﻿using System;
 using Blauhaus.Domain.Client.Sync.DtoBatches;
+using Newtonsoft.Json;
 
 namespace Blauhaus.Domain.Client.Sync.SyncClient
 {
     public class DtoSyncStatus 
     {
-        private DtoSyncStatus(
+        [JsonConstructor]
+        public DtoSyncStatus(
             string dtoName, 
             int currentDtoCount, 
             int totalDtoCount, 

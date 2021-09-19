@@ -12,10 +12,10 @@ namespace Blauhaus.Domain.Client.Sync.DtoBatches
         [JsonConstructor]
         public DtoBatch(
             IReadOnlyList<TDto> dtos, 
-            int totalDtoCount)
+            int remainingDtoCount)
         {
             Dtos = dtos;
-            RemainingDtoCount = totalDtoCount;
+            RemainingDtoCount = remainingDtoCount;
         }
 
         public int RemainingDtoCount { get; }

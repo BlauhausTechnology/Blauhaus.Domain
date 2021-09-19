@@ -3,20 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.Sync.SyncClient;
+using Newtonsoft.Json;
 
 namespace Blauhaus.Domain.Client.Sync.Manager
 {
-    public class SyncStatus : ISyncStatus
+    public class OverallSyncStatus : IOverallSyncStatus
     {
-        public SyncStatus(Dictionary<string, DtoSyncStatus> dtoStatuses)
+        [JsonConstructor]
+        public OverallSyncStatus(Dictionary<string, DtoSyncStatus>? dtoStatuses = null)
         {
-            DtoStatuses = dtoStatuses; 
+            DtoStatuses = new Dictionary<string, DtoSyncStatus>();
+            if (dtoStatuses != null)
+            {
+                foreach (var dtoStatus in dtoStatuses)
+                {
+                    DtoStatuses[dtoStatus.Key] = dtoStatus.Value;
+                }
+            }
         }
 
-        public SyncStatus Update(DtoSyncStatus newDtoSyncStatus)
+        public OverallSyncStatus Update(DtoSyncStatus newDtoSyncStatus)
         {
             DtoStatuses[newDtoSyncStatus.DtoName] = newDtoSyncStatus;
-            return this;
+            return new OverallSyncStatus(DtoStatuses);
         }
         
         public Dictionary<string, DtoSyncStatus> DtoStatuses { get; }
@@ -28,7 +37,7 @@ namespace Blauhaus.Domain.Client.Sync.Manager
         
         public override string ToString()
         {
-            return $"{TotalDtoCount} / {DownloadedDtoCount} [{Math.Round(Progress*100, 1)} %]";
+            return $"{DownloadedDtoCount} / {TotalDtoCount} [{Math.Round(Progress*100, 1)} %]";
         }
     }
 }

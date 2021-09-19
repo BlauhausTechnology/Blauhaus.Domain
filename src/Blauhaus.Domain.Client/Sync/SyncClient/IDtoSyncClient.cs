@@ -9,6 +9,6 @@ namespace Blauhaus.Domain.Client.Sync.SyncClient
     public interface IDtoSyncClient : IAsyncPublisher<DtoSyncStatus>
     {
         Task<KeyValuePair<string, long>> LoadLastModifiedTicksAsync();
-        Task<Response> SyncDtoAsync(int batchSize, Dictionary<string, long>? dtosLastModifiedTicks);
+        Task<Response> SyncDtoAsync(Dictionary<string, long>? dtosLastModifiedTicks);
     }
 }

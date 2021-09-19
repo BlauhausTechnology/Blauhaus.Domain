@@ -7,6 +7,7 @@ using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Sync;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers;
 using Blauhaus.Domain.Tests.Base;
 using Blauhaus.Domain.Tests.TestObjects.Common;
+using Blauhaus.TestHelpers.MockBuilders;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests.Base
 {
@@ -14,6 +15,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests.Base
     {
         protected CommandHandlerMockBuilder<IDtoBatch, DtoSyncCommand> MockSyncCommandHandler = null!;
         protected SyncDtoCacheMockBuilder<MyDto, Guid> MockSyncDtoCache = null!;
+        protected MockBuilder<IDtoSyncConfig> MockSyncDtoConfig = null!;
 
         public override void Setup()
         {
@@ -24,6 +26,10 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests.Base
 
             MockSyncDtoCache = new SyncDtoCacheMockBuilder<MyDto, Guid>();
             AddService(MockSyncDtoCache.Object);
+
+            MockSyncDtoConfig = new MockBuilder<IDtoSyncConfig>();
+            MockSyncDtoConfig.Setup(x => x.GetSyncBatchSize("MyDto"), 10);
+            AddService(MockSyncDtoConfig.Object);
         }
     }
 }

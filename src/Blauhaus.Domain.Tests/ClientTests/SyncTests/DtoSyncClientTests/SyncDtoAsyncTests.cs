@@ -34,11 +34,13 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests
         [Test]
         public async Task IF_lastModified_Not_given_SHOULD_load_from_cache()
         {
+            //Arrange
+            MockSyncDtoConfig.Setup(x => x.GetSyncBatchSize("MyDto"), 20);
             var cacheLastModified = DateTime.UtcNow.AddSeconds(-1).Ticks;
             MockSyncDtoCache.Where_LoadLastModifiedTicksAsync_returns(cacheLastModified);
 
             //Act
-            await Sut.SyncDtoAsync(20, null);
+            await Sut.SyncDtoAsync(null);
 
             //Assert
             MockSyncCommandHandler.Verify_HandleAsync_called_With(x => x.ModifiedAfterTicks == cacheLastModified);
@@ -49,7 +51,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests
         public async Task IF_lastModified_given_SHOULD_use_it()
         {
             //Act
-            await Sut.SyncDtoAsync(10, _lastModifiedDictionary);
+            await Sut.SyncDtoAsync(_lastModifiedDictionary);
 
             //Assert
             MockSyncCommandHandler.Verify_HandleAsync_called_With(x => x.ModifiedAfterTicks == _lastModifiedTicks);
@@ -85,7 +87,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests
             using var publishedStatuses = await Sut.SubscribeToUpdatesAsync();
             
             //Act
-            await Sut.SyncDtoAsync(2, _lastModifiedDictionary);
+            await Sut.SyncDtoAsync(_lastModifiedDictionary);
 
             //Assert
             Assert.That(publishedStatuses.Count, Is.EqualTo(4));
@@ -127,7 +129,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests
             });
             
             //Act
-            var result = await Sut.SyncDtoAsync(2, _lastModifiedDictionary);
+            var result = await Sut.SyncDtoAsync(_lastModifiedDictionary);
 
             //Assert
             Assert.That(result.Error, Is.EqualTo(Errors.Errors.InvalidValue("Bob")));
@@ -148,7 +150,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests
             });
             
             //Act
-            var result = await Sut.SyncDtoAsync(2, _lastModifiedDictionary);
+            var result = await Sut.SyncDtoAsync(_lastModifiedDictionary);
 
             //Assert
             Assert.That(result.Error, Is.EqualTo(Errors.Errors.InvalidValue("Fred")));

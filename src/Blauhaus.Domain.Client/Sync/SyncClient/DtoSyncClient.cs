@@ -17,6 +17,7 @@ namespace Blauhaus.Domain.Client.Sync.SyncClient
         where TId : IEquatable<TId>
     {
         private readonly IAnalyticsService _analyticsService;
+        private readonly IDtoSyncConfig _syncConfig;
         private readonly ISyncDtoCache<TDto, TId> _syncDtoCache;
         private readonly ICommandHandler<IDtoBatch, DtoSyncCommand> _syncCommandHandler;
 
@@ -24,10 +25,12 @@ namespace Blauhaus.Domain.Client.Sync.SyncClient
 
         public DtoSyncClient(
             IAnalyticsService analyticsService,
+            IDtoSyncConfig syncConfig,
             ISyncDtoCache<TDto, TId> syncDtoCache,
             ICommandHandler<IDtoBatch, DtoSyncCommand> syncCommandHandler)
         {
             _analyticsService = analyticsService;
+            _syncConfig = syncConfig;
             _syncDtoCache = syncDtoCache;
             _syncCommandHandler = syncCommandHandler;
         }
@@ -41,7 +44,7 @@ namespace Blauhaus.Domain.Client.Sync.SyncClient
             });
         }
 
-        public Task<Response> SyncDtoAsync(int batchSize, Dictionary<string, long>? dtosLastModifiedTicks)
+        public Task<Response> SyncDtoAsync(Dictionary<string, long>? dtosLastModifiedTicks)
         {
             return InvokeAsync(async () =>
             {
@@ -49,6 +52,8 @@ namespace Blauhaus.Domain.Client.Sync.SyncClient
                 {
                     lastModifiedTicks = await _syncDtoCache.LoadLastModifiedTicksAsync();
                 }
+
+                var batchSize = _syncConfig.GetSyncBatchSize(DtoName);
 
                 var syncCommand = new DtoSyncCommand(lastModifiedTicks, batchSize);
 
