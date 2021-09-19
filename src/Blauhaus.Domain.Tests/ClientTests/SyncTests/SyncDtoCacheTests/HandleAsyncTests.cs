@@ -1,11 +1,11 @@
-﻿using NUnit.Framework;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncDtoCacheTests.Base;
+using System.Threading.Tasks;
+using Blauhaus.Domain.Tests.ClientTests.SyncTests.SyncDtoCacheTests.Base;
 using Blauhaus.Domain.Tests.TestObjects.Common;
+using NUnit.Framework;
 
-namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncDtoCacheTests
+namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.SyncDtoCacheTests
 {
     public class HandleAsyncTests : BaseSyncDtoCacheTest
     {

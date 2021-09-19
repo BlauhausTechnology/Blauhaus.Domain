@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.ClientActors.Actors;
@@ -22,6 +23,8 @@ namespace Blauhaus.Domain.Client.Sqlite.DtoCaches
     {
         private readonly IAnalyticsService _analyticsService;
         private readonly ISqliteDatabaseService _sqliteDatabaseService;
+        private readonly string _lastModifiedQueryStart;
+        private readonly string _lastModifiedQueryEnd;
 
         public SyncDtoCache(
             IAnalyticsService analyticsService,
@@ -29,11 +32,31 @@ namespace Blauhaus.Domain.Client.Sqlite.DtoCaches
         {
             _analyticsService = analyticsService;
             _sqliteDatabaseService = sqliteDatabaseService;
+
+            _lastModifiedQueryStart = $"SELECT {nameof(ISyncClientEntity.ModifiedAtTicks)} " +
+                                 $"FROM {typeof(TEntity).Name} " +
+                                 $"WHERE {nameof(ISyncClientEntity.SyncState)} == {(int)SyncState.InSync} ";
+
+            _lastModifiedQueryEnd = $"ORDER BY {nameof(ISyncClientEntity.ModifiedAtTicks)} DESC LIMIT 1";
+
         }
-        public Task<long> LoadLastModifiedAsync()
+        public Task<long> LoadLastModifiedTicksAsync()
         {
-            return InvokeLockedAsync(async () => await _sqliteDatabaseService.AsyncConnection
-                .ExecuteScalarAsync<long>($"SELECT ModifiedAtTicks FROM {typeof(TEntity).Name} ORDER BY ModifiedAtTicks DESC LIMIT 1"));
+            return InvokeLockedAsync(async () =>
+            {
+                var lastModifiedQuery = new StringBuilder()
+                    .Append(_lastModifiedQueryStart)
+                    .Append(GetAdditionalFilterClause())
+                    .Append(_lastModifiedQueryEnd)
+                        .ToString();
+
+                return await _sqliteDatabaseService.AsyncConnection.ExecuteScalarAsync<long>(lastModifiedQuery);
+            });
+        }
+
+        protected virtual string GetAdditionalFilterClause()
+        {
+            return string.Empty;
         }
 
 

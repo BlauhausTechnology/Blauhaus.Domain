@@ -54,6 +54,23 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base
             return (TBuilder)this;
         }
 
+        public TBuilder Where_HandleAsync_returns_sequence(List<Response<TPayload>> payloads)
+        {
+            var queue = new Queue<Response<TPayload>>();
+            foreach (var payload in payloads)
+            {
+                queue.Enqueue(payload);
+            }
+            Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>()))
+                .ReturnsAsync(queue.Dequeue)
+                .Callback((TCommand command) =>
+                {
+                    //we need to serialilze the values because SyncCommand changes state during execution
+                    _serializedCommands.Add(JsonConvert.DeserializeObject<TCommand>(JsonConvert.SerializeObject(command)));
+                });
+            return (TBuilder)this;
+        }
+
         public TBuilder Where_HandleAsync_returns_result(Response<TPayload> payload)
         {
             Mock.Setup(x => x.HandleAsync(It.IsAny<TCommand>()))

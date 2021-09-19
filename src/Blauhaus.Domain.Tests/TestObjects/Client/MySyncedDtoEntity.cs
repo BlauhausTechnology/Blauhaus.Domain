@@ -1,4 +1,5 @@
 ﻿using System;
+using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Client.Sqlite.DtoCaches;
 using Blauhaus.Domain.Client.Sqlite.Entities;
 using Blauhaus.Domain.Tests.TestObjects.Common;
@@ -23,10 +24,14 @@ namespace Blauhaus.Domain.Tests.TestObjects.Client
             EntityState = dto.EntityState;
             SerializedDto = JsonConvert.SerializeObject(dto);
             Name = dto.Name;
+            SyncState = SyncState.InSync;
         }
 
         [Indexed]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
+
+        [Indexed]
+        public Guid CategoryId { get; set; }
          
     }
 }

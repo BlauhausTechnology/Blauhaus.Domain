@@ -24,8 +24,4 @@
     <ProjectReference Include="..\Blauhaus.Domain.Abstractions\Blauhaus.Domain.Abstractions.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Sync\" />
-  </ItemGroup>
-
 </Project>

@@ -1,9 +1,10 @@
 ﻿using System;
-using Blauhaus.Common.Abstractions;
 using Blauhaus.Domain.Abstractions.DtoCaches;
 using Blauhaus.Domain.Abstractions.Entities;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoCaches;
+using Moq;
 
-namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoCaches
+namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Sync
 {
 
     public class SyncDtoCacheMockBuilder<TDto, TId> : BaseSyncDtoCacheMockBuilder<SyncDtoCacheMockBuilder<TDto, TId>, ISyncDtoCache<TDto, TId>, TDto, TId>
@@ -18,6 +19,12 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoCaches
         where TDto : class, IClientEntity<TId>
         where TId : IEquatable<TId>
     {
-        
+
+        public TBuilder Where_LoadLastModifiedTicksAsync_returns(long value)
+        {
+            Mock.Setup(x => x.LoadLastModifiedTicksAsync())
+                .ReturnsAsync(value);
+            return (TBuilder)this;
+        }
     }
 }

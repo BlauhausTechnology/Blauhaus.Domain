@@ -6,7 +6,7 @@ using Blauhaus.Domain.Client.Sqlite.DtoCaches;
 using Blauhaus.Domain.Tests.TestObjects.Client;
 using Blauhaus.Domain.Tests.TestObjects.Common;
 
-namespace Blauhaus.Domain.Tests.ClientTests.SqliteTests.SyncDtoCacheTests.Base
+namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.SyncDtoCacheTests.Base
 {
     public class TestSyncDtoCache : SyncDtoCache<MyDto, MySyncedDtoEntity, Guid>
     {

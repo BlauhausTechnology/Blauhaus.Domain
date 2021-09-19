@@ -19,6 +19,7 @@ using Blauhaus.Domain.Client.Sync.Old.Collection;
 using Blauhaus.Domain.Client.Sync.Old.Model;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoCaches;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoHandlers;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Sync;
 
 namespace Blauhaus.Domain.TestHelpers.Extensions
 {
