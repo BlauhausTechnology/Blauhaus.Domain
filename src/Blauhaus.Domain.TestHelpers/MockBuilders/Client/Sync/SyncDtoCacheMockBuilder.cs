@@ -1,4 +1,5 @@
 ﻿using System;
+using Blauhaus.Common.Abstractions;
 using Blauhaus.Domain.Abstractions.DtoCaches;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoCaches;
@@ -22,7 +23,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Sync
 
         public TBuilder Where_LoadLastModifiedTicksAsync_returns(long value)
         {
-            Mock.Setup(x => x.LoadLastModifiedTicksAsync())
+            Mock.Setup(x => x.LoadLastModifiedTicksAsync(It.IsAny<IKeyValueProvider?>()))
                 .ReturnsAsync(value);
             return (TBuilder)this;
         }

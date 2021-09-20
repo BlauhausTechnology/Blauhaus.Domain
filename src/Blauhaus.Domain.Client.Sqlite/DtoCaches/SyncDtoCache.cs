@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.ClientActors.Actors;
 using Blauhaus.ClientDatabase.Sqlite.Service;
+using Blauhaus.Common.Abstractions;
 using Blauhaus.Domain.Abstractions.DtoCaches;
 using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Errors;
+using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.Sqlite.Entities;
 using Blauhaus.Errors;
 using Newtonsoft.Json;
@@ -40,21 +42,26 @@ namespace Blauhaus.Domain.Client.Sqlite.DtoCaches
             _lastModifiedQueryEnd = $"ORDER BY {nameof(ISyncClientEntity.ModifiedAtTicks)} DESC LIMIT 1";
 
         }
-        public Task<long> LoadLastModifiedTicksAsync()
+        public Task<long> LoadLastModifiedTicksAsync(IKeyValueProvider? settingsProvider)
         {
             return InvokeLockedAsync(async () =>
             {
-                var lastModifiedQuery = new StringBuilder()
-                    .Append(_lastModifiedQueryStart)
-                    .Append(GetAdditionalFilterClause())
-                    .Append(_lastModifiedQueryEnd)
-                        .ToString();
+                var lastModifiedQuery = new StringBuilder();
+                    
+                lastModifiedQuery.Append(_lastModifiedQueryStart);
 
-                return await _sqliteDatabaseService.AsyncConnection.ExecuteScalarAsync<long>(lastModifiedQuery);
+                if (settingsProvider != null)
+                {
+                    GetAdditionalFilterClause(settingsProvider);
+                }
+                    
+                lastModifiedQuery.Append(_lastModifiedQueryEnd);
+
+                return await _sqliteDatabaseService.AsyncConnection.ExecuteScalarAsync<long>(lastModifiedQuery.ToString());
             });
         }
 
-        protected virtual string GetAdditionalFilterClause()
+        protected virtual string GetAdditionalFilterClause(IKeyValueProvider command)
         {
             return string.Empty;
         }

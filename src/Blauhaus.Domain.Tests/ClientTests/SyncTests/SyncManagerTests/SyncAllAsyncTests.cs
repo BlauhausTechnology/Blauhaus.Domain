@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Blauhaus.Common.Abstractions;
 using Blauhaus.Common.TestHelpers.Extensions;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.Sync.Manager;
@@ -25,21 +26,21 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.SyncManagerTests
             var lastModifieds = new Dictionary<string, long>();
 
             //Act
-            await Sut.SyncAllAsync(lastModifieds);
+            await Sut.SyncAllAsync(lastModifieds, MockKeyValueProvider);
 
             //Assert
-            MockSyncClient1.Verify(x => x.SyncDtoAsync(lastModifieds));
+            MockSyncClient1.Verify(x => x.SyncDtoAsync(lastModifieds, MockKeyValueProvider));
         }
 
         [Test]
         public async Task IF_any_client_fails_SHOULD_return_error()
         {
             //Arrange
-            MockSyncClient2.Mock.Setup(x => x.SyncDtoAsync(It.IsAny<Dictionary<string, long>>()))
+            MockSyncClient2.Mock.Setup(x => x.SyncDtoAsync(It.IsAny<Dictionary<string, long>>(), It.IsAny<IKeyValueProvider>()))
                 .ReturnsAsync(Response.Failure(Errors.Errors.Cancelled));
 
             //Act
-            var result = await Sut.SyncAllAsync(null);
+            var result = await Sut.SyncAllAsync(null, MockKeyValueProvider);
 
             //Assert
             Assert.That(result.Error, Is.EqualTo(Errors.Errors.Cancelled));
@@ -68,7 +69,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.SyncManagerTests
             using var statusUpdates = await Sut.SubscribeToUpdatesAsync();
             
             //Act
-            await Sut.SyncAllAsync(null);
+            await Sut.SyncAllAsync(null, MockKeyValueProvider);
 
             //Assert
             Assert.That(statusUpdates.Count, Is.EqualTo(4));

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.ClientActors.Actors;
+using Blauhaus.Common.Abstractions;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.Sync.SyncClient;
 using Blauhaus.Responses;
@@ -24,14 +25,14 @@ namespace Blauhaus.Domain.Client.Sync.Manager
             _dtoSyncClients = dtoSyncClients;
         }
 
-        public Task<Dictionary<string, long>> GetLastModifiedTicksAsync()
+        public Task<Dictionary<string, long>> GetLastModifiedTicksAsync(IKeyValueProvider? settingsProvider)
         {
             return InvokeAsync(async () =>
             {
                 var dtoSyncClientTasks = new List<Task<KeyValuePair<string, long>>>();
                 foreach (var dtoSyncClient in _dtoSyncClients)
                 {
-                    dtoSyncClientTasks.Add(dtoSyncClient.LoadLastModifiedTicksAsync());
+                    dtoSyncClientTasks.Add(dtoSyncClient.LoadLastModifiedTicksAsync(settingsProvider));
                 }
 
                 var dtoLastModifieds = await Task.WhenAll(dtoSyncClientTasks);
@@ -46,7 +47,7 @@ namespace Blauhaus.Domain.Client.Sync.Manager
             });
         }
 
-        public async Task<Response> SyncAllAsync(Dictionary<string, long>? lastModifiedTicks)
+        public async Task<Response> SyncAllAsync(Dictionary<string, long>? dtosLastModifiedTicks, IKeyValueProvider? settingsProvider)
         {
             return await InvokeAsync(async () =>
             {
@@ -55,7 +56,7 @@ namespace Blauhaus.Domain.Client.Sync.Manager
                 var dtoSyncClientTasks = new List<Task<Response>>();
                 foreach (var dtoSyncClient in _dtoSyncClients)
                 {
-                    dtoSyncClientTasks.Add(SyncDtoAsync(dtoSyncClient, lastModifiedTicks));
+                    dtoSyncClientTasks.Add(SyncDtoAsync(dtoSyncClient, dtosLastModifiedTicks, settingsProvider));
                 }
 
                 var syncResults = await Task.WhenAll(dtoSyncClientTasks);
@@ -68,7 +69,7 @@ namespace Blauhaus.Domain.Client.Sync.Manager
             });
         }
 
-        private async Task<Response> SyncDtoAsync(IDtoSyncClient dtoSyncClient, Dictionary<string, long>? lastModifiedTicks = null)
+        private async Task<Response> SyncDtoAsync(IDtoSyncClient dtoSyncClient, Dictionary<string, long>? dtosLastModifiedTicks, IKeyValueProvider? settingsProvider)
         {
 
             var token = dtoSyncClient.SubscribeAsync(async dtoSyncStatus =>
@@ -77,7 +78,7 @@ namespace Blauhaus.Domain.Client.Sync.Manager
                 await UpdateSubscribersAsync(_overallStatus);
             });
 
-            var dtoSyncResult = await dtoSyncClient.SyncDtoAsync(lastModifiedTicks);
+            var dtoSyncResult = await dtoSyncClient.SyncDtoAsync(dtosLastModifiedTicks, settingsProvider);
 
             token?.Dispose();
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.ClientActors.Actors;
+using Blauhaus.Common.Abstractions;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
 using Blauhaus.Domain.Abstractions.DtoCaches;
 using Blauhaus.Domain.Abstractions.Entities;
@@ -16,7 +17,6 @@ namespace Blauhaus.Domain.Client.Sync.SyncClient
         where TId : IEquatable<TId>
     {
         private readonly IAnalyticsService _analyticsService;
-        private readonly IDtoSyncConfig _syncConfig;
         private readonly ISyncDtoCache<TDto, TId> _syncDtoCache;
         private readonly ICommandHandler<IDtoBatch<TDto>, DtoSyncCommand> _syncCommandHandler;
 
@@ -24,37 +24,33 @@ namespace Blauhaus.Domain.Client.Sync.SyncClient
 
         public DtoSyncClient(
             IAnalyticsService analyticsService,
-            IDtoSyncConfig syncConfig,
             ISyncDtoCache<TDto, TId> syncDtoCache,
             ICommandHandler<IDtoBatch<TDto>, DtoSyncCommand> syncCommandHandler)
         {
             _analyticsService = analyticsService;
-            _syncConfig = syncConfig;
             _syncDtoCache = syncDtoCache;
             _syncCommandHandler = syncCommandHandler;
         }
         
-        public Task<KeyValuePair<string, long>> LoadLastModifiedTicksAsync()
+        public Task<KeyValuePair<string, long>> LoadLastModifiedTicksAsync(IKeyValueProvider? settingsProvider)
         {
             return InvokeAsync(async () =>
             {
-                var lastModified = await _syncDtoCache.LoadLastModifiedTicksAsync();
+                var lastModified = await _syncDtoCache.LoadLastModifiedTicksAsync(settingsProvider);
                 return new KeyValuePair<string, long>(DtoName, lastModified);
             });
         }
 
-        public Task<Response> SyncDtoAsync(Dictionary<string, long>? dtosLastModifiedTicks)
+        public Task<Response> SyncDtoAsync(Dictionary<string, long>? dtosLastModifiedTicks, IKeyValueProvider? settingsProvider)
         {
             return InvokeAsync(async () =>
             {
                 if (dtosLastModifiedTicks == null || !dtosLastModifiedTicks.TryGetValue(DtoName, out var lastModifiedTicks))
                 {
-                    lastModifiedTicks = await _syncDtoCache.LoadLastModifiedTicksAsync();
+                    lastModifiedTicks = await _syncDtoCache.LoadLastModifiedTicksAsync(settingsProvider);
                 }
 
-                var batchSize = _syncConfig.GetSyncBatchSize(DtoName);
-
-                var syncCommand = new DtoSyncCommand(lastModifiedTicks, batchSize);
+                var syncCommand = new DtoSyncCommand(lastModifiedTicks);
 
                 var syncResult = await _syncCommandHandler.HandleAsync(syncCommand);
                 if (syncResult.IsFailure)
@@ -67,7 +63,7 @@ namespace Blauhaus.Domain.Client.Sync.SyncClient
 
                 while (dtoSyncStatus.RemainingDtoCount > 0)
                 {
-                    syncResult = await _syncCommandHandler.HandleAsync(new DtoSyncCommand(syncResult.Value.BatchLastModifiedTicks, batchSize));
+                    syncResult = await _syncCommandHandler.HandleAsync(new DtoSyncCommand(syncResult.Value.BatchLastModifiedTicks));
                     if (syncResult.IsFailure)
                     {
                         return Response.Failure(syncResult.Error);

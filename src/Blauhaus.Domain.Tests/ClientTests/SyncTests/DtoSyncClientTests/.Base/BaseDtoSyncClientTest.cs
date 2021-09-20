@@ -1,4 +1,5 @@
 ﻿using System;
+using Blauhaus.Common.Abstractions;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Client.Sync.SyncClient;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoCaches;
@@ -14,7 +15,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests.Base
     {
         protected CommandHandlerMockBuilder<IDtoBatch<MyDto>, DtoSyncCommand> MockSyncCommandHandler = null!;
         protected SyncDtoCacheMockBuilder<MyDto, Guid> MockSyncDtoCache = null!;
-        protected MockBuilder<IDtoSyncConfig> MockSyncDtoConfig = null!;
+        protected IKeyValueProvider MockKeyValueProvider = new MockBuilder<IKeyValueProvider>().Object;
 
         public override void Setup()
         {
@@ -25,10 +26,6 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests.Base
 
             MockSyncDtoCache = new SyncDtoCacheMockBuilder<MyDto, Guid>();
             AddService(MockSyncDtoCache.Object);
-
-            MockSyncDtoConfig = new MockBuilder<IDtoSyncConfig>();
-            MockSyncDtoConfig.Setup(x => x.GetSyncBatchSize("MyDto"), 10);
-            AddService(MockSyncDtoConfig.Object);
         }
     }
 }

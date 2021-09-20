@@ -2,13 +2,11 @@
 {
     public class DtoSyncCommand
     {
-        public DtoSyncCommand(long? modifiedAfterTicks, int? maxResults)
+        public DtoSyncCommand(long? modifiedAfterTicks)
         {
             ModifiedAfterTicks = modifiedAfterTicks;
-            MaxResults = maxResults;
         }
 
         public long? ModifiedAfterTicks { get; }
-        public int? MaxResults { get; }
     }
 }

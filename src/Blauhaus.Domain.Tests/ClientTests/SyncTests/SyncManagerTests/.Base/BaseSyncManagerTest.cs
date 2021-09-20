@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using Blauhaus.Common.Abstractions;
 using Blauhaus.Domain.Client.Sync.Manager;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Sync;
 using Blauhaus.Domain.Tests.Base;
+using Blauhaus.TestHelpers.MockBuilders;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.SyncManagerTests.Base
 {
@@ -11,6 +13,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.SyncManagerTests.Base
         protected DtoSyncClientMockBuilder MockSyncClient1 = null!;
         protected DtoSyncClientMockBuilder MockSyncClient2 = null!;
         protected DtoSyncClientMockBuilder MockSyncClient3 = null!;
+        
+        protected IKeyValueProvider MockKeyValueProvider = new MockBuilder<IKeyValueProvider>().Object;
 
         public override void Setup()
         {

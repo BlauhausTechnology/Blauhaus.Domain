@@ -1,7 +1,9 @@
 ﻿using AutoFixture;
+using Blauhaus.Common.Abstractions;
 using Blauhaus.Domain.Tests.ClientTests.SqliteTests._Base;
 using Blauhaus.Domain.Tests.TestObjects.Client;
 using Blauhaus.Domain.Tests.TestObjects.Common;
+using Blauhaus.TestHelpers.MockBuilders;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.SyncDtoCacheTests.Base
 {
@@ -14,7 +16,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.SyncDtoCacheTests.Base
         protected MySyncedDtoEntity SyncedDtoEntityOne = null!;
         protected MySyncedDtoEntity SyncedDtoEntityTwo = null!;
         protected MySyncedDtoEntity SyncedDtoEntityThree = null!;
-
+        
+        protected IKeyValueProvider MockKeyValueProvider = new MockBuilder<IKeyValueProvider>().Object;
         public override void Setup()
         {
             base.Setup();

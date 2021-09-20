@@ -16,7 +16,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests
             MockSyncDtoCache.Where_LoadLastModifiedTicksAsync_returns(lastModified);
 
             //Act
-            var result = await Sut.LoadLastModifiedTicksAsync();
+            var result = await Sut.LoadLastModifiedTicksAsync(MockKeyValueProvider);
 
             //Assert
             Assert.That(result.Key, Is.EqualTo(nameof(MyDto)));

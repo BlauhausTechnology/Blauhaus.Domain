@@ -12,7 +12,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.SyncDtoCacheTests
         public async Task IF_no_Dtos_exist_SHOULD_return_0()
         {
             //Act
-            var result = await Sut.LoadLastModifiedTicksAsync();
+            var result = await Sut.LoadLastModifiedTicksAsync(MockKeyValueProvider);
             
             //Assert
             Assert.That(result, Is.EqualTo(0));
@@ -27,7 +27,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.SyncDtoCacheTests
             await Connection.InsertAsync(SyncedDtoEntityThree);
             
             //Act
-            var result = await Sut.LoadLastModifiedTicksAsync();
+            var result = await Sut.LoadLastModifiedTicksAsync(MockKeyValueProvider);
             
             //Assert
             Assert.That(result, Is.EqualTo(3000));
@@ -43,7 +43,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.SyncDtoCacheTests
             await Connection.InsertAsync(SyncedDtoEntityThree);
             
             //Act
-            var result = await Sut.LoadLastModifiedTicksAsync();
+            var result = await Sut.LoadLastModifiedTicksAsync(MockKeyValueProvider);
             
             //Assert
             Assert.That(result, Is.EqualTo(2000));

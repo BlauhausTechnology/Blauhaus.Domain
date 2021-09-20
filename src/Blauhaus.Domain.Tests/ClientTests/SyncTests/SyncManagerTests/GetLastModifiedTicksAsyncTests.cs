@@ -16,7 +16,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.SyncManagerTests
             MockSyncClient3.Where_GetLastModifiedTicksAsync_returns("Dto3", 1000);
 
             //Act
-            var result = await Sut.GetLastModifiedTicksAsync();
+            var result = await Sut.GetLastModifiedTicksAsync(MockKeyValueProvider);
 
             //Assert
             Assert.That(result["Dto1"], Is.EqualTo(2000));

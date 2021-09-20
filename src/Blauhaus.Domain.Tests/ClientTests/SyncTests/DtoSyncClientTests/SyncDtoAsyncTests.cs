@@ -35,27 +35,24 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests
         public async Task IF_lastModified_Not_given_SHOULD_load_from_cache()
         {
             //Arrange
-            MockSyncDtoConfig.Setup(x => x.GetSyncBatchSize("MyDto"), 20);
             var cacheLastModified = DateTime.UtcNow.AddSeconds(-1).Ticks;
             MockSyncDtoCache.Where_LoadLastModifiedTicksAsync_returns(cacheLastModified);
 
             //Act
-            await Sut.SyncDtoAsync(null);
+            await Sut.SyncDtoAsync(null, MockKeyValueProvider);
 
             //Assert
             MockSyncCommandHandler.Verify_HandleAsync_called_With(x => x.ModifiedAfterTicks == cacheLastModified);
-            MockSyncCommandHandler.Verify_HandleAsync_called_With(x => x.MaxResults == 20);
         }
 
         [Test]
         public async Task IF_lastModified_given_SHOULD_use_it()
         {
             //Act
-            await Sut.SyncDtoAsync(_lastModifiedDictionary);
+            await Sut.SyncDtoAsync(_lastModifiedDictionary, MockKeyValueProvider);
 
             //Assert
             MockSyncCommandHandler.Verify_HandleAsync_called_With(x => x.ModifiedAfterTicks == _lastModifiedTicks);
-            MockSyncCommandHandler.Verify_HandleAsync_called_With(x => x.MaxResults == 10);
         }
 
         [Test]
@@ -87,7 +84,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests
             using var publishedStatuses = await Sut.SubscribeToUpdatesAsync();
             
             //Act
-            await Sut.SyncDtoAsync(_lastModifiedDictionary);
+            await Sut.SyncDtoAsync(_lastModifiedDictionary, MockKeyValueProvider);
 
             //Assert
             Assert.That(publishedStatuses.Count, Is.EqualTo(4));
@@ -129,7 +126,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests
             });
             
             //Act
-            var result = await Sut.SyncDtoAsync(_lastModifiedDictionary);
+            var result = await Sut.SyncDtoAsync(_lastModifiedDictionary, MockKeyValueProvider);
 
             //Assert
             Assert.That(result.Error, Is.EqualTo(Errors.Errors.InvalidValue("Bob")));
@@ -150,7 +147,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests
             });
             
             //Act
-            var result = await Sut.SyncDtoAsync(_lastModifiedDictionary);
+            var result = await Sut.SyncDtoAsync(_lastModifiedDictionary, MockKeyValueProvider);
 
             //Assert
             Assert.That(result.Error, Is.EqualTo(Errors.Errors.InvalidValue("Fred")));

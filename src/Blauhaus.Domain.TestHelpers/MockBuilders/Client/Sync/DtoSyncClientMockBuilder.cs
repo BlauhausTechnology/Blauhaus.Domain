@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Blauhaus.Common.Abstractions;
 using Blauhaus.Common.TestHelpers.MockBuilders;
 using Blauhaus.Domain.Client.Sync.SyncClient;
 using Moq;
@@ -17,7 +18,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Sync
 
         public TBuilder Where_GetLastModifiedTicksAsync_returns(string dtoName, long value)
         {
-            Mock.Setup(x => x.LoadLastModifiedTicksAsync())
+            Mock.Setup(x => x.LoadLastModifiedTicksAsync(It.IsAny<IKeyValueProvider?>()))
                 .ReturnsAsync(new KeyValuePair<string, long>(dtoName, value));
             return (TBuilder)this;
         }  
