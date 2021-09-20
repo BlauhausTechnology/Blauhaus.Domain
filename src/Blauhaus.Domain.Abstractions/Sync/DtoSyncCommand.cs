@@ -2,11 +2,18 @@
 {
     public class DtoSyncCommand
     {
-        public DtoSyncCommand(long? modifiedAfterTicks)
+        public DtoSyncCommand(string dtoName, long modifiedAfterTicks)
         {
             ModifiedAfterTicks = modifiedAfterTicks;
+            DtoName = dtoName;
         }
 
-        public long? ModifiedAfterTicks { get; }
+        public string DtoName { get; }
+        public long ModifiedAfterTicks { get; }
+
+        public static DtoSyncCommand Create<T>(long lastModifiedTicks)
+        {
+            return new DtoSyncCommand(typeof(T).Name, lastModifiedTicks);
+        }
     }
 }

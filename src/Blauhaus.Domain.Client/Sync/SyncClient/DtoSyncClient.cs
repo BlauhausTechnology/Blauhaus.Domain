@@ -38,7 +38,7 @@ namespace Blauhaus.Domain.Client.Sync.SyncClient
             {
                 var lastModifiedTicks = await _syncDtoCache.LoadLastModifiedTicksAsync(settingsProvider);
 
-                var syncCommand = new DtoSyncCommand(lastModifiedTicks);
+                var syncCommand = DtoSyncCommand.Create<TDto>(lastModifiedTicks);
 
                 var syncResult = await _syncCommandHandler.HandleAsync(syncCommand);
                 if (syncResult.IsFailure)
@@ -51,7 +51,7 @@ namespace Blauhaus.Domain.Client.Sync.SyncClient
 
                 while (dtoSyncStatus.RemainingDtoCount > 0)
                 {
-                    syncResult = await _syncCommandHandler.HandleAsync(new DtoSyncCommand(syncResult.Value.BatchLastModifiedTicks));
+                    syncResult = await _syncCommandHandler.HandleAsync(DtoSyncCommand.Create<TDto>(syncResult.Value.BatchLastModifiedTicks));
                     if (syncResult.IsFailure)
                     {
                         return Response.Failure(syncResult.Error);

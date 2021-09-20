@@ -96,6 +96,8 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests
             MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(1, x => x.ModifiedAfterTicks == 2 * Num);
             MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(2, x => x.ModifiedAfterTicks == 4 * Num);
             MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(3, x => x.ModifiedAfterTicks == 6 * Num);
+
+            MockSyncCommandHandler.Verify_HandleAsync_called_With(x => x.DtoName == "MyDto");
         }
 
         
