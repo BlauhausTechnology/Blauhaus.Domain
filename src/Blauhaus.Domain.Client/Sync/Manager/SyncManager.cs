@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.ClientActors.Actors;
@@ -29,6 +28,8 @@ namespace Blauhaus.Domain.Client.Sync.Manager
         {
             return await InvokeAsync(async () =>
             {
+                using var _ = _analyticsService.StartTrace(this, "Sync");
+
                 _overallStatus = new OverallSyncStatus();
 
                 var dtoSyncClientTasks = new List<Task<Response>>();

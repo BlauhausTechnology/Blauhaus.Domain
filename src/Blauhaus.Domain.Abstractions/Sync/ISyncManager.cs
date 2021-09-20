@@ -5,7 +5,6 @@ using Blauhaus.Responses;
 
 namespace Blauhaus.Domain.Abstractions.Sync
 {
-
     public interface ISyncManager : IAsyncPublisher<IOverallSyncStatus>
     {
         Task<Response> SyncAllAsync(IKeyValueProvider? settingsProvider);
