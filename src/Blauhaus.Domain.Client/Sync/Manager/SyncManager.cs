@@ -69,6 +69,11 @@ namespace Blauhaus.Domain.Client.Sync.Manager
             });
         }
 
+        public Task<Response> SyncAllAsync(IKeyValueProvider? settingsProvider = null)
+        {
+            return SyncAllAsync(null, settingsProvider);
+        }
+
         private async Task<Response> SyncDtoAsync(IDtoSyncClient dtoSyncClient, Dictionary<string, long>? dtosLastModifiedTicks, IKeyValueProvider? settingsProvider)
         {
 

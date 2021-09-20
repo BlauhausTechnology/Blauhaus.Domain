@@ -10,5 +10,6 @@ namespace Blauhaus.Domain.Abstractions.Sync
     {
         Task<Dictionary<string, long>> GetLastModifiedTicksAsync(IKeyValueProvider? settingsProvider);
         Task<Response> SyncAllAsync(Dictionary<string, long>? dtosLastModifiedTicks, IKeyValueProvider? settingsProvider);
+        Task<Response> SyncAllAsync(IKeyValueProvider? settingsProvider = null);
     }
 }
