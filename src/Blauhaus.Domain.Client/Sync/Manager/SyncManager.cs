@@ -25,29 +25,7 @@ namespace Blauhaus.Domain.Client.Sync.Manager
             _dtoSyncClients = dtoSyncClients;
         }
 
-        public Task<Dictionary<string, long>> GetLastModifiedTicksAsync(IKeyValueProvider? settingsProvider)
-        {
-            return InvokeAsync(async () =>
-            {
-                var dtoSyncClientTasks = new List<Task<KeyValuePair<string, long>>>();
-                foreach (var dtoSyncClient in _dtoSyncClients)
-                {
-                    dtoSyncClientTasks.Add(dtoSyncClient.LoadLastModifiedTicksAsync(settingsProvider));
-                }
-
-                var dtoLastModifieds = await Task.WhenAll(dtoSyncClientTasks);
-
-                var lastModifiedTicks = new Dictionary<string, long>();
-                foreach (var dtoLastModified in dtoLastModifieds)
-                {
-                    lastModifiedTicks[dtoLastModified.Key] = dtoLastModified.Value;
-                }
-
-                return lastModifiedTicks;
-            });
-        }
-
-        public async Task<Response> SyncAllAsync(Dictionary<string, long>? dtosLastModifiedTicks, IKeyValueProvider? settingsProvider)
+        public async Task<Response> SyncAllAsync(IKeyValueProvider? settingsProvider)
         {
             return await InvokeAsync(async () =>
             {
@@ -56,7 +34,7 @@ namespace Blauhaus.Domain.Client.Sync.Manager
                 var dtoSyncClientTasks = new List<Task<Response>>();
                 foreach (var dtoSyncClient in _dtoSyncClients)
                 {
-                    dtoSyncClientTasks.Add(SyncDtoAsync(dtoSyncClient, dtosLastModifiedTicks, settingsProvider));
+                    dtoSyncClientTasks.Add(SyncDtoAsync(dtoSyncClient, settingsProvider));
                 }
 
                 var syncResults = await Task.WhenAll(dtoSyncClientTasks);
@@ -68,22 +46,16 @@ namespace Blauhaus.Domain.Client.Sync.Manager
                 return Response.Success();
             });
         }
-
-        public Task<Response> SyncAllAsync(IKeyValueProvider? settingsProvider = null)
+         
+        private async Task<Response> SyncDtoAsync(IDtoSyncClient dtoSyncClient, IKeyValueProvider? settingsProvider)
         {
-            return SyncAllAsync(null, settingsProvider);
-        }
-
-        private async Task<Response> SyncDtoAsync(IDtoSyncClient dtoSyncClient, Dictionary<string, long>? dtosLastModifiedTicks, IKeyValueProvider? settingsProvider)
-        {
-
             var token = dtoSyncClient.SubscribeAsync(async dtoSyncStatus =>
             {
                 _overallStatus = _overallStatus.Update(dtoSyncStatus);
                 await UpdateSubscribersAsync(_overallStatus);
             });
 
-            var dtoSyncResult = await dtoSyncClient.SyncDtoAsync(dtosLastModifiedTicks, settingsProvider);
+            var dtoSyncResult = await dtoSyncClient.SyncDtoAsync(settingsProvider);
 
             token?.Dispose();
 

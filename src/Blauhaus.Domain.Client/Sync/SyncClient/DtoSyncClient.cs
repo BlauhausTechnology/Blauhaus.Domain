@@ -31,24 +31,12 @@ namespace Blauhaus.Domain.Client.Sync.SyncClient
             _syncDtoCache = syncDtoCache;
             _syncCommandHandler = syncCommandHandler;
         }
-        
-        public Task<KeyValuePair<string, long>> LoadLastModifiedTicksAsync(IKeyValueProvider? settingsProvider)
+         
+        public Task<Response> SyncDtoAsync(IKeyValueProvider? settingsProvider)
         {
             return InvokeAsync(async () =>
             {
-                var lastModified = await _syncDtoCache.LoadLastModifiedTicksAsync(settingsProvider);
-                return new KeyValuePair<string, long>(DtoName, lastModified);
-            });
-        }
-
-        public Task<Response> SyncDtoAsync(Dictionary<string, long>? dtosLastModifiedTicks, IKeyValueProvider? settingsProvider)
-        {
-            return InvokeAsync(async () =>
-            {
-                if (dtosLastModifiedTicks == null || !dtosLastModifiedTicks.TryGetValue(DtoName, out var lastModifiedTicks))
-                {
-                    lastModifiedTicks = await _syncDtoCache.LoadLastModifiedTicksAsync(settingsProvider);
-                }
+                var lastModifiedTicks = await _syncDtoCache.LoadLastModifiedTicksAsync(settingsProvider);
 
                 var syncCommand = new DtoSyncCommand(lastModifiedTicks);
 
