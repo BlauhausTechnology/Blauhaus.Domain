@@ -10,6 +10,7 @@ using Blauhaus.Domain.Client.Sqlite.DtoCaches;
 using Blauhaus.Domain.Client.Sqlite.Entities;
 using Blauhaus.Domain.Client.Sqlite.Repository;
 using Blauhaus.Domain.Client.Sqlite.SyncRepository;
+using Blauhaus.Domain.Client.Sync;
 using Blauhaus.Domain.Client.Sync.Old.Client;
 using Blauhaus.Domain.Client.Sync.Old.CommandHandler;
 using Blauhaus.Domain.Client.Sync.Old.Model;
@@ -29,13 +30,13 @@ namespace Blauhaus.Domain.Client.Sqlite.Ioc
                  .AddSyncDtoCache<TDto, TId, SyncDtoCache<TDto, TEntity, TId>>();
         }
 
-         public static IServiceCollection AddSyncDtoCache<TDto, TId, TDtoCache>(this IServiceCollection services)
+         public static IServiceCollection AddSyncDtoCache<TDto, TId, TSyncDtoCache>(this IServiceCollection services)
              where TDto : ClientEntity<TId>, new()
              where TId : IEquatable<TId>
-             where TDtoCache : class, ISyncDtoCache<TDto, TId>
+             where TSyncDtoCache : class, ISyncDtoCache<TDto, TId>
          {
-             services.AddDtoSyncHandler<TDto, TId>();
-             services.AddSingleton<ISyncDtoCache<TDto, TId>, TDtoCache>();
+             services.AddSingleton<IDtoSyncHandler, DtoSyncHandler<TDto, TId>>();
+             services.TryAddSingleton<ISyncDtoCache<TDto, TId>, TSyncDtoCache>();
              return services;
          }
          
