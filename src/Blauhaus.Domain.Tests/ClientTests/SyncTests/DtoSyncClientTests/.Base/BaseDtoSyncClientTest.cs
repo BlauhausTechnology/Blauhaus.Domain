@@ -1,7 +1,7 @@
 ﻿using System;
 using Blauhaus.Common.Abstractions;
 using Blauhaus.Domain.Abstractions.Sync;
-using Blauhaus.Domain.Client.Sync.SyncClient;
+using Blauhaus.Domain.Client.Sync;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoCaches;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Sync;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers;
@@ -11,7 +11,7 @@ using Blauhaus.TestHelpers.MockBuilders;
 
 namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests.Base
 {
-    public class BaseDtoSyncClientTest : BaseDomainTest<DtoSyncClient<MyDto, Guid>>
+    public class BaseDtoSyncClientTest : BaseDomainTest<DtoSyncHandler<MyDto, Guid>>
     {
         protected CommandHandlerMockBuilder<IDtoBatch<MyDto>, DtoSyncCommand> MockSyncCommandHandler = null!;
         protected SyncDtoCacheMockBuilder<MyDto, Guid> MockSyncDtoCache = null!;

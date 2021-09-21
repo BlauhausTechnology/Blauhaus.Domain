@@ -5,23 +5,22 @@ using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.ClientActors.Actors;
 using Blauhaus.Common.Abstractions;
 using Blauhaus.Domain.Abstractions.Sync;
-using Blauhaus.Domain.Client.Sync.SyncClient;
 using Blauhaus.Responses;
 
-namespace Blauhaus.Domain.Client.Sync.Manager
+namespace Blauhaus.Domain.Client.Sync
 {
     public class SyncManager : BaseActor, ISyncManager
     {
         private readonly IAnalyticsService _analyticsService;
-        private readonly IEnumerable<IDtoSyncClient> _dtoSyncClients;
+        private readonly IEnumerable<IDtoSyncHandler> _dtoSyncHandlers;
         private OverallSyncStatus _overallStatus = null!;
 
         public SyncManager(
             IAnalyticsService analyticsService,
-            IEnumerable<IDtoSyncClient> dtoSyncClients)
+            IEnumerable<IDtoSyncHandler> dtoSyncHandlers)
         {
             _analyticsService = analyticsService;
-            _dtoSyncClients = dtoSyncClients;
+            _dtoSyncHandlers = dtoSyncHandlers;
         }
 
         public async Task<Response> SyncAllAsync(IKeyValueProvider? settingsProvider)
@@ -33,7 +32,7 @@ namespace Blauhaus.Domain.Client.Sync.Manager
                 _overallStatus = new OverallSyncStatus();
 
                 var dtoSyncClientTasks = new List<Task<Response>>();
-                foreach (var dtoSyncClient in _dtoSyncClients)
+                foreach (var dtoSyncClient in _dtoSyncHandlers)
                 {
                     dtoSyncClientTasks.Add(SyncDtoAsync(dtoSyncClient, settingsProvider));
                 }
@@ -48,15 +47,15 @@ namespace Blauhaus.Domain.Client.Sync.Manager
             });
         }
          
-        private async Task<Response> SyncDtoAsync(IDtoSyncClient dtoSyncClient, IKeyValueProvider? settingsProvider)
+        private async Task<Response> SyncDtoAsync(IDtoSyncHandler dtoSyncHandler, IKeyValueProvider? settingsProvider)
         {
-            var token = dtoSyncClient.SubscribeAsync(async dtoSyncStatus =>
+            var token = dtoSyncHandler.SubscribeAsync(async dtoSyncStatus =>
             {
                 _overallStatus = _overallStatus.Update(dtoSyncStatus);
                 await UpdateSubscribersAsync(_overallStatus);
             });
 
-            var dtoSyncResult = await dtoSyncClient.SyncDtoAsync(settingsProvider);
+            var dtoSyncResult = await dtoSyncHandler.SyncDtoAsync(settingsProvider);
 
             token?.Dispose();
 

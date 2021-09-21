@@ -5,6 +5,7 @@ using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Repositories;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Abstractions.Sync.Old;
+using Blauhaus.Domain.Client.Ioc;
 using Blauhaus.Domain.Client.Sqlite.DtoCaches;
 using Blauhaus.Domain.Client.Sqlite.Entities;
 using Blauhaus.Domain.Client.Sqlite.Repository;
@@ -19,15 +20,24 @@ namespace Blauhaus.Domain.Client.Sqlite.Ioc
 {
     public static class ServiceCollectionExtensions
     {
-         
-        public static IServiceCollection AddSyncDtoCache<TDto, TId, TEntity>(this IServiceCollection services)
+         public static IServiceCollection AddSyncDto<TDto, TId, TEntity>(this IServiceCollection services)
             where TDto : ClientEntity<TId>, new()
-            where TEntity : SyncClientEntity<TId>, new()
+            where TEntity : SyncClientEntity<TId>, IEquatable<TEntity>, new()
             where TId : IEquatable<TId>
-        {
-            services.AddSingleton<ISyncDtoCache<TDto, TId>, SyncDtoCache<TDto, TEntity, TId>>();
-            return services;
+         {
+             return services
+                 .AddSyncDtoCache<TDto, TId, SyncDtoCache<TDto, TEntity, TId>>();
         }
+
+         public static IServiceCollection AddSyncDtoCache<TDto, TId, TDtoCache>(this IServiceCollection services)
+             where TDto : ClientEntity<TId>, new()
+             where TId : IEquatable<TId>
+             where TDtoCache : class, ISyncDtoCache<TDto, TId>
+         {
+             services.AddDtoSyncHandler<TDto, TId>();
+             services.AddSingleton<ISyncDtoCache<TDto, TId>, TDtoCache>();
+             return services;
+         }
          
 
         public static IServiceCollection AddClientRepository<TModel, TDto, TRootEntity, TEntityConverter>(this IServiceCollection services) 

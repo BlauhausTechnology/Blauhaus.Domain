@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Blauhaus.Common.Abstractions;
-using Blauhaus.Domain.Client.Sync.Manager;
+using Blauhaus.Domain.Client.Sync;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Sync;
 using Blauhaus.Domain.Tests.Base;
 using Blauhaus.TestHelpers.MockBuilders;

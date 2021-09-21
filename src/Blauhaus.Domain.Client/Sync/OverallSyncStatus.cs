@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Blauhaus.Domain.Abstractions.Sync;
-using Blauhaus.Domain.Client.Sync.SyncClient;
 using Newtonsoft.Json;
 
-namespace Blauhaus.Domain.Client.Sync.Manager
+namespace Blauhaus.Domain.Client.Sync
 {
     public class OverallSyncStatus : IOverallSyncStatus
     {

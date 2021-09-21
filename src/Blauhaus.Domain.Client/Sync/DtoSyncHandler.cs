@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.ClientActors.Actors;
@@ -10,9 +9,9 @@ using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Responses;
 
-namespace Blauhaus.Domain.Client.Sync.SyncClient
+namespace Blauhaus.Domain.Client.Sync
 {
-    public class DtoSyncClient<TDto, TId> : BaseActor, IDtoSyncClient
+    public class DtoSyncHandler<TDto, TId> : BaseActor, IDtoSyncHandler
         where TDto : class, IClientEntity<TId>
         where TId : IEquatable<TId>
     {
@@ -22,7 +21,7 @@ namespace Blauhaus.Domain.Client.Sync.SyncClient
 
         protected string DtoName = typeof(TDto).Name;
 
-        public DtoSyncClient(
+        public DtoSyncHandler(
             IAnalyticsService analyticsService,
             ISyncDtoCache<TDto, TId> syncDtoCache,
             ICommandHandler<IDtoBatch<TDto>, DtoSyncCommand> syncCommandHandler)

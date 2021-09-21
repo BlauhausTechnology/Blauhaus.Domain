@@ -1,8 +1,7 @@
-﻿using System;
-using Blauhaus.Domain.Abstractions.Sync;
+﻿using Blauhaus.Domain.Abstractions.Sync;
 using Newtonsoft.Json;
 
-namespace Blauhaus.Domain.Client.Sync.SyncClient
+namespace Blauhaus.Domain.Client.Sync
 {
     public class DtoSyncStatus 
     {
