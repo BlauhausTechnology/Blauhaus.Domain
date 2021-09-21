@@ -17,14 +17,14 @@ namespace Blauhaus.Domain.Client.Sync
     {
         private readonly IAnalyticsService _analyticsService;
         private readonly ISyncDtoCache<TDto, TId> _syncDtoCache;
-        private readonly ICommandHandler<IDtoBatch<TDto>, DtoSyncCommand> _syncCommandHandler;
+        private readonly ICommandHandler<DtoBatch<TDto, TId>, DtoSyncCommand> _syncCommandHandler;
 
         protected string DtoName = typeof(TDto).Name;
 
         public DtoSyncHandler(
             IAnalyticsService analyticsService,
             ISyncDtoCache<TDto, TId> syncDtoCache,
-            ICommandHandler<IDtoBatch<TDto>, DtoSyncCommand> syncCommandHandler)
+            ICommandHandler<DtoBatch<TDto, TId>, DtoSyncCommand> syncCommandHandler)
         {
             _analyticsService = analyticsService;
             _syncDtoCache = syncDtoCache;
@@ -44,7 +44,7 @@ namespace Blauhaus.Domain.Client.Sync
                 {
                     return Response.Failure(syncResult.Error);
                 }
-                var dtoSyncStatus = DtoSyncStatus.Create(DtoName, syncResult.Value);
+                var dtoSyncStatus = DtoSyncStatus.Create(DtoName, syncResult.Value.CurrentDtoCount, syncResult.Value.RemainingDtoCount);
 
                 await UpdateSubscribersAsync(dtoSyncStatus);
 
@@ -56,7 +56,7 @@ namespace Blauhaus.Domain.Client.Sync
                         return Response.Failure(syncResult.Error);
                     }
 
-                    dtoSyncStatus = dtoSyncStatus.Update(syncResult.Value);
+                    dtoSyncStatus = dtoSyncStatus.Update(syncResult.Value.CurrentDtoCount, syncResult.Value.RemainingDtoCount);
                     await UpdateSubscribersAsync(dtoSyncStatus);
                 }
 

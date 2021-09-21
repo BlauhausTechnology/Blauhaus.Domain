@@ -30,25 +30,24 @@ namespace Blauhaus.Domain.Client.Sync
         
         public float Progress => DownloadedDtoCount / (float)TotalDtoCount;
 
-
-        public static DtoSyncStatus Create(string dtoName, IDtoBatch dtoBatch)
+        public static DtoSyncStatus Create(string dtoName, int currentDtoCount, int remainingDtoCount)
         {
             return new DtoSyncStatus(
-                dtoName: dtoName,
-                currentDtoCount: dtoBatch.CurrentDtoCount,
-                totalDtoCount: dtoBatch.CurrentDtoCount + dtoBatch.RemainingDtoCount,
-                downloadedDtoCount: dtoBatch.CurrentDtoCount,
-                remainingDtoCount: dtoBatch.RemainingDtoCount);
+                dtoName: dtoName, 
+                currentDtoCount: currentDtoCount,
+                totalDtoCount: currentDtoCount + remainingDtoCount,
+                downloadedDtoCount: currentDtoCount, 
+                remainingDtoCount: remainingDtoCount);
         }
 
-        public DtoSyncStatus Update(IDtoBatch dtoBatch) 
+        public DtoSyncStatus Update(int currentDtoCount, int remainingDtoCount) 
         {
             return new DtoSyncStatus(
                 dtoName: DtoName,
-                currentDtoCount: dtoBatch.CurrentDtoCount,
+                currentDtoCount: currentDtoCount,
                 totalDtoCount: TotalDtoCount, 
-                downloadedDtoCount: DownloadedDtoCount + dtoBatch.CurrentDtoCount,
-                remainingDtoCount: dtoBatch.RemainingDtoCount);
+                downloadedDtoCount: DownloadedDtoCount + currentDtoCount,
+                remainingDtoCount: remainingDtoCount);
         }
 
         

@@ -42,24 +42,24 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests
             //Arrange
             var cacheLastModified = DateTime.UtcNow.AddSeconds(-1).Ticks;
             MockSyncDtoCache.Where_LoadLastModifiedTicksAsync_returns(cacheLastModified);
-            MockSyncCommandHandler.Where_HandleAsync_returns_sequence(new List<IDtoBatch<MyDto>>
+            MockSyncCommandHandler.Where_HandleAsync_returns_sequence(new List<DtoBatch<MyDto, Guid>>
             {
-                new DtoBatch<MyDto, Guid>(new []
+                new(new []
                 {
                     new MyDto{ ModifiedAtTicks = 1 * Num },
                     new MyDto{ ModifiedAtTicks = 2 * Num },
                 }, 5),
-                new DtoBatch<MyDto, Guid>(new []
+                new(new []
                 {
                     new MyDto{ ModifiedAtTicks = 3 * Num },
                     new MyDto{ ModifiedAtTicks = 4 * Num },
                 }, 3),
-                new DtoBatch<MyDto, Guid>(new []
+                new(new []
                 {
                     new MyDto{ ModifiedAtTicks = 5 * Num },
                     new MyDto{ ModifiedAtTicks = 6 * Num },
                 }, 1),
-                new DtoBatch<MyDto, Guid>(new []
+                new(new []
                 {
                     new MyDto{ ModifiedAtTicks = 7 * Num },
                 }, 0)
@@ -105,9 +105,9 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests
         public async Task IF_sync_command_handler_fails_on_initial_sync_SHOULD_return_error()
         {
             //Arrange
-            MockSyncCommandHandler.Where_HandleAsync_returns_sequence(new List<Response<IDtoBatch<MyDto>>>
+            MockSyncCommandHandler.Where_HandleAsync_returns_sequence(new List<Response<DtoBatch<MyDto, Guid>>>
             { 
-                Response.Failure<IDtoBatch<MyDto>>(Errors.Errors.InvalidValue("Bob"))
+                Response.Failure<DtoBatch<MyDto, Guid>>(Errors.Errors.InvalidValue("Bob"))
             });
             
             //Act
@@ -121,14 +121,14 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests
         public async Task IF_sync_command_handler_fails_on_later_sync_SHOULD_return_error()
         {
             //Arrange
-            MockSyncCommandHandler.Where_HandleAsync_returns_sequence(new List<Response<IDtoBatch<MyDto>>>
+            MockSyncCommandHandler.Where_HandleAsync_returns_sequence(new List<Response<DtoBatch<MyDto, Guid>>>
             {
-                Response.Success<IDtoBatch<MyDto>>(new DtoBatch<MyDto, Guid>(new []
+                Response.Success(new DtoBatch<MyDto, Guid>(new []
                 {
                     new MyDto{ ModifiedAtTicks = 1 * Num },
                     new MyDto{ ModifiedAtTicks = 2 * Num },
                 }, 5)), 
-                Response.Failure<IDtoBatch<MyDto>>(Errors.Errors.InvalidValue("Fred"))
+                Response.Failure<DtoBatch<MyDto, Guid>>(Errors.Errors.InvalidValue("Fred"))
             });
             
             //Act

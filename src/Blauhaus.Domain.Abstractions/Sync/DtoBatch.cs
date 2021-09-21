@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace Blauhaus.Domain.Abstractions.Sync
 {
-    public class DtoBatch<TDto, TId> : IDtoBatch<TDto> 
+    public class DtoBatch<TDto, TId> 
         where TDto :  IClientEntity<TId> 
         where TId : IEquatable<TId>
     {

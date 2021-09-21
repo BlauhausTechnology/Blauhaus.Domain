@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Blauhaus.Common.Abstractions;
@@ -45,20 +46,10 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.SyncManagerTests
         public async Task SHOULD_publish_updates()
         {
             //Arrange
-            var batch1Dto1 = DtoSyncStatus.Create("DtoOne", new MockBuilder<IDtoBatch>()
-                .With(x => x.RemainingDtoCount, 12)
-                .With(x => x.CurrentDtoCount, 10).Object);
-            var batch2Dto1 = batch1Dto1.Update(new MockBuilder<IDtoBatch>()
-                .With(x => x.RemainingDtoCount, 2)
-                .With(x => x.CurrentDtoCount, 10)
-                .Object);
-            var batch3Dto1 = batch2Dto1.Update(new MockBuilder<IDtoBatch>()
-                .With(x => x.RemainingDtoCount, 0)
-                .With(x => x.CurrentDtoCount, 2)
-                .Object);
-            var batch1Dto2 = DtoSyncStatus.Create("DtoTwo", new MockBuilder<IDtoBatch>()
-                .With(x => x.RemainingDtoCount, 0)
-                .With(x => x.CurrentDtoCount, 5).Object);
+            var batch1Dto1 = DtoSyncStatus.Create("DtoOne", 10, 12);
+            var batch2Dto1 = batch1Dto1.Update(10, 2);
+            var batch3Dto1 = batch2Dto1.Update(2, 0);
+            var batch1Dto2 = DtoSyncStatus.Create("DtoTwo", 5, 0);
             MockSyncClient1.Where_SubscribeAsync_publishes(batch1Dto1, batch2Dto1, batch3Dto1);
             MockSyncClient2.Where_SubscribeAsync_publishes(batch1Dto2);
             using var statusUpdates = await Sut.SubscribeToUpdatesAsync();

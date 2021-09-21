@@ -35,7 +35,6 @@ namespace Blauhaus.Domain.Client.Sqlite.Ioc
              where TId : IEquatable<TId>
              where TSyncDtoCache : class, ISyncDtoCache<TDto, TId>
          {
-             services.AddSingleton<IDtoSyncHandler, DtoSyncHandler<TDto, TId>>();
              services.TryAddSingleton<ISyncDtoCache<TDto, TId>, TSyncDtoCache>();
              return services;
          }
