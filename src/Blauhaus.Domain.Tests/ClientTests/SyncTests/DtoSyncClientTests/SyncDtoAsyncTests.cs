@@ -19,7 +19,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests
         {
             base.Setup();
 
-            MockSyncCommandHandler.Where_HandleAsync_returns(new DtoBatch<MyDto, Guid>(Array.Empty<MyDto>(), 0));
+            MockSyncCommandHandler.Where_HandleAsync_returns(DtoBatch<MyDto, Guid>.Create(Array.Empty<MyDto>(), 0));
         }
 
         [Test]
@@ -44,22 +44,22 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests
             MockSyncDtoCache.Where_LoadLastModifiedTicksAsync_returns(cacheLastModified);
             MockSyncCommandHandler.Where_HandleAsync_returns_sequence(new List<DtoBatch<MyDto, Guid>>
             {
-                new(new []
+                DtoBatch<MyDto, Guid>.Create(new []
                 {
                     new MyDto{ ModifiedAtTicks = 1 * Num },
                     new MyDto{ ModifiedAtTicks = 2 * Num },
                 }, 5),
-                new(new []
+                DtoBatch<MyDto, Guid>.Create(new []
                 {
                     new MyDto{ ModifiedAtTicks = 3 * Num },
                     new MyDto{ ModifiedAtTicks = 4 * Num },
                 }, 3),
-                new(new []
+                DtoBatch<MyDto, Guid>.Create(new []
                 {
                     new MyDto{ ModifiedAtTicks = 5 * Num },
                     new MyDto{ ModifiedAtTicks = 6 * Num },
                 }, 1),
-                new(new []
+                DtoBatch<MyDto, Guid>.Create(new []
                 {
                     new MyDto{ ModifiedAtTicks = 7 * Num },
                 }, 0)
@@ -112,12 +112,12 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests
             MockSyncDtoCache.Where_LoadLastModifiedTicksAsync_returns(0);
             MockSyncCommandHandler.Where_HandleAsync_returns_sequence(new List<DtoBatch<MyDto, Guid>>
             {
-                new(new []
+                DtoBatch<MyDto, Guid>.Create(new []
                 {
                     new MyDto{ ModifiedAtTicks = 5 * Num },
                     new MyDto{ ModifiedAtTicks = 6 * Num },
                 }, 1),
-                new(new []
+                DtoBatch<MyDto, Guid>.Create(new []
                 {
                     new MyDto{ ModifiedAtTicks = 7 * Num },
                 }, 0)
@@ -155,7 +155,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests
             //Arrange
             MockSyncCommandHandler.Where_HandleAsync_returns_sequence(new List<Response<DtoBatch<MyDto, Guid>>>
             {
-                Response.Success(new DtoBatch<MyDto, Guid>(new []
+                Response.Success(DtoBatch<MyDto, Guid>.Create(new []
                 {
                     new MyDto{ ModifiedAtTicks = 1 * Num },
                     new MyDto{ ModifiedAtTicks = 2 * Num },

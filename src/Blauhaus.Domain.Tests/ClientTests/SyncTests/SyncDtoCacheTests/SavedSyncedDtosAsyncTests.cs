@@ -19,7 +19,7 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.SyncDtoCacheTests
         {
             base.Setup();
 
-            _dtoBatch = new DtoBatch<MyDto, Guid>(new []{DtoOne, DtoTwo}, 1);
+            _dtoBatch = DtoBatch<MyDto, Guid>.Create(new []{DtoOne, DtoTwo}, 1);
         }
 
         [Test]
