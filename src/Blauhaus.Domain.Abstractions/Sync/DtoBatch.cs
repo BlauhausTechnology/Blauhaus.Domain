@@ -24,7 +24,7 @@ namespace Blauhaus.Domain.Abstractions.Sync
         public IReadOnlyList<TDto> Dtos { get; }
 
         public int CurrentDtoCount => Dtos.Count;
-        public long BatchLastModifiedTicks => Dtos.Max(x => x.ModifiedAtTicks);
+        public long BatchLastModifiedTicks => Dtos.Count == 0 ? 0 : Dtos.Max(x => x.ModifiedAtTicks);
 
         public static DtoBatch<TDto, TId> Empty()
         {
