@@ -50,7 +50,8 @@ namespace Blauhaus.Domain.Client.Sync
 
                 while (dtoSyncStatus.RemainingDtoCount > 0)
                 {
-                    syncResult = await _syncCommandHandler.HandleAsync(DtoSyncCommand.Create<TDto>(syncResult.Value.BatchLastModifiedTicks));
+                    syncCommand = syncCommand.Update(syncResult.Value.BatchLastModifiedTicks);
+                    syncResult = await _syncCommandHandler.HandleAsync(syncCommand);
                     if (syncResult.IsFailure)
                     {
                         return Response.Failure(syncResult.Error);

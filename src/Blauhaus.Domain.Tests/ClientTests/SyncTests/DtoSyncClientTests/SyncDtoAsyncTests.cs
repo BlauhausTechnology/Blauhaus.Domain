@@ -96,10 +96,42 @@ namespace Blauhaus.Domain.Tests.ClientTests.SyncTests.DtoSyncClientTests
             MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(1, x => x.ModifiedAfterTicks == 2 * Num);
             MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(2, x => x.ModifiedAfterTicks == 4 * Num);
             MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(3, x => x.ModifiedAfterTicks == 6 * Num);
+            
+            MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.IsFirstSync == false);
+            MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(1, x => x.IsFirstSync == false);
+            MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(2, x => x.IsFirstSync == false);
+            MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(3, x => x.IsFirstSync == false);
 
-            MockSyncCommandHandler.Verify_HandleAsync_called_With(x => x.DtoName == "MyDto");
+            MockSyncCommandHandler.Verify_HandleAsync_called_With(x => x.DtoName == "MyDto"); 
         }
 
+        [Test]
+        public async Task IF_there_are_no_entities_locally_SHOULD_send_IsFirstSync_with_all_requests()
+        {
+            //Arrange
+            MockSyncDtoCache.Where_LoadLastModifiedTicksAsync_returns(0);
+            MockSyncCommandHandler.Where_HandleAsync_returns_sequence(new List<DtoBatch<MyDto, Guid>>
+            {
+                new(new []
+                {
+                    new MyDto{ ModifiedAtTicks = 5 * Num },
+                    new MyDto{ ModifiedAtTicks = 6 * Num },
+                }, 1),
+                new(new []
+                {
+                    new MyDto{ ModifiedAtTicks = 7 * Num },
+                }, 0)
+            });
+            
+            //Act
+            await Sut.SyncDtoAsync(MockKeyValueProvider);
+
+            //Assert 
+            MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.IsFirstSync);
+            MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(0, x => x.ModifiedAfterTicks == 0);
+            MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(1, x => x.IsFirstSync);
+            MockSyncCommandHandler.Verify_HandleAsync_called_in_sequence(1, x => x.ModifiedAfterTicks == 6 * Num);
+        }
         
         [Test]
         public async Task IF_sync_command_handler_fails_on_initial_sync_SHOULD_return_error()
