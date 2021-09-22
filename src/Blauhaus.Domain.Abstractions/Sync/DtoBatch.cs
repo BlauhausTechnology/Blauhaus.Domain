@@ -10,27 +10,37 @@ namespace Blauhaus.Domain.Abstractions.Sync
         where TDto :  IClientEntity<TId> 
         where TId : IEquatable<TId>
     {
-   
         [JsonConstructor]
         public DtoBatch(
             IReadOnlyList<TDto> dtos, 
-            int remainingDtoCount)
+            int remainingDtoCount, 
+            int currentDtoCount, 
+            long batchLastModifiedTicks)
         {
-            Dtos = dtos;
             RemainingDtoCount = remainingDtoCount;
-            BatchLastModifiedTicks = Dtos.Count == 0 ? 0 : Dtos.Max(x => x.ModifiedAtTicks);
-            CurrentDtoCount = Dtos.Count;
+            Dtos = dtos;
+            CurrentDtoCount = currentDtoCount;
+            BatchLastModifiedTicks = batchLastModifiedTicks;
         }
+
 
         public int RemainingDtoCount { get; }
         public IReadOnlyList<TDto> Dtos { get; }
-
         public int CurrentDtoCount { get; }
         public long BatchLastModifiedTicks { get; }
 
+        public static DtoBatch<TDto, TId>Create(IReadOnlyList<TDto> dtos, int remainingDtoCount)
+        {
+            return new DtoBatch<TDto, TId>(
+                dtos,
+                remainingDtoCount,
+                dtos.Count,
+                dtos.Count == 0 ? 0 : dtos.Max(x => x.ModifiedAtTicks));
+        }
+
         public static DtoBatch<TDto, TId> Empty()
         {
-            return new DtoBatch<TDto, TId>(Array.Empty<TDto>(), 0);
+            return Create(Array.Empty<TDto>(), 0);
         }
     }
 }
