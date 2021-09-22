@@ -18,13 +18,15 @@ namespace Blauhaus.Domain.Abstractions.Sync
         {
             Dtos = dtos;
             RemainingDtoCount = remainingDtoCount;
+            BatchLastModifiedTicks = Dtos.Count == 0 ? 0 : Dtos.Max(x => x.ModifiedAtTicks);
+            CurrentDtoCount = Dtos.Count;
         }
 
         public int RemainingDtoCount { get; }
         public IReadOnlyList<TDto> Dtos { get; }
 
-        public int CurrentDtoCount => Dtos.Count;
-        public long BatchLastModifiedTicks => Dtos.Count == 0 ? 0 : Dtos.Max(x => x.ModifiedAtTicks);
+        public int CurrentDtoCount { get; }
+        public long BatchLastModifiedTicks { get; }
 
         public static DtoBatch<TDto, TId> Empty()
         {
