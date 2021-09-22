@@ -8,10 +8,11 @@ using Blauhaus.Domain.Abstractions.Sync;
 namespace Blauhaus.Domain.Abstractions.DtoCaches
 {
      
-    public interface ISyncDtoCache<TDto, in TId> : IDtoCache<TDto, TId>
+    public interface ISyncDtoCache<TDto, TId> : IDtoCache<TDto, TId>
         where TDto : class, IClientEntity<TId> where TId : IEquatable<TId>
     {
         Task<long> LoadLastModifiedTicksAsync(IKeyValueProvider? settingsProvider);
+        Task SaveSyncedDtosAsync(DtoBatch<TDto, TId> dtoBatch);
 
     }
 }

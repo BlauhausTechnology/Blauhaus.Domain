@@ -61,6 +61,27 @@ namespace Blauhaus.Domain.Client.Sqlite.DtoCaches
             });
         }
 
+        public Task SaveSyncedDtosAsync(DtoBatch<TDto, TId> dtoBatch)
+        {
+            return InvokeAsync(async () =>
+            {
+                //todo cache BatchLastModifiedTicks?
+
+                foreach (var dto in dtoBatch.Dtos)
+                {
+                    var entity = await PopulateEntityAsync(dto);
+                    entity.SyncState = SyncState.InSync;
+
+                    await _sqliteDatabaseService.AsyncConnection
+                        .InsertOrReplaceAsync(entity);
+
+                    _analyticsService.Debug($"{typeof(TDto).Name} saved as {typeof(TEntity).Name}");
+
+                    await UpdateSubscribersAsync(dto);
+                }
+            });
+        }
+
         protected virtual string GetAdditionalFilterClause(IKeyValueProvider command)
         {
             return string.Empty;
@@ -137,6 +158,7 @@ namespace Blauhaus.Domain.Client.Sqlite.DtoCaches
             return dto;
         }
          
+        //todo how do we set SyncState for synced entities?
         protected virtual Task<TEntity> PopulateEntityAsync(TDto dto)
         {
             return Task.FromResult(new TEntity

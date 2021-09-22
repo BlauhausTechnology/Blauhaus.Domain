@@ -25,5 +25,10 @@ namespace Blauhaus.Domain.Abstractions.Sync
 
         public int CurrentDtoCount => Dtos.Count;
         public long BatchLastModifiedTicks => Dtos.Max(x => x.ModifiedAtTicks);
+
+        public static DtoBatch<TDto, TId> Empty()
+        {
+            return new DtoBatch<TDto, TId>(Array.Empty<TDto>(), 0);
+        }
     }
 }
