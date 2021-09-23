@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
-using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Abstractions.Sync.Old;
 using Blauhaus.TestHelpers.MockBuilders;
 using Moq;
 
-namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients
+namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Sync.Old.SyncClients
 {
     public class SyncStatusHandlerMockBuilder : BaseMockBuilder<SyncStatusHandlerMockBuilder, ISyncStatusHandler>
     {

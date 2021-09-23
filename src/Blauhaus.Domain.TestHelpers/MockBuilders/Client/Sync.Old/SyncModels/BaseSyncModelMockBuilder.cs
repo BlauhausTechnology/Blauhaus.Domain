@@ -7,7 +7,7 @@ using Blauhaus.Domain.Client.Sync.Old.Model;
 using Blauhaus.TestHelpers.MockBuilders;
 using Moq;
 
-namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncModels
+namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Sync.Old.SyncModels
 {
 
     public abstract class BaseSyncModelMockBuilder<TBuilder, TSyncModel, TModel> : BaseMockBuilder<TBuilder, TSyncModel>

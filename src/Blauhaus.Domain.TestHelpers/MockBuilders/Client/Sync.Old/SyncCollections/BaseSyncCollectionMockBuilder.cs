@@ -1,12 +1,11 @@
-﻿using Blauhaus.Domain.Abstractions.Entities;
-using Blauhaus.Domain.Abstractions.Sync;
-using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients;
-using Blauhaus.TestHelpers.MockBuilders;
-using System;
+﻿using System;
+using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Sync.Old;
 using Blauhaus.Domain.Client.Sync.Old.Collection;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Sync.Old.SyncClients;
+using Blauhaus.TestHelpers.MockBuilders;
 
-namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncCollections
+namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Sync.Old.SyncCollections
 {
 
     public class BaseSyncCollectionMockBuilder<TBuilder, TModel, TListItem, TSyncCommand> : BaseMockBuilder<TBuilder, ISyncCollection<TModel, TListItem, TSyncCommand>> 

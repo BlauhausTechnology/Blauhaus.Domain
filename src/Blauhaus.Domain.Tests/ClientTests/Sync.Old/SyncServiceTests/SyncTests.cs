@@ -5,7 +5,7 @@ using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Domain.Abstractions.Sync.Old;
 using Blauhaus.Domain.Client.Sync.Old.Service;
 using Blauhaus.Domain.TestHelpers.Extensions;
-using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Sync.Old.SyncClients;
 using Blauhaus.Domain.Tests.Base;
 using Blauhaus.Domain.Tests.TestObjects.Client;
 using Blauhaus.Domain.Tests.TestObjects.Common;

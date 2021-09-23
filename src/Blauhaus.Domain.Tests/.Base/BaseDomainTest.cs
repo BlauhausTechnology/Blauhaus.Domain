@@ -4,7 +4,7 @@ using Blauhaus.DeviceServices.Abstractions.Connectivity;
 using Blauhaus.DeviceServices.TestHelpers.MockBuilders;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Abstractions.Sync.Old;
-using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Sync.Old.SyncClients;
 using Blauhaus.Errors.Handler;
 using Blauhaus.Ioc.Abstractions;
 using Blauhaus.Ioc.TestHelpers;

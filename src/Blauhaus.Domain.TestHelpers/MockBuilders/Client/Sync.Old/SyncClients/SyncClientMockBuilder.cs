@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Blauhaus.Domain.Abstractions.Entities;
-using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Abstractions.Sync.Old;
 using Blauhaus.TestHelpers.MockBuilders;
 using Moq;
 
-namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients
+namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Sync.Old.SyncClients
 {
     public class SyncClientMockBuilder<TModel, TSyncCommand> : BaseSyncClientMockBuilder<SyncClientMockBuilder<TModel, TSyncCommand>, ISyncClient<TModel, TSyncCommand>, TModel, TSyncCommand> 
         where TModel : IClientEntity <Guid>

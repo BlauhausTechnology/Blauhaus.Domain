@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
-using Blauhaus.Domain.TestHelpers.MockBuilders.Common.DtoLoaders;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoCaches
 {
@@ -16,7 +15,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoCaches
 
     }
 
-    public abstract class BaseDtoCacheMockBuilder<TBuilder, TMock, TDto, TId> : BaseDtoLoaderMockBuilder<TBuilder, TMock, TDto, TId>
+    public abstract class BaseDtoCacheMockBuilder<TBuilder, TMock, TDto, TId> : Common.DtoCaches.BaseDtoCacheMockBuilder<TBuilder, TMock, TDto, TId>
         where TBuilder : BaseDtoCacheMockBuilder<TBuilder, TMock, TDto, TId> 
         where TMock : class, IDtoCache<TDto, TId>
         where TDto : class, IHasId<TId>

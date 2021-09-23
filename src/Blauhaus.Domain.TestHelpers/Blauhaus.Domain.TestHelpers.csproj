@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="MockBuilders\Common\DtoLoaders\" />
     <Folder Include="MockBuilders\Server\" />
   </ItemGroup>
 

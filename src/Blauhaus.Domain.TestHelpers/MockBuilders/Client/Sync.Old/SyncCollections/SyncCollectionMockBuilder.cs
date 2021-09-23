@@ -1,10 +1,9 @@
-﻿using Blauhaus.Domain.Abstractions.Entities;
-using Blauhaus.Domain.Abstractions.Sync;
-using System;
+﻿using System;
+using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Sync.Old;
 using Blauhaus.Domain.Client.Sync.Old.Collection;
 
-namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncCollections
+namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.Sync.Old.SyncCollections
 {
     public class SyncCollectionMockBuilder<TModel, TListItem> : BaseSyncCollectionMockBuilder<SyncCollectionMockBuilder<TModel, TListItem>, TModel, TListItem, SyncCommand>
         where TListItem : IListItem<TModel>

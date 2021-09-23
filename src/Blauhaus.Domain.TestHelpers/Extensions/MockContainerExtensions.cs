@@ -6,9 +6,6 @@ using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.ClientEntityConverters;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Repositories;
-using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncClients;
-using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncCollections;
-using Blauhaus.Domain.TestHelpers.MockBuilders.Client.SyncModels;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers;
 using Blauhaus.TestHelpers;
 using Blauhaus.Common.Abstractions;
@@ -20,6 +17,9 @@ using Blauhaus.Domain.Client.Sync.Old.Model;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoCaches;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoHandlers;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Sync;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Sync.Old.SyncClients;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Sync.Old.SyncCollections;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Client.Sync.Old.SyncModels;
 
 namespace Blauhaus.Domain.TestHelpers.Extensions
 {
