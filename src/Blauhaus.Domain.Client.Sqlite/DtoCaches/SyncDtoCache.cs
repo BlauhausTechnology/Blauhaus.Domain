@@ -130,7 +130,25 @@ namespace Blauhaus.Domain.Client.Sqlite.DtoCaches
         {
             return InvokeAsync(async () => await LoadManyAsync(x => true));
         }
-         
+
+        public Task DeleteOneAsync(TId id)
+        {
+            return InvokeAsync(async () =>
+            {
+                await _sqliteDatabaseService.AsyncConnection.Table<TEntity>()
+                    .DeleteAsync(x => x.Id.Equals(id));
+            });
+        }
+
+        public Task DeleteAllAsync()
+        {
+            return InvokeAsync(async () =>
+            {
+                await _sqliteDatabaseService.AsyncConnection.Table<TEntity>()
+                    .DeleteAsync(x => true);
+            });
+        }
+
         protected async Task<IReadOnlyList<TDto>> LoadManyAsync(Expression<Func<TEntity, bool>>? search = null)
         {
             var entities = search == null 
@@ -158,7 +176,6 @@ namespace Blauhaus.Domain.Client.Sqlite.DtoCaches
             return dto;
         }
          
-        //todo how do we set SyncState for synced entities?
         protected virtual Task<TEntity> PopulateEntityAsync(TDto dto)
         {
             return Task.FromResult(new TEntity

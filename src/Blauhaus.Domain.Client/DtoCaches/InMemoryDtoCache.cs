@@ -56,6 +56,21 @@ namespace Blauhaus.Domain.Client.DtoCaches
             return InvokeAsync<IReadOnlyList<TDto>>(() =>
                 CachedDtos.Values.ToList());
         }
-         
+
+        public Task DeleteOneAsync(TId id)
+        {
+            if (CachedDtos.TryGetValue(id, out _))
+            {
+                CachedDtos.Remove(id);
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public Task DeleteAllAsync()
+        {
+            CachedDtos.Clear();
+            return Task.CompletedTask;
+        }
     }
 }

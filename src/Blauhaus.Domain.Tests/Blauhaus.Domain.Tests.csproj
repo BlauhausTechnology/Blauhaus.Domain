@@ -17,8 +17,6 @@
     <Compile Include="ClientTests\Sync.Old\SyncClientTests\.Base\BaseSyncClientTest.cs" />
     <Compile Include="ClientTests\SyncTests\DtoSyncClientTests\.Base\BaseDtoSyncClientTest.cs" />
     <Compile Include="ClientTests\SyncTests\SyncManagerTests\.Base\BaseSyncManagerTest.cs" />
-    <Compile Include="ServerTests\MyServerDtoRepositoryTests\.Base\BaseMyServerRepositoryDtoTest.cs" />
-    <Compile Include="ServerTests\MyServerDtoRepositoryTests\.Base\MyServerDtoLoader.cs" />
   </ItemGroup>
 
   <ItemGroup>
