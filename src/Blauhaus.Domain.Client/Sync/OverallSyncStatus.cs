@@ -23,8 +23,10 @@ namespace Blauhaus.Domain.Client.Sync
 
         public OverallSyncStatus Update(DtoSyncStatus newDtoSyncStatus)
         {
-            DtoStatuses[newDtoSyncStatus.DtoName] = newDtoSyncStatus;
-            return new OverallSyncStatus(DtoStatuses);
+            return new OverallSyncStatus(new Dictionary<string, DtoSyncStatus>(DtoStatuses)
+            {
+                [newDtoSyncStatus.DtoName] = newDtoSyncStatus
+            });
         }
         
         public Dictionary<string, DtoSyncStatus> DtoStatuses { get; }

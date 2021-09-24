@@ -42,6 +42,12 @@ namespace Blauhaus.Domain.Client.Sqlite.DtoCaches
             _lastModifiedQueryEnd = $"ORDER BY {nameof(ISyncClientEntity.ModifiedAtTicks)} DESC LIMIT 1";
 
         }
+
+        public Task<IDisposable> SubscribeAsync(Func<TDto, Task> handler, Func<TDto, bool>? filter = null)
+        {
+            return Task.FromResult(AddSubscriber(handler, filter));
+        }
+
         public Task<long> LoadLastModifiedTicksAsync(IKeyValueProvider? settingsProvider)
         {
             return InvokeLockedAsync(async () =>
@@ -59,6 +65,11 @@ namespace Blauhaus.Domain.Client.Sqlite.DtoCaches
 
                 return await _sqliteDatabaseService.AsyncConnection.ExecuteScalarAsync<long>(lastModifiedQuery.ToString());
             });
+        }
+        
+        protected virtual string GetAdditionalFilterClause(IKeyValueProvider command)
+        {
+            return string.Empty;
         }
 
         public Task SaveSyncedDtosAsync(DtoBatch<TDto, TId> dtoBatch)
@@ -82,16 +93,6 @@ namespace Blauhaus.Domain.Client.Sqlite.DtoCaches
             });
         }
 
-        protected virtual string GetAdditionalFilterClause(IKeyValueProvider command)
-        {
-            return string.Empty;
-        }
-
-
-        public Task<IDisposable> SubscribeAsync(Func<TDto, Task> handler, Func<TDto, bool>? filter = null)
-        {
-            return Task.FromResult(AddSubscriber(handler, filter));
-        }
 
         public Task HandleAsync(TDto dto)
         {
