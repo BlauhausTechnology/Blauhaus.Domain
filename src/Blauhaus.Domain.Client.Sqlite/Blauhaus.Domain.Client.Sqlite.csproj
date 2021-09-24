@@ -17,11 +17,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Blauhaus.Domain.Client\Blauhaus.Domain.Client.csproj" />
+    <Folder Include="DtoRepository\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DtoRepository\" />
+    <ProjectReference Include="..\Blauhaus.Domain.Client\Blauhaus.Domain.Client.csproj" />
   </ItemGroup>
 
 </Project>
