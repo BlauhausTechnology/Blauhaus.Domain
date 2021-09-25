@@ -42,5 +42,10 @@ namespace Blauhaus.Domain.Abstractions.Sync
         {
             return Create(Array.Empty<TDto>(), 0);
         }
+
+        public override string ToString()
+        {
+            return $"{typeof(TDto).Name}: {CurrentDtoCount} / {CurrentDtoCount+RemainingDtoCount}";
+        }
     }
 }
