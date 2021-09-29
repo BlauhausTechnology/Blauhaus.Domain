@@ -6,7 +6,6 @@ using Blauhaus.Domain.Abstractions.Repositories;
 using Blauhaus.Domain.Abstractions.Sync;
 using Blauhaus.Domain.Abstractions.Sync.Old;
 using Blauhaus.Domain.Client.Ioc;
-using Blauhaus.Domain.Client.Sqlite.DtoCaches;
 using Blauhaus.Domain.Client.Sqlite.Entities;
 using Blauhaus.Domain.Client.Sqlite.Repository;
 using Blauhaus.Domain.Client.Sqlite.SyncRepository;
@@ -21,23 +20,23 @@ namespace Blauhaus.Domain.Client.Sqlite.Ioc
 {
     public static class ServiceCollectionExtensions
     {
-         public static IServiceCollection AddSyncDto<TDto, TId, TEntity>(this IServiceCollection services)
-            where TDto : ClientEntity<TId>, new()
-            where TEntity : SyncClientEntity<TId>, IEquatable<TEntity>, new()
-            where TId : IEquatable<TId>
-         {
-             return services
-                 .AddSyncDtoCache<TDto, TId, SyncDtoCache<TDto, TEntity, TId>>();
-        }
+        // public static IServiceCollection AddSyncDto<TDto, TId, TEntity>(this IServiceCollection services)
+        //    where TDto : ClientEntity<TId>, new()
+        //    where TEntity : SyncClientEntity<TId>, IEquatable<TEntity>, new()
+        //    where TId : IEquatable<TId>
+        // {
+        //     return services
+        //         .AddSyncDtoCache<TDto, TId, SyncDtoCache<TDto, TEntity, TId>>();
+        //}
 
-         public static IServiceCollection AddSyncDtoCache<TDto, TId, TSyncDtoCache>(this IServiceCollection services)
-             where TDto : ClientEntity<TId>, new()
-             where TId : IEquatable<TId>
-             where TSyncDtoCache : class, ISyncDtoCache<TDto, TId>
-         {
-             services.TryAddSingleton<ISyncDtoCache<TDto, TId>, TSyncDtoCache>();
-             return services;
-         }
+        // public static IServiceCollection AddSyncDtoCache<TDto, TId, TSyncDtoCache>(this IServiceCollection services)
+        //     where TDto : ClientEntity<TId>, new()
+        //     where TId : IEquatable<TId>
+        //     where TSyncDtoCache : class, ISyncDtoCache<TDto, TId>
+        // {
+        //     services.TryAddSingleton<ISyncDtoCache<TDto, TId>, TSyncDtoCache>();
+        //     return services;
+        // }
          
 
         public static IServiceCollection AddClientRepository<TModel, TDto, TRootEntity, TEntityConverter>(this IServiceCollection services) 

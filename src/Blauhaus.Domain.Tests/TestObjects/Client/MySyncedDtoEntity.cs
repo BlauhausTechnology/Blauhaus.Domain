@@ -1,6 +1,5 @@
 ﻿using System;
 using Blauhaus.Domain.Abstractions.Entities;
-using Blauhaus.Domain.Client.Sqlite.DtoCaches;
 using Blauhaus.Domain.Client.Sqlite.Entities;
 using Blauhaus.Domain.Tests.TestObjects.Common;
 using Newtonsoft.Json;

@@ -8,15 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ClientTests\SqliteTests\SyncDtoCacheTests\**" />
+    <EmbeddedResource Remove="ClientTests\SqliteTests\SyncDtoCacheTests\**" />
+    <None Remove="ClientTests\SqliteTests\SyncDtoCacheTests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include=".Base\BaseDomainTest.cs" />
     <Compile Include=".Base\BaseEfCoreTest.cs" />
     <Compile Include="ClientTests\InMemoryDtoCacheTests\.Base\BaseInMemoryDtoCacheTest.cs" />
     <Compile Include="ClientTests\InMemoryDtoCacheTests\.Base\TestInMemoryDtoCache.cs" />
-    <Compile Include="ClientTests\SyncTests\SyncDtoCacheTests\.Base\BaseSyncDtoCacheTest.cs" />
-    <Compile Include="ClientTests\SyncTests\SyncDtoCacheTests\.Base\TestSyncDtoCache.cs" />
     <Compile Include="ClientTests\Sync.Old\SyncClientTests\.Base\BaseSyncClientTest.cs" />
-    <Compile Include="ClientTests\SyncTests\DtoSyncClientTests\.Base\BaseDtoSyncClientTest.cs" />
-    <Compile Include="ClientTests\SyncTests\SyncManagerTests\.Base\BaseSyncManagerTest.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,7 +39,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ClientTests\SqliteTests\SyncDtoCacheTests\" />
     <Folder Include="ClientTests\SqliteTests\_Seeds\" />
   </ItemGroup>
 

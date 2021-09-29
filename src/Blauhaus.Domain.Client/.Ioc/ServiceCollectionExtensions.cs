@@ -19,16 +19,7 @@ namespace Blauhaus.Domain.Client.Ioc
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddDtoSyncHandler<TDto, TId>(this IServiceCollection services) 
-            where TDto : class, IClientEntity<TId> 
-            where TId : IEquatable<TId>
-        {
-            services.AddSingleton<IDtoSyncHandler, DtoSyncHandler<TDto, TId>>();
-
-            return services;
-        }
-
-
+ 
         public static IServiceCollection AddDtoHandler<TDto, TId, TDtoHandler>(this IServiceCollection services) 
             where TDto : class, IHasId<TId>
             where TDtoHandler : class, IDtoHandler<TDto>
