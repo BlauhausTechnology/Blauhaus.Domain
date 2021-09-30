@@ -1,6 +1,4 @@
-﻿using AutoFixture;
-using Blauhaus.Common.Utils.Extensions;
-using Blauhaus.Domain.Tests.Base;
+﻿using Blauhaus.Domain.Tests.Base;
 using Blauhaus.Domain.Tests.TestObjects.Common;
 using Blauhaus.TestHelpers.Builders.Base;
 

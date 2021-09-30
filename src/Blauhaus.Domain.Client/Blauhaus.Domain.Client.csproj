@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include=".Ioc\IocServiceExtensions.cs" />
     <Compile Include=".Ioc\ServiceCollectionExtensions.cs" />
   </ItemGroup>
 
@@ -21,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Blauhaus.Domain.Abstractions\Blauhaus.Domain.Abstractions.csproj" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
 
 </Project>

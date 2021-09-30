@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Blauhaus.Domain.Tests.ClientTests.InMemoryDtoCacheTests.Base;
-using Blauhaus.Errors;
 using NUnit.Framework;
 
 namespace Blauhaus.Domain.Tests.ClientTests.InMemoryDtoCacheTests

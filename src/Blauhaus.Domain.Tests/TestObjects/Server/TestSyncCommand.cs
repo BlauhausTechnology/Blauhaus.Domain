@@ -1,5 +1,4 @@
-﻿using Blauhaus.Domain.Abstractions.Sync;
-using Blauhaus.Domain.Abstractions.Sync.Old;
+﻿using Reveye.Common.Sync;
 
 namespace Blauhaus.Domain.Tests.TestObjects.Server
 {

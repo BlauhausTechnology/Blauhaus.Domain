@@ -1,11 +1,7 @@
 ﻿using Blauhaus.Common.Abstractions;
-using Blauhaus.Common.TestHelpers.MockBuilders;
 using Blauhaus.Domain.Abstractions.DtoCaches;
 using Moq;
-using System.Collections.Generic;
 using System;
-using System.Linq;
-using System.Linq.Expressions;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoCaches
 {

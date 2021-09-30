@@ -1,4 +1,4 @@
-﻿using Blauhaus.Domain.Client.Sync.Old.Collection;
+﻿using Reveye.Client.Domain.Domain.Sync.Old.Collection;
 
 namespace Blauhaus.Domain.Tests.TestObjects.Client
 {

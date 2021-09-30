@@ -1,5 +1,4 @@
 ﻿using System;
-using Blauhaus.Domain.Abstractions.Entities;
 using Blauhaus.Domain.Client.Sqlite.Entities;
 
 namespace Blauhaus.Domain.Tests.TestObjects.Common

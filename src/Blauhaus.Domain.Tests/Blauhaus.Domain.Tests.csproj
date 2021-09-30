@@ -1,24 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+	  <TargetFramework>net5.0-windows10.0.19041.0</TargetFramework>
     <LangVersion>9</LangVersion>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="ClientTests\SqliteTests\SyncDtoCacheTests\**" />
-    <EmbeddedResource Remove="ClientTests\SqliteTests\SyncDtoCacheTests\**" />
-    <None Remove="ClientTests\SqliteTests\SyncDtoCacheTests\**" />
-  </ItemGroup>
-
+   
   <ItemGroup>
     <Compile Include=".Base\BaseDomainTest.cs" />
     <Compile Include=".Base\BaseEfCoreTest.cs" />
     <Compile Include="ClientTests\InMemoryDtoCacheTests\.Base\BaseInMemoryDtoCacheTest.cs" />
     <Compile Include="ClientTests\InMemoryDtoCacheTests\.Base\TestInMemoryDtoCache.cs" />
-    <Compile Include="ClientTests\Sync.Old\SyncClientTests\.Base\BaseSyncClientTest.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,10 +29,6 @@
     <ProjectReference Include="..\Blauhaus.Domain.Server\Blauhaus.Domain.Server.csproj" />
     <ProjectReference Include="..\Blauhaus.Domain.TestHelpers.EFCore\Blauhaus.Domain.TestHelpers.EFCore.csproj" />
     <ProjectReference Include="..\Blauhaus.Domain.TestHelpers\Blauhaus.Domain.TestHelpers.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ClientTests\SqliteTests\_Seeds\" />
   </ItemGroup>
 
 </Project>

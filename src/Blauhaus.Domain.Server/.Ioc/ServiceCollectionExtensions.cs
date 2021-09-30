@@ -1,10 +1,6 @@
-﻿using System;
-using Blauhaus.Auth.Abstractions.User;
+﻿using Blauhaus.Auth.Abstractions.User;
 using Blauhaus.Domain.Abstractions.CommandHandlers;
-using Blauhaus.Domain.Abstractions.Entities;
-using Blauhaus.Domain.Abstractions.Sync;
-using Blauhaus.Domain.Abstractions.Sync.Old;
-using Blauhaus.Domain.Server.CommandHandlers.Sync;
+using Blauhaus.Domain.Abstractions.Entities; 
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Blauhaus.Domain.Server.Ioc
@@ -74,31 +70,31 @@ namespace Blauhaus.Domain.Server.Ioc
         //    return services;
         //}
 
-        public static IServiceCollection AddAuthenticatedSyncCommandHandler<TEntity, TSyncCommand, TQueryLoader, TUser>(this IServiceCollection services) 
-            where TEntity : IServerEntity 
-            where TUser : class
-            where TQueryLoader : class, IAuthenticatedSyncQueryLoader<TEntity, TSyncCommand, TUser>
-            where TSyncCommand : SyncCommand
-        {
-            services.AddAuthenticatedCommandHandler<SyncResult<TEntity>, TSyncCommand, TUser, AuthenticatedSyncCommandHandler<TEntity, TSyncCommand, TUser>>();
-            services.AddScoped<IAuthenticatedSyncQueryLoader<TEntity, TSyncCommand, TUser>, TQueryLoader>();
-            return services;
-        }
+        //public static IServiceCollection AddAuthenticatedSyncCommandHandler<TEntity, TSyncCommand, TQueryLoader, TUser>(this IServiceCollection services) 
+        //    where TEntity : IServerEntity 
+        //    where TUser : class
+        //    where TQueryLoader : class, IAuthenticatedSyncQueryLoader<TEntity, TSyncCommand, TUser>
+        //    where TSyncCommand : SyncCommand
+        //{
+        //    services.AddAuthenticatedCommandHandler<SyncResult<TEntity>, TSyncCommand, TUser, AuthenticatedSyncCommandHandler<TEntity, TSyncCommand, TUser>>();
+        //    services.AddScoped<IAuthenticatedSyncQueryLoader<TEntity, TSyncCommand, TUser>, TQueryLoader>();
+        //    return services;
+        //}
         
-        public static IServiceCollection AddAuthenticatedUserSyncCommandHandler<TEntity, TSyncQuery, TQueryLoader>(this IServiceCollection services) 
-            where TEntity : IServerEntity 
-            where TQueryLoader : class, IAuthenticatedSyncQueryLoader<TEntity, TSyncQuery, IAuthenticatedUser>
-            where TSyncQuery : SyncCommand
-        {
-            return services.AddAuthenticatedSyncCommandHandler<TEntity, TSyncQuery, TQueryLoader, IAuthenticatedUser>();
-        }
+        //public static IServiceCollection AddAuthenticatedUserSyncCommandHandler<TEntity, TSyncQuery, TQueryLoader>(this IServiceCollection services) 
+        //    where TEntity : IServerEntity 
+        //    where TQueryLoader : class, IAuthenticatedSyncQueryLoader<TEntity, TSyncQuery, IAuthenticatedUser>
+        //    where TSyncQuery : SyncCommand
+        //{
+        //    return services.AddAuthenticatedSyncCommandHandler<TEntity, TSyncQuery, TQueryLoader, IAuthenticatedUser>();
+        //}
          
-        public static IServiceCollection AddAuthenticatedUserSyncCommandHandler<TEntity, TQueryLoader>(this IServiceCollection services) 
-            where TEntity : IServerEntity
-            where TQueryLoader : class, IAuthenticatedSyncQueryLoader<TEntity, SyncCommand, IAuthenticatedUser>
-        {
-            return services.AddAuthenticatedSyncCommandHandler<TEntity, SyncCommand, TQueryLoader, IAuthenticatedUser>();
-        }
+        //public static IServiceCollection AddAuthenticatedUserSyncCommandHandler<TEntity, TQueryLoader>(this IServiceCollection services) 
+        //    where TEntity : IServerEntity
+        //    where TQueryLoader : class, IAuthenticatedSyncQueryLoader<TEntity, SyncCommand, IAuthenticatedUser>
+        //{
+        //    return services.AddAuthenticatedSyncCommandHandler<TEntity, SyncCommand, TQueryLoader, IAuthenticatedUser>();
+        //}
 
     }
 }

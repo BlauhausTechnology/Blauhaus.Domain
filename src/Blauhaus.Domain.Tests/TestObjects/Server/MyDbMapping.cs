@@ -1,5 +1,4 @@
-﻿using System;
-using Blauhaus.Domain.Server.EFCore.DbMappings;
+﻿using Blauhaus.Domain.Server.EFCore.DbMappings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

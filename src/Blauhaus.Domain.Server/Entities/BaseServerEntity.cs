@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.Cryptography;
 using Blauhaus.Domain.Abstractions.Entities;
 
 namespace Blauhaus.Domain.Server.Entities
