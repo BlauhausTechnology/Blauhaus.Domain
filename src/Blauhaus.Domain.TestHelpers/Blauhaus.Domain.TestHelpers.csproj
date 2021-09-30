@@ -19,8 +19,7 @@
     <Folder Include="MockBuilders\Server\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\REVEYE Code\REVEYE.Client\src\Reveye.Client\Reveye.Client.Domain\Reveye.Client.Domain.csproj" />
+  <ItemGroup> 
     <ProjectReference Include="..\Blauhaus.Domain.Server\Blauhaus.Domain.Server.csproj" />
   </ItemGroup>
 

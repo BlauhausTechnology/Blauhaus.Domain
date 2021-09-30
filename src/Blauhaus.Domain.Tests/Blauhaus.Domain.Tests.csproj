@@ -6,6 +6,13 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include=".Base\BaseDomainTest.cs" />
+    <Compile Include=".Base\BaseEfCoreTest.cs" />
+    <Compile Include="ClientTests\InMemoryDtoCacheTests\.Base\BaseInMemoryDtoCacheTest.cs" />
+    <Compile Include="ClientTests\InMemoryDtoCacheTests\.Base\TestInMemoryDtoCache.cs" />
+  </ItemGroup>
     
 
   <ItemGroup>
