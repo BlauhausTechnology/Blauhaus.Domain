@@ -18,7 +18,6 @@ namespace Blauhaus.Domain.Tests.TestObjects.Client
         public Guid Id { get; }
         public EntityState EntityState { get; }
         public long ModifiedAtTicks { get; }
-        public SyncState SyncState { get; }
 
 
         public override string ToString()
