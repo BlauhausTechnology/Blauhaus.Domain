@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Blauhaus.ClientActors.Actors;
 using Blauhaus.Common.Abstractions;
@@ -56,7 +57,7 @@ namespace Blauhaus.Domain.Client.DtoCaches
             return InvokeAsync<IReadOnlyList<TDto>>(() =>
                 CachedDtos.Values.ToList());
         }
-
+         
         public Task DeleteOneAsync(TId id)
         {
             return InvokeAsync(() =>
