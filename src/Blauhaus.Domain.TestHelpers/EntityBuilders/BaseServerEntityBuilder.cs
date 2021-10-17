@@ -10,10 +10,14 @@ namespace Blauhaus.Domain.TestHelpers.EntityBuilders
         where TBuilder : BaseServerEntityBuilder<TBuilder, TEntity>
     {
 
-        protected Guid Id = Guid.NewGuid();
+        public Guid Id { get; } 
+        public DateTime CreatedAt { get; }
 
         protected BaseServerEntityBuilder(DateTime createdAt)
         {
+            Id = Guid.NewGuid();
+            CreatedAt = createdAt;
+
             With(x => x.CreatedAt, createdAt);
             With(x => x.ModifiedAt, createdAt);
             With(x => x.EntityState, EntityState.Active);
