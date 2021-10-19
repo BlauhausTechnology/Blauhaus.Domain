@@ -8,7 +8,7 @@
 
   <ItemGroup>
 	  <PackageReference Include="Blauhaus.Common.Utils" Version="1.12.5" />
-    <PackageReference Include="Blauhaus.ClientDatabase.Sqlite" Version="0.7.10" />
+    <PackageReference Include="Blauhaus.ClientDatabase.Sqlite" Version="0.7.11" />
     <PackageReference Include="SqlKata" Version="2.3.7" />
   </ItemGroup>
 
