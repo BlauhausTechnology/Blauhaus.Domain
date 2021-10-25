@@ -8,7 +8,7 @@ namespace Blauhaus.Domain.TestHelpers.Extensions
     public static class ServerEntityExtensions
     {
         
-        public static TEntity VerifyDeletedServerEntity<TEntity>(this TEntity entity, DateTime createdAt, DateTime modifiedAt) 
+        public static TEntity VerifyDeletedServerEntity<TEntity>(this TEntity? entity, DateTime createdAt, DateTime modifiedAt) 
             where TEntity : IServerEntity
         {
             Assert.That(entity, Is.Not.Null);
@@ -22,7 +22,7 @@ namespace Blauhaus.Domain.TestHelpers.Extensions
         }
 
 
-        public static TEntity VerifyModifiedServerEntity<TEntity>(this TEntity entity, DateTime createdAt, DateTime modifiedAt) 
+        public static TEntity VerifyModifiedServerEntity<TEntity>(this TEntity? entity, DateTime createdAt, DateTime modifiedAt) 
             where TEntity : IServerEntity
         {
             Assert.That(entity, Is.Not.Null);
@@ -35,7 +35,7 @@ namespace Blauhaus.Domain.TestHelpers.Extensions
             return entity;
         }
         
-        public static TEntity VerifyNewDraftServerEntity<TEntity>(this TEntity entity, DateTime runTime) 
+        public static TEntity VerifyNewDraftServerEntity<TEntity>(this TEntity? entity, DateTime runTime) 
             where TEntity : IServerEntity
         {
             Assert.That(entity, Is.Not.Null);
@@ -49,7 +49,7 @@ namespace Blauhaus.Domain.TestHelpers.Extensions
         }
 
         
-        public static TEntity VerifyNewServerEntity<TEntity>(this TEntity entity, DateTime runTime) 
+        public static TEntity VerifyNewServerEntity<TEntity>(this TEntity? entity, DateTime runTime) 
             where TEntity : IServerEntity
         {
             Assert.That(entity, Is.Not.Null);
@@ -62,7 +62,7 @@ namespace Blauhaus.Domain.TestHelpers.Extensions
             return entity;
         }
         
-        public static TEntity VerifyNewServerUserEntity<TEntity>(this TEntity entity, DateTime createdAt, Guid userId) 
+        public static TEntity VerifyNewServerUserEntity<TEntity>(this TEntity? entity, DateTime createdAt, Guid userId) 
             where TEntity : IServerEntity, IHasUserId
         {
             entity = entity.VerifyNewServerEntity(createdAt);
