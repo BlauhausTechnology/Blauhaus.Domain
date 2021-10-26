@@ -1,6 +1,6 @@
 ﻿namespace Blauhaus.Domain.Abstractions.Commands
 {
-    public class DeleteCommand
+    public class DeleteCommand : IAdminCommand
     {
         
     }
