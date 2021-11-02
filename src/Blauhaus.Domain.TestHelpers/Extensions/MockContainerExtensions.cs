@@ -7,6 +7,7 @@ using Blauhaus.Domain.Abstractions.DtoCaches;
 using Blauhaus.Domain.Abstractions.DtoHandlers;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoCaches;
 using Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoHandlers;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Common.DtoCaches;
 
 namespace Blauhaus.Domain.TestHelpers.Extensions
 {
@@ -18,6 +19,9 @@ namespace Blauhaus.Domain.TestHelpers.Extensions
         public static Func<DtoHandlerMockBuilder<TDto, TId>> AddMockDtoHandler<TDto, TId>(this MockContainer mocks) where TDto : class, IHasId<TId>
             => mocks.AddMock<DtoHandlerMockBuilder<TDto, TId>, IDtoHandler<TDto>>();
 
+        //DtoLoaders
+        public static Func<DtoLoaderMockBuilder<TDto, TId>> AddMockDtoLoader<TDto, TId>(this MockContainer mocks) where TDto : class, IHasId<TId> where TId : IEquatable<TId> 
+            => mocks.AddMock<DtoLoaderMockBuilder<TDto, TId>, IDtoLoader<TDto, TId>>();
 
 
         //handlers 

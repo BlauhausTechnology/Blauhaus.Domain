@@ -9,11 +9,11 @@ using System.Linq;
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.DtoCaches
 {
 
-    public class DtoLoaderMockBuilder<TMock, TDto, TId> : BaseDtoLoaderMockBuilder<DtoLoaderMockBuilder<TMock, TDto, TId>, TMock, TDto, TId>
-        where TMock : class, IDtoLoader<TDto, TId>
+    public class DtoLoaderMockBuilder<TDto, TId> : BaseDtoLoaderMockBuilder<DtoLoaderMockBuilder<TDto, TId>, IDtoLoader<TDto, TId>, TDto, TId> 
         where TId : IEquatable<TId>
         where TDto : class, IHasId<TId>
     {
+
     }
 
     public abstract class BaseDtoLoaderMockBuilder<TBuilder, TMock, TDto, TId>: BaseAsyncPublisherMockBuilder<TBuilder, TMock, TDto>
