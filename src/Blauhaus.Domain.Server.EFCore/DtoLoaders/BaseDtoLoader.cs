@@ -14,10 +14,10 @@
 
 //namespace Blauhaus.Domain.Server.EFCore.DtoLoaders
 //{
-//    public abstract class BaseDbDtoLoader<TDbContext, TEntity, TDto, TId, TDtoId> : BasePublisher, IDtoLoader<TDto, TDtoId>
+//    public abstract class BaseDbDtoLoader<TDbContext, TEntity, TDto, TId> : BasePublisher, IDtoCache<TDto, TId>
 //        where TDbContext : DbContext
-//        where TDto : class, IClientEntity<TDtoId>
-//        where TId : IEquatable<TDtoId>
+//        where TDto : class, IClientEntity<TId>
+//        where TId : IEquatable<TId>
 //        where TEntity : BaseServerEntity, IDtoOwner<TDto>
 //    {
 
@@ -38,23 +38,23 @@
 //            return Task.FromResult(AddSubscriber(handler, filter));
 //        }
 
-//        public virtual async Task<TDto> GetOneAsync(TDtoId id)
+//        public virtual async Task<TDto> GetOneAsync(TId id)
 //        {
 //            using (var db = GetDbContext())
 //            {
 //                var entity = await db.Set<TEntity>()
-//                    .FirstAsync(x => x.Id == Guid.Parse(id));
+//                    .FirstAsync(x => x.Id.Equals(id));
 //                return await entity.GetDtoAsync();
 //            }
 //        }
-        
-//        public virtual async Task<TDto?> TryGetOneAsync(string id)
+
+//        public virtual async Task<TDto?> TryGetOneAsync(TId id)
 //        {
 
 //            using (var db = GetDbContext())
 //            {
 //                var entity = await db.Set<TEntity>()
-//                    .FirstOrDefaultAsync(x => x.Id == Guid.Parse(id));
+//                    .FirstOrDefaultAsync(x => x.Id.Equals(id));
 //                if (entity == null) return null;
 //                return await entity.GetDtoAsync();
 //            }
@@ -69,7 +69,7 @@
 //        {
 //            return LoadDtosFromDatabaseAsync(filter);
 //        }
-        
+
 //        protected async Task<IReadOnlyList<TDto>> LoadDtosFromDatabaseAsync(Expression<Func<TEntity, bool>> filter)
 //        {
 //            using var db = GetDbContext();

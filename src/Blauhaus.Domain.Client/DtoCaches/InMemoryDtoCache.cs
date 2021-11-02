@@ -57,7 +57,19 @@ namespace Blauhaus.Domain.Client.DtoCaches
             return InvokeAsync<IReadOnlyList<TDto>>(() =>
                 CachedDtos.Values.ToList());
         }
-         
+
+        public Task<IReadOnlyList<TDto>> GetWhereAsync(Func<TDto, bool> filter)
+        {
+            return InvokeAsync<IReadOnlyList<TDto>>(() => 
+                CachedDtos.Values.Where(filter).ToList());
+        }
+
+        public Task<IReadOnlyList<TId>> GetIdsWhereAsync(Func<TDto, bool> filter)
+        {
+            return InvokeAsync<IReadOnlyList<TId>>(() => 
+                CachedDtos.Values.Where(filter).Select(y => y.Id).ToList());
+        }
+
         public Task DeleteOneAsync(TId id)
         {
             return InvokeAsync(() =>
