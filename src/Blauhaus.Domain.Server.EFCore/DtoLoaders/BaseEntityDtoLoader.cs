@@ -1,110 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Common.Abstractions;
-using Blauhaus.Common.Utils.Disposables;
-using Blauhaus.Domain.Abstractions.DtoCaches;
-using Blauhaus.Domain.Abstractions.Errors;
-using Blauhaus.Errors;
+using Blauhaus.Domain.Abstractions.DtoHandlers;
 using Blauhaus.Time.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Blauhaus.Domain.Server.EFCore.DtoLoaders
 {
-    public abstract class BaseEntityDtoLoader<TDbContext, TEntity, TDto, TId> : BasePublisher, IEntityDtoLoader<TDto, TEntity, TId> 
+
+    public abstract class BaseDbEntityDtoLoader<TDbContext, TEntity, TDto, TId> : BaseDbDtoLoader<TDbContext, TEntity, TDto, TId>
         where TDbContext : DbContext
-        where TEntity: class, IHasId<TId>
-        where TId : IEquatable<TId> 
+        where TEntity : class, IHasId<TId>, IDtoOwner<TDto>
+        where TId : IEquatable<TId>
         where TDto : class, IHasId<TId>
     {
-        
-        private readonly Func<TDbContext> _dbContextFactory;
-        protected TDbContext GetDbContext() =>
-            _dbContextFactory.Invoke();
-
-        protected readonly IAnalyticsService AnalyticsService;
-        protected readonly ITimeService TimeService;
-
-        protected BaseEntityDtoLoader(
-            IAnalyticsService analyticsService,
-            ITimeService timeService,
-            Func<TDbContext> dbContextFactory)
+        protected BaseDbEntityDtoLoader(
+            IAnalyticsService analyticsService, 
+            ITimeService timeService, 
+            Func<TDbContext> dbContextFactory) 
+                : base(analyticsService, timeService, dbContextFactory)
         {
-            AnalyticsService = analyticsService;
-            TimeService = timeService;
-            _dbContextFactory = dbContextFactory;
         }
 
-        public async Task HandleAsync(TDto dto)
+        protected override Task<TDto> ExtractDtoAsync(TEntity entity)
         {
-            await UpdateSubscribersAsync(dto);
+            return entity.GetDtoAsync();
         }
-
-        public Task<IDisposable> SubscribeAsync(Func<TDto, Task> handler, Func<TDto, bool>? filter = null)
-        {
-            return Task.FromResult(AddSubscriber(handler, filter));
-        }
-
-        public async Task<TDto> GetOneAsync(TId id)
-        {
-            var dtos = await LoadDtosAsync(x => x.Id.Equals(id));
-
-            return dtos.Count == 1 
-                ? dtos[0] 
-                : throw new ErrorException(DomainErrors.NotFound<TDto>());
-        }
-
-        public async Task<TDto?> TryGetOneAsync(TId id)
-        {
-            var dtos = await LoadDtosAsync(x => x.Id.Equals(id));
-
-            return dtos.Count == 1 
-                ? dtos[0] 
-                : null;
-        }
-
-        public Task<IReadOnlyList<TDto>> GetAllAsync()
-        {
-            return LoadDtosAsync(x => true);
-        }
-
-        public Task<IReadOnlyList<TDto>> GetWhereAsync(Func<TEntity, bool> filter)
-        {
-            return LoadDtosAsync(x => filter.Invoke(x));
-        }
-
-        public Task<IReadOnlyList<TId>> GetIdsWhereAsync(Func<TEntity, bool> filter)
-        {
-            using var db = GetDbContext();
-
-            return Task.FromResult<IReadOnlyList<TId>>(db.Set<TEntity>()
-                .Where(filter).Select(x => x.Id).ToArray());
-        }
-
-        protected async Task<IReadOnlyList<TDto>> LoadDtosAsync(Expression<Func<TEntity, bool>> filter)
-        {
-            using var db = GetDbContext();
-            var query = db.Set<TEntity>().Where(filter);
-            query = Include(query);
-            var entities = await query.ToListAsync();
-
-            var dtoLoadTasks = new Task<TDto>[entities.Count];
-            for (var i = 0; i < dtoLoadTasks.Length; i++)
-            {
-                dtoLoadTasks[i] = ExtractDtoAsync(entities[i]);
-            }
-            return await Task.WhenAll(dtoLoadTasks);
-        }
-
-        protected virtual IQueryable<TEntity> Include(IQueryable<TEntity> query)
-        {
-            return query;
-        }
-
-        protected abstract Task<TDto> ExtractDtoAsync(TEntity entity);
-
     }
+
+    
 }
