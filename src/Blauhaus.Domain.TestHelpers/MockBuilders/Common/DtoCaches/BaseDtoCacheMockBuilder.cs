@@ -8,64 +8,13 @@ using Moq;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.DtoCaches
 {
-    public abstract class BaseDtoCacheMockBuilder<TBuilder, TMock, TDto, TId>: BaseAsyncPublisherMockBuilder<TBuilder, TMock, TDto>
+    public abstract class BaseDtoCacheMockBuilder<TBuilder, TMock, TDto, TId>: BaseDtoLoaderMockBuilder<TBuilder, TMock, TDto, TId>
         where TBuilder: BaseDtoCacheMockBuilder<TBuilder, TMock, TDto, TId>
         where TMock : class, IDtoCache<TDto, TId>
         where TId : IEquatable<TId>
         where TDto : class, IHasId<TId>
     {
         
-        public TBuilder Where_TryGetOneAsync_returns(TDto? dto)
-        {
-            Mock.Setup(x => x.TryGetOneAsync(It.IsAny<TId>())).ReturnsAsync(dto);
-            return (TBuilder) this;
-        }
-        public TBuilder Where_TryGetOneAsync_returns(Func<TDto?> dto)
-        {
-            Mock.Setup(x => x.TryGetOneAsync(It.IsAny<TId>())).ReturnsAsync(dto);
-            return (TBuilder) this;
-        }
-        public TBuilder Where_TryGetOneAsync_returns(TDto? dto, TId id)
-        {
-            Mock.Setup(x => x.TryGetOneAsync(id)).ReturnsAsync(dto);
-            return (TBuilder) this;
-        }
-
-        public TBuilder Where_GetOneAsync_returns(TDto dto)
-        {
-            Mock.Setup(x => x.GetOneAsync(It.IsAny<TId>())).ReturnsAsync(dto);
-            return (TBuilder) this;
-        }
-        public TBuilder Where_GetOneAsync_returns(Func<TDto> dto)
-        {
-            Mock.Setup(x => x.GetOneAsync(It.IsAny<TId>())).ReturnsAsync(dto);
-            return (TBuilder) this;
-        }
-        public TBuilder Where_GetOneAsync_returns(TDto dto, TId id)
-        {
-            Mock.Setup(x => x.GetOneAsync(id)).ReturnsAsync(dto);
-            return (TBuilder) this;
-        }
-        
-        public TBuilder Where_GetAllAsync_returns(TDto dto)
-        {
-            Mock.Setup(x => x.GetAllAsync()).ReturnsAsync(new List<TDto>{dto});
-            return (TBuilder) this;
-        } 
-        public TBuilder Where_GetAllAsync_returns(Func<TDto> dto)
-        {
-            Mock.Setup(x => x.GetAllAsync()).ReturnsAsync(() => new List<TDto>{dto.Invoke()});
-            return (TBuilder) this;
-        }        
-        public TBuilder Where_GetAllAsync_returns(Func<IEnumerable<TDto>> dto)
-        {
-            Mock.Setup(x => x.GetAllAsync()).ReturnsAsync(() => dto.Invoke().ToArray());
-            return (TBuilder) this;
-        } 
-        public TBuilder Where_GetAllAsync_returns(IEnumerable<TDto> dtos)
-        {
-            Mock.Setup(x => x.GetAllAsync()).ReturnsAsync(dtos.ToList());
-            return (TBuilder) this;
-        } 
+       
     }
 }
