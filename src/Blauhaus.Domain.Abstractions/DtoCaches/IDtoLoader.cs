@@ -6,7 +6,7 @@ using System;
 
 namespace Blauhaus.Domain.Abstractions.DtoCaches
 {
-    public interface IDtoLoader<TDto, in TId> : IAsyncPublisher<TDto>, IDtoHandler<TDto>
+    public interface IDtoLoader<TDto, in TId> : IAsyncPublisher<TDto>
         where TDto : class, IHasId<TId>
         where TId : IEquatable<TId>
     {

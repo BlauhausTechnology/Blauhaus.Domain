@@ -8,7 +8,7 @@ using Blauhaus.Domain.Abstractions.DtoHandlers;
 namespace Blauhaus.Domain.Abstractions.DtoCaches
 {
 
-    public interface IDtoCache<TDto, TId> : IDtoLoader<TDto, TId>
+    public interface IDtoCache<TDto, in TId> : IDtoLoader<TDto, TId>, IDtoHandler<TDto>
         where TDto : class, IHasId<TId>
         where TId : IEquatable<TId>
     {
