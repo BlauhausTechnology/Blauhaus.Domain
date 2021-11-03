@@ -5,6 +5,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Blauhaus.TestHelpers.Builders.Base;
 
 namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.DtoCaches
 {
@@ -37,6 +38,11 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.DtoCaches
             Mock.Setup(x => x.TryGetOneAsync(id)).ReturnsAsync(dto);
             return (TBuilder) this;
         }
+        public TBuilder Where_TryGetOneAsync_returns(Func<TDto?> dto, TId id)
+        {
+            Mock.Setup(x => x.TryGetOneAsync(id)).ReturnsAsync(dto);
+            return (TBuilder) this;
+        }
 
         public TBuilder Where_GetOneAsync_returns(TDto dto)
         {
@@ -51,6 +57,16 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.DtoCaches
         public TBuilder Where_GetOneAsync_returns(TDto dto, TId id)
         {
             Mock.Setup(x => x.GetOneAsync(id)).ReturnsAsync(dto);
+            return (TBuilder) this;
+        }
+        public TBuilder Where_GetOneAsync_returns(Func<TDto> dto, TId id)
+        {
+            Mock.Setup(x => x.GetOneAsync(id)).ReturnsAsync(dto);
+            return (TBuilder) this;
+        }
+        public TBuilder Where_GetOneAsync_returns(IBuilder<TDto> dto, TId id)
+        {
+            Mock.Setup(x => x.GetOneAsync(id)).ReturnsAsync(()=> dto.Object);
             return (TBuilder) this;
         }
         

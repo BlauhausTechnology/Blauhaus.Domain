@@ -38,12 +38,12 @@ namespace Blauhaus.Domain.Server.EFCore.DtoLoaders
             _dbContextFactory = dbContextFactory;
         }
 
-        public async Task HandleAsync(TDto dto)
+        public virtual async Task HandleAsync(TDto dto)
         {
             await UpdateSubscribersAsync(dto);
         }
 
-        public Task<IDisposable> SubscribeAsync(Func<TDto, Task> handler, Func<TDto, bool>? filter = null)
+        public virtual Task<IDisposable> SubscribeAsync(Func<TDto, Task> handler, Func<TDto, bool>? filter = null)
         {
             return Task.FromResult(AddSubscriber(handler, filter));
         }
