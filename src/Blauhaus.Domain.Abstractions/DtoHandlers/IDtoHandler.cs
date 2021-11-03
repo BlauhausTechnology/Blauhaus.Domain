@@ -10,6 +10,4 @@ namespace Blauhaus.Domain.Abstractions.DtoHandlers
         Task HandleAsync(TDto dto);
     }
 
-
-
 }
