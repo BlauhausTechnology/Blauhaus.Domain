@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Auth.Abstractions.Errors;
@@ -14,6 +16,7 @@ using Blauhaus.Errors.Extensions;
 using Blauhaus.Responses;
 using Blauhaus.Time.Abstractions;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Blauhaus.Domain.Server.EFCore.Actors
 {
@@ -23,89 +26,68 @@ namespace Blauhaus.Domain.Server.EFCore.Actors
     {
         private readonly Func<TDbContext> _dbContextFactory;
 
-        protected readonly IAnalyticsService AnalyticsService;
         protected readonly ITimeService TimeService;
         protected TDbContext GetDbContext => _dbContextFactory.Invoke();
 
         protected BaseDbModelActor(
             Func<TDbContext> dbContextFactory, 
             IAnalyticsService analyticsService, 
-            ITimeService timeService)
+            ITimeService timeService) : base(analyticsService)
         {
             _dbContextFactory = dbContextFactory;
-            AnalyticsService = analyticsService;
             TimeService = timeService;
         }
 
         
         protected async Task<Response> TryExecuteCommandAsync<TCommand>(TCommand command, IAuthenticatedUser user, Func<TDbContext, DateTime, Task<Response>> func)
         {
-            using (var _ = AnalyticsService.StartTrace(this, $"{typeof(TCommand).Name} executed by {this.GetType().Name}", LogSeverity.Verbose, command.ToObjectDictionary()))
+            return await TryExecuteAsync(async () =>
             {
-                try
+                if (command is IAdminCommand)
                 {
-                    if (command is IAdminCommand)
+                    if (!user.IsAdminUser())
                     {
-                        if (!user.IsAdminUser())
-                        {
-                            return AnalyticsService.TraceErrorResponse(this, AuthError.NotAuthorized);
-                        }
-                    }
-                    using (var db = GetDbContext)
-                    {
-                        var response = await func.Invoke(db, TimeService.CurrentUtcTime);
-                        if (response.IsSuccess && db.ChangeTracker.HasChanges())
-                        {
-                            await db.SaveChangesAsync();
-                        }
-                        return response;
+                        return AnalyticsService.TraceErrorResponse(this, AuthError.NotAuthorized);
                     }
                 }
-                catch (Exception e)
+
+                using (var db = GetDbContext)
                 {
-                    if (e.IsErrorException())
+                    var response = await func.Invoke(db, TimeService.CurrentUtcTime);
+                    if (response.IsSuccess && db.ChangeTracker.HasChanges())
                     {
-                        return AnalyticsService.TraceErrorResponse(this, e.ToError());
+                        await db.SaveChangesAsync();
                     }
-                    AnalyticsService.LogException(this, e, command.ToObjectDictionary());
-                    return Response.Failure(Error.Unexpected($"{typeof(TCommand).Name} failed to complete"));
+
+                    return response;
                 }
-            }
-        } 
+            }, typeof(TCommand).Name, command.ToObjectDictionary());
+        }
+
 
         protected async Task<Response<T>> TryExecuteCommandAsync<T, TCommand>(TCommand command, IAuthenticatedUser user, Func<TDbContext, DateTime, Task<Response<T>>> func)
         {
-            using (var _ = AnalyticsService.StartTrace(this, $"{typeof(TCommand).Name} executed by {this.GetType().Name}", LogSeverity.Verbose, command.ToObjectDictionary()))
+            return await TryExecuteAsync(async () =>
             {
-                try
+                if (command is IAdminCommand)
                 {
-                    if (command is IAdminCommand)
+                    if (!user.IsAdminUser())
                     {
-                        if (!user.IsAdminUser())
-                        {
-                            return AnalyticsService.TraceErrorResponse<T>(this, AuthError.NotAuthorized);
-                        }
-                    }
-                    using (var db = GetDbContext)
-                    {
-                        var response = await func.Invoke(db, TimeService.CurrentUtcTime);
-                        if (response.IsSuccess && db.ChangeTracker.HasChanges())
-                        {
-                            await db.SaveChangesAsync();
-                        }
-                        return response;
+                        return AnalyticsService.TraceErrorResponse<T>(this, AuthError.NotAuthorized);
                     }
                 }
-                catch (Exception e)
+
+                using (var db = GetDbContext)
                 {
-                    if (e.IsErrorException())
+                    var response = await func.Invoke(db, TimeService.CurrentUtcTime);
+                    if (response.IsSuccess && db.ChangeTracker.HasChanges())
                     {
-                        return AnalyticsService.TraceErrorResponse<T>(this, e.ToError());
+                        await db.SaveChangesAsync();
                     }
-                    AnalyticsService.LogException(this, e, command.ToObjectDictionary());
-                    return Response.Failure<T>(Error.Unexpected($"{typeof(TCommand).Name} failed to complete"));
+
+                    return response;
                 }
-            }
+            }, typeof(TCommand).Name, command.ToObjectDictionary());
         } 
         
     }

@@ -1,8 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Blauhaus.Analytics.Abstractions.Extensions;
+using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Common.Abstractions;
 using Blauhaus.Common.Utils.Disposables;
 using Blauhaus.Domain.Abstractions.Actors;
+using Blauhaus.Errors.Extensions;
+using Blauhaus.Errors;
+using Blauhaus.Responses;
 
 namespace Blauhaus.Domain.Server.Actors
 {
@@ -10,8 +16,17 @@ namespace Blauhaus.Domain.Server.Actors
         where TId : IEquatable<TId> 
         where TModel : IHasId<TId>
     {
-
+        
         private TId? _id;
+        protected TModel? Model;
+        
+        protected readonly IAnalyticsService AnalyticsService;
+
+        protected BaseServerModelActor(IAnalyticsService analyticsService)
+        {
+            AnalyticsService = analyticsService;
+        }
+
         public TId Id
         {
             get
@@ -22,7 +37,6 @@ namespace Blauhaus.Domain.Server.Actors
             }
         }
 
-        protected TModel? Model;
 
         public Task InitializeAsync(TId id)
         {
@@ -57,5 +71,46 @@ namespace Blauhaus.Domain.Server.Actors
         }
         
         protected abstract Task<TModel> LoadModelAsync();
+
+        
+        protected async Task<Response> TryExecuteAsync(Func<Task<Response>> func, string operationName, Dictionary<string, object> properties)
+        {
+            using (var _ = AnalyticsService.StartTrace(this, $"{operationName} executed by {GetType().Name}", LogSeverity.Verbose, properties))
+            {
+                try
+                {
+                    return await func.Invoke();
+                }
+                catch (Exception e)
+                {
+                    if (e.IsErrorException())
+                    {
+                        return AnalyticsService.TraceErrorResponse(this, e.ToError());
+                    }
+                    AnalyticsService.LogException(this, e, properties);
+                    return Response.Failure(Error.Unexpected($"{operationName} failed to complete"));
+                }
+            }
+        }
+        
+        protected async Task<Response<T>> TryExecuteAsync<T>(Func<Task<Response<T>>> func, string operationName, Dictionary<string, object> properties)
+        {
+            using (var _ = AnalyticsService.StartTrace(this, $"{operationName} executed by {GetType().Name}", LogSeverity.Verbose, properties))
+            {
+                try
+                {
+                    return await func.Invoke();
+                }
+                catch (Exception e)
+                {
+                    if (e.IsErrorException())
+                    {
+                        return AnalyticsService.TraceErrorResponse<T>(this, e.ToError());
+                    }
+                    AnalyticsService.LogException(this, e, properties);
+                    return Response.Failure<T>(Error.Unexpected($"{operationName} failed to complete"));
+                }
+            }
+        }
     }
 }
