@@ -30,5 +30,12 @@ namespace Blauhaus.Domain.Server.EFCore.Actors
             DtoHandler = dtoHandler;
         }
         
+        protected override async Task<TModel> LoadModelAsync()
+        {
+            var dto = await GetDtoAsync();
+            return await PopulateModelAsync(dto);
+        }
+
+        protected abstract Task<TModel> PopulateModelAsync(TDto dto);
     }
 }

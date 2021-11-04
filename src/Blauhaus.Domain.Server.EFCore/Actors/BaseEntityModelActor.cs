@@ -25,6 +25,7 @@ namespace Blauhaus.Domain.Server.EFCore.Actors
         {
         }
 
+
         protected override async Task OnInitializedAsync(Guid id)
         {
             using (var db = GetDbContext)
