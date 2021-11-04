@@ -89,6 +89,20 @@ namespace Blauhaus.Domain.Server.EFCore.Actors
                 }
             }, typeof(TCommand).Name, command.ToObjectDictionary());
         } 
+
+        protected async Task<T> UpdateDbAsync<T>(Func<TDbContext, DateTime, Task<T>> func)
+        {
+            using (var db = GetDbContext)
+            {
+                var response = await func.Invoke(db, TimeService.CurrentUtcTime);
+                if (db.ChangeTracker.HasChanges())
+                {
+                    await db.SaveChangesAsync();
+                }
+
+                return response;
+            }
+        }
         
     }
 }
