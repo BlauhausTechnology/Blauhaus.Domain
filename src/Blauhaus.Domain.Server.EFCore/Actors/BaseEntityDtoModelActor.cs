@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using System;
 using Blauhaus.Domain.Abstractions.Actors;
+using Blauhaus.Responses;
 
 namespace Blauhaus.Domain.Server.EFCore.Actors
 {
@@ -37,5 +38,12 @@ namespace Blauhaus.Domain.Server.EFCore.Actors
         }
 
         protected abstract Task<TModel> PopulateModelAsync(TDto dto);
+
+        protected async Task<Response<TDto>> PublishDtoAsync()
+        {
+            var dto = await GetDtoAsync();
+            await DtoHandler.HandleAsync(dto);
+            return Response.Success(dto);
+        }
     }
 }

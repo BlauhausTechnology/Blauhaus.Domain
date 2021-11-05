@@ -39,7 +39,7 @@ namespace Blauhaus.Domain.Server.EFCore.Actors
         }
 
         
-        protected async Task<Response> TryExecuteCommandAsync<TCommand>(TCommand command, IAuthenticatedUser user, Func<TDbContext, DateTime, Task<Response>> func)
+        protected async Task<Response> HandleCommandAsync<TCommand>(TCommand command, IAuthenticatedUser user, Func<TDbContext, DateTime, Task<Response>> func)
         {
             return await TryExecuteAsync(async () =>
             {
@@ -65,7 +65,7 @@ namespace Blauhaus.Domain.Server.EFCore.Actors
         }
 
 
-        protected async Task<Response<T>> TryExecuteCommandAsync<T, TCommand>(TCommand command, IAuthenticatedUser user, Func<TDbContext, DateTime, Task<Response<T>>> func)
+        protected async Task<Response<T>> HandleCommandAsync<T, TCommand>(TCommand command, IAuthenticatedUser user, Func<TDbContext, DateTime, Task<Response<T>>> func)
         {
             return await TryExecuteAsync(async () =>
             {

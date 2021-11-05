@@ -33,7 +33,17 @@ namespace Blauhaus.Domain.Server.EFCore.Actors
                 var query = db.Set<TEntity>().Where(x => x.Id.Equals(id));
                 query = Include(query);
                 Entity = await query.FirstOrDefaultAsync();
+
+                if (Entity != null)
+                {
+                    await HandleEntityLoadedAsync(db, Entity);
+                }
             }
+        }
+
+        protected virtual Task HandleEntityLoadedAsync(TDbContext db, TEntity entity)
+        {
+            return Task.CompletedTask;
         }
 
         protected virtual IQueryable<TEntity> Include(IQueryable<TEntity> query)
