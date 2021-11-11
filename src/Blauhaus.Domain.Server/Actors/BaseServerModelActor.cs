@@ -114,5 +114,15 @@ namespace Blauhaus.Domain.Server.Actors
         }
 
        
+
+        protected Response TraceError(Error error)
+        {
+            return AnalyticsService.TraceErrorResponse(this, error);
+        }
+        
+        protected Response<T> TraceError<T>(Error error)
+        {
+            return AnalyticsService.TraceErrorResponse<T>(this, error);
+        }
     }
 }

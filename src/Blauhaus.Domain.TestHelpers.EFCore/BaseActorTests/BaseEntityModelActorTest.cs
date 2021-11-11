@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Blauhaus.Domain.TestHelpers.EFCore.BaseActorTests
 {
-    public abstract class BaseEntityActorTest<TDbContext, TActor, TModel, TEntity, TEntityBuilder> : BaseDbModelActorTest<TDbContext, TActor, TModel> 
+    public abstract class BaseEntityModelActorTest<TDbContext, TActor, TModel, TEntity, TEntityBuilder> : BaseDbModelActorTest<TDbContext, TActor, TModel> 
         where TDbContext : DbContext 
         where TActor : BaseEntityModelActor<TDbContext, TEntity, TModel> 
         where TModel : IHasId<Guid>
