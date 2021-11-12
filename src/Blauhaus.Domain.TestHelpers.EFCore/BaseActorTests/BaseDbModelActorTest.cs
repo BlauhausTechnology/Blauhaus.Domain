@@ -21,13 +21,11 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.BaseActorTests
             Id = Guid.NewGuid();
         }
 
-        protected override void AfterConstructSut(TActor sut)
+        protected override async Task AfterConstructSutAsync(TActor sut)
         {
-            base.AfterConstructSut(sut);
-            
-            Task.Run(async () => await sut.InitializeAsync(Id)).Wait();
-        }
-          
+            await sut.InitializeAsync(Id);
 
+            await base.AfterConstructSutAsync(sut);
+        }
     }
 }

@@ -9,6 +9,7 @@ using Blauhaus.Domain.Server.Entities;
 using Blauhaus.TestHelpers.Builders.Base;
 using NUnit.Framework;
 using System.Threading.Tasks;
+using Blauhaus.Common.Abstractions;
 
 namespace Blauhaus.Domain.TestHelpers.EFCore.BaseActorTests
 {
@@ -69,20 +70,17 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.BaseActorTests
             }
             MockTimeService.With(x => x.CurrentUtcTime, RunTime);
         }
-
-        protected override TSut ConstructSut()
+         
+        protected override async Task AfterConstructSutAsync(TSut sut)
         {
-            var sut = base.ConstructSut();
-            AfterConstructSut(sut);
+            if (typeof(TSut) is IAsyncInitializable asyncInitializable)
+            {
+                await asyncInitializable.InitializeAsync();
+            }
             
             DbContextBefore.SaveChanges();
             _dbContextBefore = null;
             _dbContextAfter = GetNewDbContext();
-            
-            return sut;
-        }
-        protected virtual void AfterConstructSut(TSut sut)
-        {
         }
 
 
