@@ -77,8 +77,11 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.BaseActorTests
             {
                 await asyncInitializable.InitializeAsync();
             }
-            
-            DbContextBefore.SaveChanges();
+
+            if (DbContextBefore.ChangeTracker.HasChanges())
+            {
+                DbContextBefore.SaveChanges();
+            }
             _dbContextBefore = null;
             _dbContextAfter = GetNewDbContext();
         }
