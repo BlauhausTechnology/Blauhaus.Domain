@@ -67,9 +67,6 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.BaseActorTests
             {
                 setupFunc.Invoke(DbContextBefore);
             }
-            DbContextBefore.SaveChanges();
-            _dbContextBefore = null;
-
             MockTimeService.With(x => x.CurrentUtcTime, RunTime);
         }
 
@@ -77,10 +74,13 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.BaseActorTests
         {
             var sut = base.ConstructSut();
             AfterConstructSut(sut);
+            
+            DbContextBefore.SaveChanges();
+            _dbContextBefore = null;
             _dbContextAfter = GetNewDbContext();
+            
             return sut;
         }
-
         protected virtual void AfterConstructSut(TSut sut)
         {
         }

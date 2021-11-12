@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.Cryptography;
 using Blauhaus.Domain.Server.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
