@@ -40,7 +40,6 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.BaseActorTests
         {
             base.Cleanup();
             
-            
             MockAnalyticsService = new AnalyticsServiceMockBuilder();
             AddService(MockAnalyticsService.Object);
             

@@ -16,7 +16,7 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.BaseActorTests
 
         public override void Setup()
         {
-            base.Cleanup();
+            base.Setup();
             
             Id = Guid.NewGuid();
         }
