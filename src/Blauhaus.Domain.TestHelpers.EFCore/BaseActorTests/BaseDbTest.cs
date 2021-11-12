@@ -67,6 +67,7 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.BaseActorTests
             {
                 setupFunc.Invoke(DbContextBefore);
             }
+            DbContextBefore.SaveChanges();
             MockTimeService.With(x => x.CurrentUtcTime, RunTime);
         }
          
