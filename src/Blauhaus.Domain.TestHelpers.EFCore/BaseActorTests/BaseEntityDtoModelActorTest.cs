@@ -4,6 +4,8 @@ using Blauhaus.Domain.Abstractions.DtoHandlers;
 using Blauhaus.Domain.Server.EFCore.Actors;
 using Blauhaus.Domain.Server.Entities;
 using Blauhaus.Domain.TestHelpers.EntityBuilders;
+using Blauhaus.Domain.TestHelpers.Extensions;
+using Blauhaus.Domain.TestHelpers.MockBuilders.Client.DtoHandlers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Blauhaus.Domain.TestHelpers.EFCore.BaseActorTests
@@ -14,8 +16,15 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.BaseActorTests
         where TModel : IHasId<Guid>
         where TEntity : BaseServerEntity, IDtoOwner<TDto>
         where TEntityBuilder : BaseServerEntityBuilder<TEntityBuilder, TEntity>
-        where TDto : IHasId<Guid>
+        where TDto : class, IHasId<Guid>
     {
-        
+        public override void Setup()
+        {
+            base.Setup();
+
+            AddService(x => MockDtoHandler.Object);
+        }
+
+        protected DtoHandlerMockBuilder<TDto, Guid> MockDtoHandler => Mocks.AddMockDtoHandler<TDto, Guid>().Invoke();
     }
 }
