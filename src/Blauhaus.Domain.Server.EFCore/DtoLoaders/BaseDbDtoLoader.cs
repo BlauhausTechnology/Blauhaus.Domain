@@ -84,8 +84,12 @@ namespace Blauhaus.Domain.Server.EFCore.DtoLoaders
             using var db = GetDbContext();
             var query = db.Set<TEntity>().Where(filter);
             query = Include(query);
-            var entities = await query.ToListAsync();
+            return await LoadQueryAsync(query);
+        }
 
+        protected async Task<IReadOnlyList<TDto>> LoadQueryAsync(IQueryable<TEntity> query)
+        {
+            var entities = await query.ToListAsync();
             var dtoLoadTasks = new Task<TDto>[entities.Count];
             for (var i = 0; i < dtoLoadTasks.Length; i++)
             {
