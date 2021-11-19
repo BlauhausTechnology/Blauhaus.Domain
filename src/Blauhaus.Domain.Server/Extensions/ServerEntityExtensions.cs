@@ -62,7 +62,7 @@ namespace Blauhaus.Domain.Server.Extensions
         
         public static bool CanRemove(this BaseServerEntity entity)
         {
-            return entity.EntityState == EntityState.Deleted;
+            return entity.EntityState != EntityState.Active;
         }
     }
 }
