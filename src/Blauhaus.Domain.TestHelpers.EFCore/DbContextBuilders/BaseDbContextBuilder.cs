@@ -7,7 +7,7 @@ using ILoggerFactory = Microsoft.Extensions.Logging.ILoggerFactory;
 
 namespace Blauhaus.Domain.TestHelpers.EFCore.DbContextBuilders
 {
-    public abstract class BaseDbContextBuilder<TBuilder, TDbContext> : BaseBuilder<TBuilder, TDbContext>
+    public abstract class BaseDbContextBuilder<TBuilder, TDbContext> : BaseBuilder<TBuilder, TDbContext>, IDbContextBuilder<TDbContext>
         where TDbContext : DbContext 
         where TBuilder : BaseDbContextBuilder<TBuilder, TDbContext>
     {
@@ -18,7 +18,7 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.DbContextBuilders
             _options = useSqlLite ? GetSqLiteDbContextOptions() : GetInMemoryDbContextOptions();
         }
         
-        public TDbContext NewContext => ((TDbContext) Activator.CreateInstance(typeof(TDbContext), _options))!;
+        public TDbContext NewContext => ((TDbContext) Activator.CreateInstance(typeof(TDbContext), _options)!)!;
 
         protected override TDbContext Construct()
         {

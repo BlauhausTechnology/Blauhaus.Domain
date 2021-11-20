@@ -13,12 +13,14 @@ using Blauhaus.Common.Abstractions;
 
 namespace Blauhaus.Domain.TestHelpers.EFCore.BaseActorTests
 {
+
     public abstract class BaseDbTest<TDbContext, TSut> : BaseServiceTest<TSut> 
         where TSut : class
         where TDbContext : DbContext 
     {
-        
-        private InMemoryDbContextBuilder<TDbContext> _dbContextBuilder = null!;
+        private readonly TestDbProvider _provider;
+
+        private IDbContextBuilder<TDbContext> _dbContextBuilder = null!;
         private readonly List<Action<TDbContext>> _entityFactories = new();   
         private TDbContext? _dbContextAfter;
         private TDbContext? _dbContextBefore;
@@ -33,7 +35,10 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.BaseActorTests
         protected DateTime SetupTime;
         protected DateTime RunTime;
 
-
+        protected BaseDbTest(TestDbProvider provider = TestDbProvider.InMemory)
+        {
+            _provider = provider;
+        }
         
         [SetUp]
         public virtual void Setup()
@@ -47,7 +52,12 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.BaseActorTests
             AddService(MockTimeService.Object);
 
             _entityFactories.Clear();
-            _dbContextBuilder = new InMemoryDbContextBuilder<TDbContext>();
+            _dbContextBuilder = _provider switch
+            {
+                TestDbProvider.InMemory => new InMemoryDbContextBuilder<TDbContext>(),
+                TestDbProvider.SqliteInMemory => new SqliteInMemoryDbContextBuilder<TDbContext>(),
+                _ => _dbContextBuilder
+            };
 
             _dbContextAfter = null;
             _dbContextBefore = GetNewDbContext();
