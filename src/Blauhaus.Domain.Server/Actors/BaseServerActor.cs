@@ -46,7 +46,7 @@ namespace Blauhaus.Domain.Server.Actors
             return Task.CompletedTask;
         }
 
-        public ValueTask DisposeAsync()
+        public virtual ValueTask DisposeAsync()
         {
             return new ValueTask();
         }
