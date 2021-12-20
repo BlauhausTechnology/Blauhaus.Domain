@@ -17,9 +17,11 @@
 
   <ItemGroup>
     <Folder Include="MockBuilders\Server\" />
+    <Folder Include="BaseTests\" />
   </ItemGroup>
 
   <ItemGroup> 
+    <ProjectReference Include="..\Blauhaus.Domain.Client.Sqlite\Blauhaus.Domain.Client.Sqlite.csproj" /> 
     <ProjectReference Include="..\Blauhaus.Domain.Server\Blauhaus.Domain.Server.csproj" />
   </ItemGroup>
 
