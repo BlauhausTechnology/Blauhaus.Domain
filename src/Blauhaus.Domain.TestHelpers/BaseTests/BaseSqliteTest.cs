@@ -7,7 +7,6 @@ using Blauhaus.ClientDatabase.Sqlite.Config;
 using Blauhaus.ClientDatabase.Sqlite.Service;
 using Blauhaus.DeviceServices.Abstractions.DeviceInfo;
 using Blauhaus.DeviceServices.TestHelpers.MockBuilders;
-using Blauhaus.Domain.Server.Entities;
 using Blauhaus.TestHelpers.BaseTests;
 using Blauhaus.TestHelpers.Builders.Base;
 using NUnit.Framework;
@@ -31,7 +30,7 @@ namespace Blauhaus.Domain.TestHelpers.BaseTests
             
             _entityFactories.Clear();
 
-            var config = (ISqliteConfig)Activator.CreateInstance(typeof(TSqliteConfig), MockDeviceInfoService.Object);
+            var config = (ISqliteConfig)Activator.CreateInstance(typeof(TSqliteConfig), MockDeviceInfoService.Object)!;
             SqliteDatabaseService = new SqliteInMemoryDatabase(config);
             Task.Run(async () => await SqliteDatabaseService.DeleteDataAsync()).Wait();
             Connection = SqliteDatabaseService.AsyncConnection;
@@ -54,19 +53,22 @@ namespace Blauhaus.Domain.TestHelpers.BaseTests
             }
         }
 
-        protected void AddEntityBuilders<T>(params IBuilder<T>[] builders) where T : BaseServerEntity 
+        protected void AddEntityBuilders<T>(params IBuilder<T>[] builders) 
         {
             foreach (var builder in builders)
             {
-                _entityFactories.Add(connection=> Task.Run(async ()=> await connection.InsertAsync(builder.Object)).Wait());
+                _entityFactories.Add(connection=> Task.Run(async () =>
+                {
+                    await connection.InsertAsync(builder.Object);
+                }).Wait());
             } 
         }
-        protected void AddEntityBuilder<T>(IBuilder<T> builder) where T : BaseServerEntity 
+        protected void AddEntityBuilder<T>(IBuilder<T> builder) 
         {
             _entityFactories.Add(connection=> Task.Run(async ()=> await connection.InsertAsync(builder.Object)).Wait());
         }
 
-        protected void AddEntityBuilders<T>(List<IBuilder<T>> builders) where T : BaseServerEntity 
+        protected void AddEntityBuilders<T>(List<IBuilder<T>> builders)  
         {
             foreach (var builder in builders)
             {
