@@ -14,7 +14,7 @@ namespace Blauhaus.Domain.Client.Sqlite.Entities
     public class ClientEntity<TId> : IClientEntity<TId>
     {
         [PrimaryKey]
-        public TId Id { get; set; }
+        public TId Id { get; set; } = default!;
         
         [Indexed]
         public EntityState EntityState { get; set;}

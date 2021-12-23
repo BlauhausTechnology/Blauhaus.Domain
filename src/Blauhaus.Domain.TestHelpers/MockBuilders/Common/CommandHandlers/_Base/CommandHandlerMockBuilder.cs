@@ -32,7 +32,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base
                 .Callback((TCommand command) =>
                 {
                     //we need to serialilze the values because SyncCommand changes state during execution
-                    _serializedCommands.Add(JsonConvert.DeserializeObject<TCommand>(JsonConvert.SerializeObject(command)));
+                    _serializedCommands.Add(JsonConvert.DeserializeObject<TCommand>(JsonConvert.SerializeObject(command))!);
                 }); ;
             return (TBuilder)this;
         }
@@ -49,7 +49,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base
                 .Callback((TCommand command) =>
                 {
                     //we need to serialilze the values because SyncCommand changes state during execution
-                    _serializedCommands.Add(JsonConvert.DeserializeObject<TCommand>(JsonConvert.SerializeObject(command)));
+                    _serializedCommands.Add(JsonConvert.DeserializeObject<TCommand>(JsonConvert.SerializeObject(command))!);
                 }); ;
             return (TBuilder)this;
         }
@@ -66,7 +66,7 @@ namespace Blauhaus.Domain.TestHelpers.MockBuilders.Common.CommandHandlers._Base
                 .Callback((TCommand command) =>
                 {
                     //we need to serialilze the values because SyncCommand changes state during execution
-                    _serializedCommands.Add(JsonConvert.DeserializeObject<TCommand>(JsonConvert.SerializeObject(command)));
+                    _serializedCommands.Add(JsonConvert.DeserializeObject<TCommand>(JsonConvert.SerializeObject(command))!);
                 });
             return (TBuilder)this;
         }
