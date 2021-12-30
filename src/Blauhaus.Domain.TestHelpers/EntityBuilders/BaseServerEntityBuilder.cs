@@ -13,9 +13,9 @@ namespace Blauhaus.Domain.TestHelpers.EntityBuilders
         public Guid Id { get; private set; } 
         public DateTime CreatedAt { get; private set; }
 
-        protected BaseServerEntityBuilder(DateTime createdAt)
+        protected BaseServerEntityBuilder(DateTime createdAt, Guid? id = null)
         {
-            Id = Guid.NewGuid();
+            Id = id ?? Guid.NewGuid();
             CreatedAt = createdAt;
 
             With(x => x.CreatedAt, createdAt);
