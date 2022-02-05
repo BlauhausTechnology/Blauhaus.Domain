@@ -17,8 +17,8 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.DbContextBuilders
         {
             _options = useSqlLite ? GetSqLiteDbContextOptions() : GetInMemoryDbContextOptions();
         }
-        
-        public TDbContext NewContext => ((TDbContext) Activator.CreateInstance(typeof(TDbContext), _options)!)!;
+
+        public TDbContext NewContext => Construct();
 
         protected override TDbContext Construct()
         {
