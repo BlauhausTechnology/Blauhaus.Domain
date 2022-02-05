@@ -44,7 +44,7 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.DbContextBuilders
 
         private DbContextOptions<TDbContext> GetSqLiteDbContextOptions()
         {
-            var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = ":memory:" };
+            var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = "file::memory:?cache=shared" };
             var connectionString = connectionStringBuilder.ToString();
  
             //This creates a SqliteConnectionwith that string
