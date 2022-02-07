@@ -33,6 +33,8 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.DbContextBuilders
                 builder.AddConsole(); 
             });
 
+        private SqliteConnection? _connection;
+
         private DbContextOptions<TDbContext> GetInMemoryDbContextOptions()
         {
             return new DbContextOptionsBuilder<TDbContext>()
@@ -48,19 +50,25 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.DbContextBuilders
             var connectionString = connectionStringBuilder.ToString();
  
             //This creates a SqliteConnectionwith that string
-            var connection = new SqliteConnection(connectionString);
+            _connection = new SqliteConnection(connectionString);
  
             //The connection MUST be opened here
-            connection.Open();
-            connection.EnableExtensions();
+            _connection.Open();
+            _connection.EnableExtensions();
 
             //Now we have the EF Core commands to create SQLite options
             var options = new DbContextOptionsBuilder<TDbContext>();
             options.EnableSensitiveDataLogging();
             options.UseLoggerFactory(_myLoggerFactory);
-            options.UseSqlite(connection);
+            options.UseSqlite(_connection);
 
             return options.Options;
+        }
+
+        public virtual void Dispose()
+        {
+            _myLoggerFactory.Dispose();
+            _connection?.Dispose();
         }
     }
 }

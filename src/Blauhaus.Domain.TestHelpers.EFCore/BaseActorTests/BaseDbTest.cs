@@ -58,8 +58,7 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.BaseActorTests
                 TestDbProvider.SqliteInMemory => new SqliteInMemoryDbContextBuilder<TDbContext>(),
                 _ => _dbContextBuilder
             };
-
-            _dbContextAfter = null;
+            
             _dbContextBefore = GetNewDbContext();
 
             SetupTime = MockTimeService.Reset();
@@ -67,6 +66,14 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.BaseActorTests
 
             TDbContext FactoryFunc() => GetNewDbContext();
             AddService((Func<TDbContext>) FactoryFunc);
+        }
+
+        [TearDown]
+        public virtual void Teardown()
+        {
+            _dbContextAfter?.Dispose();
+            _dbContextBefore?.Dispose();
+            _dbContextBuilder.Dispose();
         }
 
         protected override void BeforeConstructSut(IServiceProvider serviceProvider)
@@ -92,7 +99,6 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.BaseActorTests
             {
                 DbContextBefore.SaveChanges();
             }
-            _dbContextBefore = null;
             _dbContextAfter = GetNewDbContext();
         }
 
