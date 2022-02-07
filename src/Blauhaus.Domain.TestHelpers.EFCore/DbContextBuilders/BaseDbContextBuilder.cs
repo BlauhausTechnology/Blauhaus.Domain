@@ -67,7 +67,6 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.DbContextBuilders
 
         public virtual void Dispose()
         {
-            _myLoggerFactory.Dispose();
             _connection?.Dispose();
         }
     }
