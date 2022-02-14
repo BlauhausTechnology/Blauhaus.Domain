@@ -3,17 +3,28 @@ using Blauhaus.Common.Abstractions;
 
 namespace Blauhaus.Domain.Server.Entities
 {
-    public abstract class BaseChildEntity : IHasId
+    public abstract class BaseChildEntity : BaseChildEntity<Guid>
     {
         protected BaseChildEntity()
         {
         }
 
-        protected BaseChildEntity(Guid id)
+        protected BaseChildEntity(Guid id) : base(id)
+        {
+        }
+    }
+
+    public abstract class BaseChildEntity<TId> : IHasId<TId>
+    {
+        protected BaseChildEntity()
+        {
+        }
+
+        protected BaseChildEntity(TId id)
         {
             Id = id;
         }
 
-        public Guid Id { get; private set; }
+        public TId Id { get; private set; } = default!;
     }
 }

@@ -5,7 +5,7 @@ using System;
 
 namespace Blauhaus.Domain.Server.EFCore.DbMappings
 {
-    public abstract class BaseChildDbMapping<TEntity> : IEntityTypeConfiguration<TEntity> where TEntity : BaseChildEntity
+    public abstract class BaseChildDbMapping<TEntity, TId> : IEntityTypeConfiguration<TEntity> where TEntity : BaseChildEntity<TId>
     {
         protected BaseChildDbMapping(ModelBuilder modelBuilder)
         {
@@ -28,5 +28,13 @@ namespace Blauhaus.Domain.Server.EFCore.DbMappings
         }
 
         protected abstract void ConfigureEntity(EntityTypeBuilder<TEntity> entity);
+    }
+
+
+    public abstract class BaseChildDbMapping<TEntity> : BaseChildDbMapping<TEntity, Guid> where TEntity : BaseChildEntity
+    {
+        protected BaseChildDbMapping(ModelBuilder modelBuilder) : base(modelBuilder)
+        {
+        }
     }
 }
