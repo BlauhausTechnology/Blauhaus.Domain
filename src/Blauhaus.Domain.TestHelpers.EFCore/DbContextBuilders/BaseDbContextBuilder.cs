@@ -61,7 +61,6 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.DbContextBuilders
             options.EnableSensitiveDataLogging();
             options.UseLoggerFactory(_myLoggerFactory);
             options.UseSqlite(_connection);
-
             return options.Options;
         }
 
