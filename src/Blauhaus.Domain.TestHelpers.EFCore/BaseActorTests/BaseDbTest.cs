@@ -9,6 +9,7 @@ using Blauhaus.Domain.Server.Entities;
 using Blauhaus.TestHelpers.Builders.Base;
 using NUnit.Framework;
 using System.Threading.Tasks;
+using Blauhaus.Analytics.Abstractions;
 using Blauhaus.Common.Abstractions;
 
 namespace Blauhaus.Domain.TestHelpers.EFCore.BaseActorTests
@@ -29,7 +30,7 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.BaseActorTests
         protected TDbContext DbContextBefore => _dbContextBefore ?? throw new InvalidOperationException("DbContextBefore is no longer valid once the test has started running");
         protected TDbContext DbContextAfter => _dbContextAfter ?? throw new InvalidOperationException("DbContextAfter is not valid until the test has finished running");
 
-        protected AnalyticsServiceMockBuilder MockAnalyticsService = null!;
+        protected virtual AnalyticsLoggerMockBuilder<TSut> MockLogger => AddMock<AnalyticsLoggerMockBuilder<TSut>, IAnalyticsLogger<TSut>>().Invoke();
         protected TimeServiceMockBuilder MockTimeService = null!;
         
         protected DateTime SetupTime;
@@ -45,8 +46,7 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.BaseActorTests
         {
             base.Cleanup();
             
-            MockAnalyticsService = new AnalyticsServiceMockBuilder();
-            AddService(MockAnalyticsService.Object);
+            AddService(MockLogger.Object);
             
             MockTimeService = new TimeServiceMockBuilder();
             AddService(MockTimeService.Object);
