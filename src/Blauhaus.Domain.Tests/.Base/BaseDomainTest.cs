@@ -1,4 +1,5 @@
-﻿using Blauhaus.Analytics.Abstractions.Service;
+﻿using Blauhaus.Analytics.Abstractions;
+using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Analytics.TestHelpers.MockBuilders;
 using Blauhaus.DeviceServices.Abstractions.Connectivity;
 using Blauhaus.DeviceServices.TestHelpers.MockBuilders;
@@ -20,6 +21,7 @@ namespace Blauhaus.Domain.Tests.Base
         {
             Cleanup();
 
+            AddService(x => MockLogger.Object);
             AddService(x => MockAnalyticsService.Object);
             AddService(x => MockErrorHandler.Object);
             AddService(x => MockConnectivityService.Object);
@@ -27,6 +29,7 @@ namespace Blauhaus.Domain.Tests.Base
             AddService(x => MockTimeService.Object);
         }
 
+        protected AnalyticsLoggerMockBuilder<TSut> MockLogger => AddMock<AnalyticsLoggerMockBuilder<TSut>, IAnalyticsLogger<TSut>>().Invoke();
         protected AnalyticsServiceMockBuilder MockAnalyticsService => AddMock<AnalyticsServiceMockBuilder, IAnalyticsService>().Invoke();
         protected ConnectivityServiceMockBuilder MockConnectivityService => AddMock<ConnectivityServiceMockBuilder, IConnectivityService>().Invoke();
         protected MockBuilder<IErrorHandler> MockErrorHandler => AddMock<IErrorHandler>().Invoke();

@@ -11,6 +11,7 @@ using System.Linq.Expressions;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
+using Blauhaus.Analytics.Abstractions;
 
 namespace Blauhaus.Domain.Server.EFCore.DtoLoaders
 {
@@ -25,15 +26,15 @@ namespace Blauhaus.Domain.Server.EFCore.DtoLoaders
         protected TDbContext GetDbContext() =>
             _dbContextFactory.Invoke();
 
-        protected readonly IAnalyticsService AnalyticsService;
+        protected readonly IAnalyticsLogger Logger;
         protected readonly ITimeService TimeService;
 
         protected BaseDbDtoLoader(
-            IAnalyticsService analyticsService,
+            IAnalyticsLogger logger,
             ITimeService timeService,
             Func<TDbContext> dbContextFactory)
         {
-            AnalyticsService = analyticsService;
+            Logger = logger;
             TimeService = timeService;
             _dbContextFactory = dbContextFactory;
         }

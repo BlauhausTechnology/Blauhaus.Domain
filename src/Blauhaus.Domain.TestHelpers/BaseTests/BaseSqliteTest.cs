@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Blauhaus.Analytics.Abstractions;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Analytics.TestHelpers.MockBuilders;
 using Blauhaus.ClientDatabase.Sqlite.Config;
@@ -38,10 +39,12 @@ namespace Blauhaus.Domain.TestHelpers.BaseTests
             AddService(MockDeviceInfoService.Object);
             AddService(MockAnalyticsService.Object);
             AddService(SqliteDatabaseService);
+            AddService(MockLogger.Object);
         }
 
         protected DeviceInfoServiceMockBuilder MockDeviceInfoService => AddMock<DeviceInfoServiceMockBuilder, IDeviceInfoService>().Invoke();
         protected AnalyticsServiceMockBuilder MockAnalyticsService => AddMock<AnalyticsServiceMockBuilder, IAnalyticsService>().Invoke();
+        private AnalyticsLoggerMockBuilder<TSut> MockLogger => AddMock<AnalyticsLoggerMockBuilder<TSut>, IAnalyticsLogger<TSut>>().Invoke();
 
         protected override void BeforeConstructSut(IServiceProvider serviceProvider)
         {

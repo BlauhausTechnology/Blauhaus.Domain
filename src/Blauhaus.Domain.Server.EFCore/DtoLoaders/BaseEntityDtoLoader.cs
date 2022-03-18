@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Blauhaus.Analytics.Abstractions;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Common.Abstractions;
 using Blauhaus.Domain.Abstractions.DtoHandlers;
@@ -16,10 +17,10 @@ namespace Blauhaus.Domain.Server.EFCore.DtoLoaders
         where TDto : class, IHasId<TId>
     {
         protected BaseDbEntityDtoLoader(
-            IAnalyticsService analyticsService, 
+            IAnalyticsLogger logger, 
             ITimeService timeService, 
             Func<TDbContext> dbContextFactory) 
-                : base(analyticsService, timeService, dbContextFactory)
+                : base(logger, timeService, dbContextFactory)
         {
         }
 
