@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Blauhaus.Analytics.Abstractions;
 using Blauhaus.Analytics.Abstractions.Extensions;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Common.Abstractions;
@@ -20,8 +21,8 @@ namespace Blauhaus.Domain.Server.Actors
         protected TModel? Model;
         
         protected BaseServerModelActor(
-            IAnalyticsService analyticsService) 
-            : base(analyticsService)
+            IAnalyticsLogger logger) 
+            : base(logger)
         {
         }
         public Task<IDisposable> SubscribeAsync(Func<TModel, Task> handler, Func<TModel, bool>? filter = null)

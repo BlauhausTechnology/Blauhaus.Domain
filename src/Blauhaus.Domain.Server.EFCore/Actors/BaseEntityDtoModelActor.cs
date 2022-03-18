@@ -6,6 +6,7 @@ using Blauhaus.Time.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using System;
+using Blauhaus.Analytics.Abstractions;
 using Blauhaus.Domain.Abstractions.Actors;
 using Blauhaus.Responses;
 
@@ -23,10 +24,10 @@ namespace Blauhaus.Domain.Server.EFCore.Actors
 
         protected BaseEntityDtoModelActor(
             Func<TDbContext> dbContextFactory, 
-            IAnalyticsService analyticsService, 
+            IAnalyticsLogger logger, 
             ITimeService timeService,
             IDtoHandler<TDto> dtoHandler) 
-            : base(dbContextFactory, analyticsService, timeService)
+                : base(dbContextFactory, logger, timeService)
         {
             DtoHandler = dtoHandler;
         }

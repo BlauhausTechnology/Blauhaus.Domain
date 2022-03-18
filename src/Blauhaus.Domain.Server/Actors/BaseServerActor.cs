@@ -9,19 +9,21 @@ using Blauhaus.Errors.Extensions;
 using Blauhaus.Errors;
 using Blauhaus.Responses;
 using System.Collections.Generic;
+using Blauhaus.Analytics.Abstractions;
+using Blauhaus.Analytics.Abstractions.Operation;
 
 namespace Blauhaus.Domain.Server.Actors
 {
     public abstract class BaseServerActor<TId> : BasePublisher, IHasId<TId>, IAsyncInitializable<TId>, IAsyncDisposable
     {
         
-        protected readonly IAnalyticsService AnalyticsService;
+        protected readonly IAnalyticsLogger Logger;
         
         private TId? _id;
 
-        protected BaseServerActor(IAnalyticsService analyticsService)
+        protected BaseServerActor(IAnalyticsLogger logger)
         {
-            AnalyticsService = analyticsService;
+            Logger = logger;
         }
         
         public TId Id
@@ -52,57 +54,57 @@ namespace Blauhaus.Domain.Server.Actors
         }
 
         
-        protected async Task<Response> TryExecuteAsync(Func<Task<Response>> func, string operationName, Dictionary<string, object> properties)
-        {
-            using (var _ = AnalyticsService.StartTrace(this, $"{operationName} executed by {GetType().Name}", LogSeverity.Verbose, properties))
-            {
-                try
-                {
-                    return await func.Invoke();
-                }
-                catch (Exception e)
-                {
-                    if (e.IsErrorException())
-                    {
-                        return AnalyticsService.TraceErrorResponse(this, e.ToError());
-                    }
-                    AnalyticsService.LogException(this, e, properties);
-                    return Response.Failure(Error.Unexpected($"{operationName} failed to complete"));
-                }
-            }
-        }
+        //protected async Task<Response> TryExecuteAsync(Func<Task<Response>> func, string operationName, Dictionary<string, object> properties)
+        //{
+        //    using (var _ = Logger.StartTrace(this, $"{operationName} executed by {GetType().Name}", LogSeverity.Verbose, properties))
+        //    {
+        //        try
+        //        {
+        //            return await func.Invoke();
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            if (e.IsErrorException())
+        //            {
+        //                return Logger.TraceErrorResponse(this, e.ToError());
+        //            }
+        //            Logger.LogException(this, e, properties);
+        //            return Response.Failure(Error.Unexpected($"{operationName} failed to complete"));
+        //        }
+        //    }
+        //}
         
-        protected async Task<Response<T>> TryExecuteAsync<T>(Func<Task<Response<T>>> func, string operationName, Dictionary<string, object> properties)
-        {
-            using (var _ = AnalyticsService.StartTrace(this, $"{operationName} executed by {GetType().Name}", LogSeverity.Verbose, properties))
-            {
-                try
-                {
-                    return await func.Invoke();
-                }
-                catch (Exception e)
-                {
-                    if (e.IsErrorException())
-                    {
-                        return AnalyticsService.TraceErrorResponse<T>(this, e.ToError());
-                    }
-                    AnalyticsService.LogException(this, e, properties);
-                    return Response.Failure<T>(Error.Unexpected($"{operationName} failed to complete"));
-                }
-            }
-        }
+        //protected async Task<Response<T>> TryExecuteAsync<T>(Func<Task<Response<T>>> func, string operationName, Dictionary<string, object> properties)
+        //{
+        //    using (var _ = Logger.StartTrace(this, $"{operationName} executed by {GetType().Name}", LogSeverity.Verbose, properties))
+        //    {
+        //        try
+        //        {
+        //            return await func.Invoke();
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            if (e.IsErrorException())
+        //            {
+        //                return Logger.TraceErrorResponse<T>(this, e.ToError());
+        //            }
+        //            Logger.LogException(this, e, properties);
+        //            return Response.Failure<T>(Error.Unexpected($"{operationName} failed to complete"));
+        //        }
+        //    }
+        //}
 
        
 
-        protected Response TraceError(Error error)
-        {
-            return AnalyticsService.TraceErrorResponse(this, error);
-        }
+        //protected Response TraceError(Error error)
+        //{
+        //    return Logger.TraceErrorResponse(this, error);
+        //}
         
-        protected Response<T> TraceError<T>(Error error)
-        {
-            return AnalyticsService.TraceErrorResponse<T>(this, error);
-        }
+        //protected Response<T> TraceError<T>(Error error)
+        //{
+        //    return Logger.TraceErrorResponse<T>(this, error);
+        //}
 
     }
 }

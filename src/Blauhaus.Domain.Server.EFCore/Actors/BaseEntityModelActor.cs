@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Blauhaus.Analytics.Abstractions;
 using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Common.Abstractions;
 using Blauhaus.Domain.Server.Entities;
@@ -19,9 +20,9 @@ namespace Blauhaus.Domain.Server.EFCore.Actors
 
         protected BaseEntityModelActor(
             Func<TDbContext> dbContextFactory, 
-            IAnalyticsService analyticsService, 
+            IAnalyticsLogger logger, 
             ITimeService timeService) 
-            : base(dbContextFactory, analyticsService, timeService)
+                : base(dbContextFactory, logger, timeService)
         {
         }
 
