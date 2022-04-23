@@ -15,7 +15,7 @@ namespace Blauhaus.Domain.Server.Entities
             Id = id;
             EntityState = entityState;
             CreatedAt = DateTime.SpecifyKind(createdAt, DateTimeKind.Utc);
-            ModifiedAt = createdAt;
+            Modify(createdAt); 
         }
 
 
@@ -27,8 +27,12 @@ namespace Blauhaus.Domain.Server.Entities
         public void Modify(DateTime now)
         {
             ModifiedAt = DateTime.SpecifyKind(now, DateTimeKind.Utc);
+            HandleModified();
         }
-        
+        protected virtual void HandleModified()
+        {
+        }
+
         public void Delete(DateTime now)
         {
             if (EntityState != EntityState.Deleted)
