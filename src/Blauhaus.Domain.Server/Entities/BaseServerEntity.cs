@@ -15,8 +15,9 @@ namespace Blauhaus.Domain.Server.Entities
             Id = id;
             EntityState = entityState;
             CreatedAt = DateTime.SpecifyKind(createdAt, DateTimeKind.Utc);
-            Modify(createdAt); 
+            ModifiedAt = CreatedAt;
         }
+
 
 
         public Guid Id { get; private set; }
