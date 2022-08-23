@@ -11,9 +11,12 @@ namespace Blauhaus.Domain.Abstractions.Errors
 
         #region NotFound
 
-        public static Error NotFound() => Error.Create("Entity not found");
-        public static Error NotFound(string name) => Error.Create($"{name} not found");
-        public static Error NotFound<T>() => Error.Create($"{typeof(T).Name} not found");
+        [Obsolete("Moved to Blauhaus.Error")]
+        public static Error NotFound() => Error.Create("The requested object was not found");
+        [Obsolete("Moved to Blauhaus.Error")]
+        public static Error NotFound(string name) => Error.Create($"{name} was not found");
+        [Obsolete("Moved to Blauhaus.Error")]
+        public static Error NotFound<T>() => Error.Create($"{typeof(T).Name} was not found");
 
         #endregion
 
@@ -21,11 +24,11 @@ namespace Blauhaus.Domain.Abstractions.Errors
         public static Error Duplicate() 
             => Error.Create("This entity already exists");
 
-        public static Error Duplicate(string entityName, string propertyName) 
-            => Error.Create($"{entityName} already exists with this value for {propertyName}");
+        public static Error Duplicate(string objectName, string propertyName) 
+            => Error.Create($"{objectName} already exists with this value for {propertyName}");
 
-        public static Error Duplicate(string entityName, string propertyName, object value) 
-            => Error.Create($"{entityName} already exists with {propertyName} == {value}");
+        public static Error Duplicate(string objectName, string propertyName, object value) 
+            => Error.Create($"{objectName} already exists with {propertyName} == {value}");
         
         public static Error Duplicate<T>(Expression<Func<T, object>> expression) 
             => Error.Create($"{typeof(T).Name} already exists with this value for {expression.ToPropertyName()}");
