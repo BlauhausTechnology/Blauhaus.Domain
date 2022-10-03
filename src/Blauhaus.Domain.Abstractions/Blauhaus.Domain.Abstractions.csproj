@@ -9,8 +9,8 @@
   <ItemGroup>
     <PackageReference Include="Blauhaus.Analytics.Abstractions" Version="1.9.11" />
     <PackageReference Include="Blauhaus.Auth.Abstractions" Version="0.16.6" />
-    <PackageReference Include="Blauhaus.Common.Abstractions" Version="2.1.17" />
-    <PackageReference Include="Blauhaus.Common.Utils" Version="2.1.17" />
+    <PackageReference Include="Blauhaus.Common.Abstractions" Version="2.1.19" />
+    <PackageReference Include="Blauhaus.Common.Utils" Version="2.1.19" />
     <PackageReference Include="Blauhaus.Errors" Version="0.4.11" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
   </ItemGroup>

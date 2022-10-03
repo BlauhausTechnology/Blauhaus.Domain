@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blauhaus.Common.Utils" Version="2.1.17" />
+    <PackageReference Include="Blauhaus.Common.Utils" Version="2.1.19" />
     <PackageReference Include="Blauhaus.DeviceServices.Abstractions" Version="1.1.19" />
     <PackageReference Include="Blauhaus.Ioc.Abstractions" Version="1.5.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />

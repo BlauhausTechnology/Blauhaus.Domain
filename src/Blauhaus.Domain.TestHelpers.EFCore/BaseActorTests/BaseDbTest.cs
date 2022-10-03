@@ -103,19 +103,19 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.BaseActorTests
         }
 
 
-        protected void AddEntityBuilders<T>(params IBuilder<T>[] builders) where T : BaseServerEntity 
+        protected void AddEntityBuilders<T>(params IBuilder<T>[] builders) where T : class 
         {
             foreach (var builder in builders)
             {
                 _entityFactories.Add(context=> context.Add(builder.Object));
             } 
         }
-        protected void AddEntityBuilder<T>(IBuilder<T> builder) where T : BaseServerEntity 
+        protected void AddEntityBuilder<T>(IBuilder<T> builder) where T : class 
         {
             _entityFactories.Add(context=> context.Add(builder.Object));
         }
 
-        protected void AddEntityBuilders<T>(List<IBuilder<T>> builders) where T : BaseServerEntity 
+        protected void AddEntityBuilders<T>(List<IBuilder<T>> builders) where T : class 
         {
             foreach (var builder in builders)
             {
