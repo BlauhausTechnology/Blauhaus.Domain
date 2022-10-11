@@ -102,7 +102,8 @@ namespace Blauhaus.Domain.TestHelpers.EFCore.BaseActorTests
             _dbContextAfter = GetNewDbContext();
         }
 
-
+        protected void ClearEntityBuilders() => _entityFactories.Clear();
+        
         protected void AddEntityBuilders<T>(params IBuilder<T>[] builders) where T : class 
         {
             foreach (var builder in builders)

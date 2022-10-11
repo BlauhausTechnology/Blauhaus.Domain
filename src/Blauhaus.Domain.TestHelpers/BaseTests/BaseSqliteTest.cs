@@ -55,7 +55,8 @@ namespace Blauhaus.Domain.TestHelpers.BaseTests
                 setupFunc.Invoke(Connection);
             }
         }
-
+        protected void ClearEntityBuilders() => _entityFactories.Clear();
+        
         protected void AddEntityBuilders<T>(params IBuilder<T>[] builders) 
         {
             foreach (var builder in builders)
