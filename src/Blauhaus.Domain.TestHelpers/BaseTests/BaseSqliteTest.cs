@@ -6,6 +6,8 @@ using Blauhaus.Analytics.Abstractions.Service;
 using Blauhaus.Analytics.TestHelpers.MockBuilders;
 using Blauhaus.ClientDatabase.Sqlite.Config;
 using Blauhaus.ClientDatabase.Sqlite.Service;
+using Blauhaus.Common.Abstractions;
+using Blauhaus.Common.TestHelpers.MockBuilders;
 using Blauhaus.DeviceServices.Abstractions.DeviceInfo;
 using Blauhaus.DeviceServices.TestHelpers.MockBuilders;
 using Blauhaus.TestHelpers.BaseTests;
@@ -32,7 +34,7 @@ namespace Blauhaus.Domain.TestHelpers.BaseTests
             _entityFactories.Clear();
 
             var config = (ISqliteConfig)Activator.CreateInstance(typeof(TSqliteConfig), MockDeviceInfoService.Object)!;
-            SqliteDatabaseService = new SqliteInMemoryDatabase(config);
+            SqliteDatabaseService = new SqliteInMemoryDatabaseService(MockSqliteLogger.Object, MockKeyValueStore.Object, config);
             Task.Run(async () => await SqliteDatabaseService.DeleteDataAsync()).Wait();
             Connection = SqliteDatabaseService.AsyncConnection;
             
@@ -40,11 +42,15 @@ namespace Blauhaus.Domain.TestHelpers.BaseTests
             AddService(MockAnalyticsService.Object);
             AddService(SqliteDatabaseService);
             AddService(MockLogger.Object);
+            AddService(MockSqliteLogger.Object);
+            AddService(MockKeyValueStore.Object);
         }
 
         protected DeviceInfoServiceMockBuilder MockDeviceInfoService => AddMock<DeviceInfoServiceMockBuilder, IDeviceInfoService>().Invoke();
         protected AnalyticsServiceMockBuilder MockAnalyticsService => AddMock<AnalyticsServiceMockBuilder, IAnalyticsService>().Invoke();
         private AnalyticsLoggerMockBuilder<TSut> MockLogger => AddMock<AnalyticsLoggerMockBuilder<TSut>, IAnalyticsLogger<TSut>>().Invoke();
+        private AnalyticsLoggerMockBuilder<SqliteInMemoryDatabaseService> MockSqliteLogger => AddMock<AnalyticsLoggerMockBuilder<SqliteInMemoryDatabaseService>, IAnalyticsLogger<SqliteInMemoryDatabaseService>>().Invoke();
+        protected KeyValueStoreMockBuilder MockKeyValueStore => AddMock<KeyValueStoreMockBuilder, IKeyValueStore>().Invoke();
 
         protected override void BeforeConstructSut(IServiceProvider serviceProvider)
         {
